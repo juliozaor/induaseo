@@ -1,0 +1,234 @@
+/* Estilos globales */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Neo Sans Std', Arial, sans-serif;
+    background-color: #F7FAFC; /* Fondo de la página */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+}
+
+/* Estilos del rectángulo del login */
+.login-card {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 30px #00000012;
+    border: 1px solid #EDEFF0;
+    border-radius: 10px;
+    padding: 40px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    margin: auto; /* Centra el rectángulo */
+}
+
+/* Logo en la parte superior */
+.logo-img {
+    width: 100%;
+    max-width: 418px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Texto debajo del logo */
+.login-header {
+    font: normal normal bold 16px/22px 'Neo Sans Std', Arial, sans-serif;
+    color: #000000;
+    margin-bottom: 20px;
+    text-align: start;
+}
+
+/* Etiquetas de los inputs */
+.label {
+    font: normal normal normal 12px/15px 'Neo Sans Std', Arial, sans-serif;
+    color: #000000;
+    text-align: left;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Inputs */
+.form-control {
+    background: #FFFFFF;
+    border: 1px solid #CFCBCB;
+    border-radius: 8px;
+    height: 40px;
+    padding: 8px 12px;
+}
+
+/* CAPTCHA */
+.captcha-text {
+    font: normal normal normal 14px/20px 'Neo Sans Std', Arial, sans-serif;
+    color: #4B4B4B;
+}
+
+/* Botón de iniciar sesión */
+.btn-login {
+    background: #000000;
+    box-shadow: 0px 3px 10px #00000040;
+    border-radius: 8px;
+    color: #FFFFFF;
+    font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+    width: 100%;
+    padding: 10px 0;
+    margin-top: 20px;
+}
+
+/* Línea divisoria */
+.divider {
+    width: 100%;
+    height: 1px;
+    background-color: #EDEFF0;
+    margin: 20px 0;
+}
+
+/* Texto "¿Olvidó su contraseña?" */
+.forgot-password-text {
+    font: normal normal normal 14px/17px 'Neo Sans Std', Arial, sans-serif;
+    color: #4B4B4B;
+}
+
+/* Link "Recupérala aquí" */
+.forgot-password-link {
+    font: normal normal normal 14px/20px 'Neo Sans Std', Arial, sans-serif;
+    color: #000000;
+    text-decoration: none;
+}
+
+
+/* Fondo y bordes del modal */
+.modal-content {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 20px #00000029;
+    border: 1px solid #EDEFF0;
+    border-radius: 10px;
+    width: 761px;
+    height: 300px;
+    padding: 0; /* Elimina el padding adicional */
+}
+
+/* Título del modal */
+.modal-title {
+    font: normal normal normal 14px/20px 'Neo Sans Std', Arial, sans-serif;
+    color: #0D0D0D;
+}
+
+/* Botón de cerrar (X) */
+.close {
+    border: 2px solid #AC0404;
+    border-radius: 50%;
+    padding: 0 4px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #AC0404;
+    cursor: pointer;
+}
+
+/* Rectángulo debajo del título */
+.modal-header-bar {
+    width: 100%;
+    height: 40px;
+    background: #EC6F35;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.modal-header-bar-text {
+    font: normal normal normal 14px/17px 'Neo Sans Std', Arial, sans-serif;
+    color: #FFFFFF;
+    padding-top: 10px;
+}
+
+/* Inputs en línea */
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* Botón de enviar */
+.btn-submit {
+    background: #000000;
+    color: #FFFFFF;
+    box-shadow: 0px 3px 10px #0000005C;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font: normal normal normal 14px/17px 'Neo Sans Std', Arial, sans-serif;
+}
+
+/* Estilos globales para modal en dispositivos de escritorio */
+.modal-dialog {
+    display: flex;
+    max-width: 751px; /* Ancho máximo del modal en pantallas grandes */
+}
+
+/* Estilo general de la lista */
+ul.requirements-list {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se ajusten a dos filas */
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    gap: 10px; /* Espacio entre los elementos */
+}
+
+/* Estilo de los elementos de la lista */
+.requirements-list li {
+    display: flex;
+    align-items: center;
+    font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+    color: #4B4B4B;
+    flex: 1 1 30%; /* Ajuste para que la primera fila tenga 3 elementos y la segunda 2 */
+    margin-bottom: 8px;
+}
+
+/* Estilo del icono */
+.requirements-list li img {
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+}
+
+.subtitulo{
+    font: normal normal normal 14px/17px 'Neo Sans Std', Arial, sans-serif;
+    letter-spacing: 0px;
+    color: #4B4B4B;
+}
+.aling-initial{
+    text-align: initial;
+}
+
+/* Estilo para los mensajes de error debajo de los inputs */
+.invalid-feedback {
+    text-align: left;
+    font: normal normal normal 10px/12px 'Neo Sans Std', Arial, sans-serif;
+    color: #CC0000;
+    margin-top: 5px;
+}
+
+/* Bordes en los inputs con error */
+.form-control.is-invalid,
+.g-recaptcha.is-invalid {
+    border: 1px solid #CC0000;
+}
+
+/* Estilo para el captcha si tiene error */
+.g-recaptcha iframe {
+    border: 1px solid #CC0000; /* Esto aplicará el borde al iframe del captcha */
+    border-radius: 8px; /* Opcional, puedes ajustar el borde redondeado si lo prefieres */
+}
+
+
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+    .modal-content {
+        height: 380px;
+    } 
+}

@@ -1,0 +1,437 @@
+/* Estructura general */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Neo Sans Std', Arial, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Contenedor principal */
+.dashboard-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+/* Menú lateral */
+.sidebar {
+    width: 247px;
+    transition: transform 0.3s ease;
+    background-color: #FFFFFF;
+    border-right: 1px solid #EDEFF0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.logo{
+    display:flex;
+}
+
+.logo button{
+    position: relative;
+    top: -20px;
+    left: 25px;
+}
+
+.logo img {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.menu {
+    width: 100%;
+    list-style: none;
+    margin: 10px 0;
+    padding: 0 20px;
+}
+
+.menu li {
+    padding: 15px 0;
+    width: 100%;
+    display: flex;
+    padding-left: 10px;
+    border-bottom: 1px solid #D9D9D9; /* Borde solo en la parte inferior */
+}
+
+.menu li a {
+    font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+    text-decoration: none;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estado activo: cambiar color del texto y del ícono */
+.menu li.active a {
+    color: #EC6F35; /* Color del texto cuando está activo */
+}
+
+.menu li a svg {
+    margin-right: 10px;
+    width: 20px;
+    height: 22px;
+    fill: #000000; /* Color del ícono */
+}
+
+.menu li.active a svg {
+    filter: none; /* Quitar filtro de gris para el ícono activo */
+    fill: #EC6F35; /* Opcional si el SVG usa `currentColor` para cambiar color */
+}
+
+
+
+
+
+/* Contenedor principal del dashboard */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 247px); /* Asegura que el contenido principal ocupe el ancho restante */
+}
+
+/* Barra superior */
+.topbar {
+    height: 58px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #EDEFF0;
+    width: 100%; /* Asegura que la barra superior ocupe todo el ancho de main-content */
+    box-sizing: border-box;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #00000029;
+}
+
+.menu-title {
+    display: flex;
+    align-items: center;
+}
+
+.menu-title img.selected-menu-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.menu-title span {
+    font-size: 18px;
+    color: #000000;
+}
+
+/* Información del usuario en la barra superior */
+.user-info {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.user-info span {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #000000;
+}
+
+
+/* Menú desplegable del usuario */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    left: -100px;
+    top: 40px;
+    background-color: #FFFFFF;
+    border: 1px solid #EDEFF0;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    width: 200px;
+    text-align: left;
+}
+
+/* .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background-color: #FFFFFF;
+    border: 1px solid #EDEFF0;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    width: 150px;
+    text-align: left;
+    padding: 10px;
+} */
+
+.divider {
+    border-bottom: 1px solid #EDEFF0;
+    margin: 10px 0;
+}
+
+.sub-text {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #343434;
+    margin-bottom: 10px;
+}
+
+.sub-text:hover {
+    color: #000000;
+}
+
+.sub-icon {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+}
+
+.dropdown-menu p, .dropdown-menu a {
+    padding: 10px 15px;
+    /* font-size: 14px; */
+    color: #000000;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-menu a:hover {
+    background-color: #F0F0F0;
+}
+
+/* Contenido principal */
+.content {
+    padding: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+    height: calc(100vh - 58px); /* Ajuste para no superponerse a la barra superior */
+}
+
+/* Estilo para el círculo alrededor del ícono */
+.user-icon-circle {
+    width: 40px; /* Tamaño del contenedor circular */
+    height: 40px;
+    background-color: #000000; /* Color de fondo negro */
+    border-radius: 50%; /* Hace el contenedor circular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer; /* Opcional, para indicar que es clickeable */
+}
+
+/* Ajustar el ícono dentro del círculo */
+.user-icon {
+    width: 24px; /* Tamaño del ícono */
+    height: 24px;
+    border-radius: 50%;
+}
+
+.sub-text{
+font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+letter-spacing: 0px;
+color: #656565;
+}
+
+.sub-icon{
+    width: 16px;
+    height: 18px;
+    margin-right: 5px;
+}
+/* Línea divisoria */
+.divider {
+    width: 100%;
+    height: 1px;
+    background-color: #EDEFF0;
+    margin: 20px 0;
+}
+
+/* Contenedor principal del dashboard */
+.dashboard-container {
+    padding: 20px;
+}
+
+/* Rectángulo de bienvenida */
+.welcome-banner {
+    height: 132px;
+    background: #EEEEEE;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.welcome-title {
+    font: normal normal bold 20px/28px 'Neo Sans Std', Arial, sans-serif;
+    color: #343434;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0;
+}
+
+.welcome-text {
+    font: normal normal normal 14px/20px 'Neo Sans Std', Arial, sans-serif;
+    color: #0D0D0D;
+    margin: 5px 0 0 0;
+    text-align: center;
+    padding: 0 100px;
+}
+
+.welcome-text span {
+    font-weight: bold;
+
+}
+
+
+/* Contenedor de tarjetas */
+.quick-access-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Tarjeta de acceso rápido */
+.card {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 20px #0000000D;
+    border-radius: 8px;
+    padding: 20px;
+    width: 100%;
+    height: 441px;
+    max-width: 300px; /* Tamaño máximo para cada tarjeta */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-icon {
+    width: 260px;
+    height: 169px;
+    background: #EEEEEE;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+
+
+.card-title {
+    font: normal normal bold 16px/22px 'Neo Sans Std', Arial, sans-serif;
+    color: #0D0D0D;
+    text-transform: uppercase;
+    margin: 15px 0 10px 0;
+}
+
+.card-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card-links li {
+    margin-bottom: 10px;
+}
+
+.card-links li a {
+    font: normal normal normal 14px/20px 'Neo Sans Std', Arial, sans-serif;
+    color: #343434;
+    text-decoration: none;
+}
+
+.card-links li a span {
+    color: #EC6F35;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.hamburger-menu {
+    display: none;
+}
+
+.close-sidebar {
+    display: none;
+    font-size: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #000000;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+/* responsivo para dispositivos móviles */
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0; /* Remueve espacio para el sidebar en móviles */
+    }
+    .content {
+        display: block !important;
+        visibility: visible !important;
+    }
+    
+
+    /* Asegura que el menú colapsable cubra toda la pantalla cuando está abierto */
+    .fixed-top .collapse {
+        width: 100%;
+    }
+
+    .menu li {
+        padding: 15px;
+    }
+
+    .menu-icon {
+        margin-right: 10px;
+    }
+
+    .quick-access-cards {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .card {
+        max-width: 100%;
+    }
+
+    .sidebar {
+        transform: translateX(-100%); /* Mueve el sidebar fuera de la pantalla */
+        transition: transform 0.3s ease;
+        position: fixed; /* Fija el sidebar para que se superponga al contenido */
+        height: 100%;
+        z-index: 1000;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .close-sidebar {
+        display: block;
+    }
+
+    .hamburger-icon {
+        display: inline-block;
+        cursor: pointer;
+    }
+   
+    
+    .sidebar.active {
+        transform: translateX(0); /* Mueve el sidebar a su posición normal */
+    }
+    
+    .hamburger-menu {
+        display: inline-block; /* Muestra el ícono de hamburguesa en dispositivos móviles */
+        cursor: pointer;
+    }
+
+}

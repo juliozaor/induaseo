@@ -1,0 +1,25 @@
+:root {
+    --color-bg: #F7FAFC;
+    --color-primary: #EC6F35;
+    --color-white: #FFFFFF;
+    --color-text: #343434;
+}
+
+/* Aplicar Neo Sans Std globalmente */
+body, .login-card, .requirements-list li {
+    font-family: 'Neo Sans Std', Arial, sans-serif;
+}
+
+/* Aplicar en elementos específicos */
+.login-header, .label, .center, ul li, p {
+    font-family: 'Neo Sans Std', Arial, sans-serif;
+}
+.modal-alerta{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
