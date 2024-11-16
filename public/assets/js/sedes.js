@@ -1,17 +1,17 @@
-
-document.addEventListener("DOMContentLoaded", function() {
+(function() {
+    const rutaRelativa = '/induaseo/public/';
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
-    const tablaClientesBody = document.querySelector("#tablaClientes tbody");
+    const tablaSedesBody = document.querySelector("#tablaSedes tbody");
     const paginacionContainer = document.createElement('div');
     paginacionContainer.classList.add('paginacion');
-    document.querySelector(".tabla-clientes-container").appendChild(paginacionContainer);
+    document.querySelector(".tabla-container").appendChild(paginacionContainer);
 
     const busquedaInput = document.getElementById("busquedaInput");
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
-    const openModalBtn = document.getElementById("openModalBtn"); // Ensure this is defined
+    const openModalBtn = document.getElementById("openModalBtn");
 
-    function cargarDatos(page) {
+    function cargarDatos(page = 1) {
         const tablaSeleccionada = tablaMaestraSelect.value;
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
@@ -25,45 +25,42 @@ document.addEventListener("DOMContentLoaded", function() {
         formData.append('buscar', buscar);
         formData.append('registros_por_pagina', registrosPorPagina);
 
-        fetch(`{{ route('maestras.consultar') }}?page=${page}`, {
+        fetch(`${rutaRelativa}admin/maestras/consultar?page=${page}`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: formData
             })
             .then(response => {
-                if (!response.ok) throw new Error('Error en la solicitud');
+                if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
             })
             .then(data => {
                 // Limpiar la tabla y la paginación
-                tablaClientesBody.innerHTML = '';
+                tablaSedesBody.innerHTML = '';
                 paginacionContainer.innerHTML = '';
 
                 // Llenar la tabla con los datos
-                data.data.forEach(cliente => {
+                data.data.forEach(sede => {
                     const row = document.createElement("tr");
-                    const estadoClase = cliente.estado ? 'estado-activo' : 'estado-inactivo';
+                    const estadoClase = sede.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
-                    <td>${cliente.id}</td>
-                    <td>${cliente.nombre}</td>
-                    <td>${cliente.tipo_documento?.nombre || 'N/A'}</td>
-                    <td>${cliente.numero_documento}</td>
-                    <td><div class="${estadoClase}">${cliente.estado ? 'Activo' : 'Inactivo'}</div></td>
-                    <td>${cliente.ciudad?.pais?.nombre || 'N/A'}</td>
-                    <td>${cliente.ciudad?.nombre || 'N/A'}</td>
-                    <td>${cliente.direccion}</td>
-                    <td>${cliente.celular}</td>
-                    <td>${cliente.correo}</td>
-                    <td>${cliente.sector_economico?.nombre || 'N/A'}</td>
-                    <td>${cliente.creador?.nombres || 'N/A'}</td>
-                    <td>${cliente.created_at}</td>
-                    <td>${cliente.actualizador?.nombres || 'N/A'}</td>
-                    <td>${cliente.updated_at}</td>
-                    <td><img src="{{ asset('assets/icons/editar.svg') }}" alt="Editar" class="icono-editar" data-id="${cliente.id}"></td>
+                    <td>${sede.id}</td>
+                    <td>${sede.cliente.nombre}</td>
+                    <td>${sede.ciudad.nombre}</td>
+                    <td>${sede.direccion}</td>
+                    <td>${sede.telefono}</td>
+                    <td>${sede.horario_inicio}</td>
+                    <td>${sede.horario_fin}</td>
+                    <td><div class="${estadoClase}">${sede.estado ? 'Activo' : 'Inactivo'}</div></td>
+                    <td>${sede.creador?.nombres || 'N/A'}</td>
+                    <td>${sede.created_at}</td>
+                    <td>${sede.actualizador?.nombres || 'N/A'}</td>
+                    <td>${sede.updated_at}</td>
+                    <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}"></td>
                 `;
-                    tablaClientesBody.appendChild(row);
+                    tablaSedesBody.appendChild(row);
                 });
 
                 // Mostrar total de registros
@@ -81,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 prevButton.classList.add("page-button", "ant");
                 prevButton.disabled = current_page === 1;
                 prevButton.addEventListener('click', () => {
-                    cargarDatos(`${current_page - 1}`);
+                    cargarDatos(current_page - 1);
                 });
                 paginacionContainer.appendChild(prevButton);
 
@@ -97,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (i === current_page) pageButton.classList.add('active');
 
                     pageButton.addEventListener('click', () => {
-                        cargarDatos(`${i}`);
+                        cargarDatos(i);
                     });
 
                     paginacionContainer.appendChild(pageButton);
@@ -109,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 nextButton.classList.add("page-button", "sig");
                 nextButton.disabled = current_page === last_page;
                 nextButton.addEventListener('click', () => {
-                    cargarDatos(`${current_page + 1}`);
+                    cargarDatos(current_page + 1);
                 });
                 paginacionContainer.appendChild(nextButton);
             })
@@ -119,18 +116,20 @@ document.addEventListener("DOMContentLoaded", function() {
     cargarDatos(1);
 
     // Eventos
-    consultarBtn.addEventListener("click", cargarDatos);
-    registrosPorPaginaSelect.addEventListener("change", cargarDatos);
-    busquedaInput.addEventListener("input", cargarDatos);
+    consultarBtn.addEventListener("click", () => cargarDatos(1));
+    registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
+    busquedaInput.addEventListener("input", () => cargarDatos(1));
 
     // Modal functionality
-    const modal = document.getElementById("createClientModal");
+    const modal = document.getElementById("createSedeModal");
     const modalTitle = document.getElementById("modalTitle");
     const modalActionBtn = document.getElementById("modalActionBtn");
-    const clientForm = document.getElementById("clientForm");
+    const sedeForm = document.getElementById("sedeForm");
     let editMode = false;
-    let clientId = null;
+    let sedeId = null;
 
+    cargarClientes();
+    cargarCiudades();
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
         modal.style.display = "flex";
@@ -146,41 +145,40 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.addEventListener("click", function(event) {
         if (event.target.classList.contains("icono-editar")) {
-            clientId = event.target.getAttribute("data-id");
-            if (!clientId) {
-                console.error("Error: No se encontró el ID del cliente en el botón.");
+            sedeId = event.target.getAttribute("data-id");
+            if (!sedeId) {
+                console.error("Error: No se encontró el ID de la sede en el botón.");
                 return;
             }
 
             editMode = true;
 
             // Aquí continúa el código de apertura del modal y carga de datos
-            modalTitle.textContent = "Editar cliente";
+            modalTitle.textContent = "Editar sede";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`{{ route('clientes.obtener') }}?id=${clientId}`)
+            fetch(`${rutaRelativa}sedes?id=${sedeId}`)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error("Error al cargar los datos del cliente.");
+                        throw new Error("Error al cargar los datos de la sede.");
                     }
                     return response.json();
                 })
-                .then((cliente) => {
-                    document.getElementById("tipoIdentificacion").value = cliente.tipo_documento_id;
-                    document.getElementById("numeroIdentificacion").value = cliente.numero_documento;
-                    document.getElementById("nombre").value = cliente.nombre;
-                    document.getElementById("pais").value = cliente.ciudad.pais.id;
-                    cargarCiudades(cliente.ciudad.pais.id, cliente.ciudad_id);
-                    document.getElementById("direccion").value = cliente.direccion;
-                    document.getElementById("celular").value = cliente.celular;
-                    document.getElementById("sectorEconomico").value = cliente.sector_economico_id;
-                    document.getElementById("correo").value = cliente.correo;
-                    document.getElementById("estadoToggle").checked = cliente.estado === 1;
-                    document.querySelector("label[for='estadoToggle']").textContent = cliente.estado ? "Activo" : "Inactivo";
+                .then((sede) => {
+                    console.log(sede);
+                    
+                    document.getElementById("cliente").value = sede.cliente_id;
+                    document.getElementById("ciudad").value = sede.ciudad_id;
+                    document.getElementById("direccion").value = sede.direccion;
+                    document.getElementById("telefono").value = sede.telefono;
+                    document.getElementById("horarioInicio").value = sede.horario_inicio;
+                    document.getElementById("horarioFin").value = sede.horario_fin;
+                    document.getElementById("estadoToggle").checked = sede.estado === 1;
+                    document.querySelector("label[for='estadoToggle']").textContent = sede.estado ? "Activo" : "Inactivo";
 
                     modal.style.display = "flex"; // Muestra el modal
                 })
-                .catch((error) => console.error("Error al cargar los datos del cliente:", error));
+                .catch((error) => console.error("Error al cargar los datos de la sede:", error));
         }
     });
 
@@ -192,10 +190,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `{{ route('clientes.actualizar', ':id') }}`.replace(':id', clientId) : `{{ route('clientes.guardar') }}`;
+        const url = editMode ? `${rutaRelativa}sedes/actualizar/${sedeId}` : `${rutaRelativa}sedes/guardar`;
         const method = editMode ? "PUT" : "POST";
 
-        const formData = new FormData(clientForm);
+        const formData = new FormData(sedeForm);
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
 
         if (editMode) {
@@ -205,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(url, {
                 method: "POST", // Always use POST for FormData
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: formData,
             })
@@ -222,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     showErrors(data.errors);
                 } else {
                     showAlertModal(
-                        "{{ asset('assets/images/ok.png') }}", // Ruta del ícono de éxito
+                        "ok.png", // Ruta del ícono de éxito
                         data.message // Mensaje de éxito
                     );
                     modal.style.display = "none";
@@ -234,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (error.errors) {
                     showErrors(error.errors);
                 } else {
-                    console.error("Error al guardar el cliente:", error);
+                    console.error("Error al guardar la sede:", error);
                 }
             });
     });
@@ -253,34 +251,24 @@ document.addEventListener("DOMContentLoaded", function() {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    function cargarCiudades(paisId, ciudadId = null) {
-        fetch(`{{ route('obtener.ciudades') }}?pais=${paisId}`)
-            .then((response) => response.json())
-            .then((ciudades) => {
-                const ciudadSelect = document.getElementById("ciudad");
-                ciudadSelect.innerHTML = '<option value="">Seleccione</option>';
-                ciudades.forEach((ciudad) => {
+    function cargarClientes() {
+        fetch(`${rutaRelativa}clientes-select`)
+            .then(response => response.json())
+            .then(clientes => {
+                const clienteSelect = document.getElementById("cliente");
+                clienteSelect.innerHTML = '<option value="">Seleccione</option>';
+                clientes.forEach(cliente => {
                     const option = document.createElement("option");
-                    option.value = ciudad.id;
-                    option.textContent = ciudad.nombre;
-                    if (ciudad.id == ciudadId) option.selected = true;
-                    ciudadSelect.appendChild(option);
+                    option.value = cliente.id;
+                    option.textContent = cliente.nombre;
+                    clienteSelect.appendChild(option);
                 });
             })
-            .catch((error) => console.error("Error al cargar las ciudades:", error));
+            .catch(error => console.error("Error al cargar los clientes:", error));
     }
 
-    function resetForm() {
-        clientForm.reset();
-        modalTitle.textContent = "Crear nuevo cliente";
-        modalActionBtn.textContent = "Crear Cliente";
-        editMode = false;
-        clientId = null;
-    }
-
-    // Cargar paises
     function cargarPaises() {
-        fetch(`{{ route('obtener.paises') }}`)
+        fetch(`${rutaRelativa}paises`)
             .then(response => response.json())
             .then(paises => {
                 const paisSelect = document.getElementById("pais");
@@ -295,55 +283,43 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error("Error al cargar los países:", error));
     }
 
-    // Cargar sectores económicos
-    function cargarSectoresEconomicos() {
-        fetch(`{{ route('obtener.sectoresEconomicos') }}`)
+    function cargarCiudades(paisId, ciudadId = null) {
+        fetch(`${rutaRelativa}ciudades?pais=${paisId}`)
             .then(response => response.json())
-            .then(sectores => {
-                const sectorEconomicoSelect = document.getElementById("sectorEconomico");
-                sectorEconomicoSelect.innerHTML = '<option value="">Seleccione</option>';
-                sectores.forEach(sector => {
+            .then(ciudades => {
+                const ciudadSelect = document.getElementById("ciudad");
+                ciudadSelect.innerHTML = '<option value="">Seleccione</option>';
+                ciudades.forEach(ciudad => {
                     const option = document.createElement("option");
-                    option.value = sector.id;
-                    option.textContent = sector.nombre;
-                    sectorEconomicoSelect.appendChild(option);
+                    option.value = ciudad.id;
+                    option.textContent = ciudad.nombre;
+                    if (ciudad.id == ciudadId) option.selected = true;
+                    ciudadSelect.appendChild(option);
                 });
             })
-            .catch(error => console.error("Error al cargar los sectores económicos:", error));
+            .catch(error => console.error("Error al cargar las ciudades:", error));
     }
+
+    // Escucha los cambios en el select de país
+    document.getElementById("pais").addEventListener("change", function() {
+        const paisId = this.value;
+        cargarCiudades(paisId);
+    });
 
     // Llamar a las funciones para cargar los datos al abrir el modal
     openModalBtn.addEventListener("click", function() {
-        cargarPaises();
-        cargarSectoresEconomicos();
+        cargarClientes();
+        cargarPaises()
+        
     });
 
-    // Cargar ciudades
-    const paisSelect = document.getElementById("pais");
-    const ciudadSelect = document.getElementById("ciudad");
-
-    // Escucha los cambios en el select de país
-    paisSelect.addEventListener("change", function() {
-        const paisId = paisSelect.value;
-
-        // Limpia el select de ciudad al cambiar de país
-        ciudadSelect.innerHTML = '<option value="">Seleccione</option>';
-
-        if (paisId) {
-            fetch(`{{ route('obtener.ciudades') }}?pais=${paisId}`)
-                .then(response => response.json())
-                .then(ciudades => {
-                    // Agrega las opciones de ciudades al select de ciudad
-                    ciudades.forEach(ciudad => {
-                        const option = document.createElement("option");
-                        option.value = ciudad.id;
-                        option.textContent = ciudad.nombre;
-                        ciudadSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error("Error al cargar las ciudades:", error));
-        }
-    });
+    function resetForm() {
+        sedeForm.reset();
+        modalTitle.textContent = "Crear nueva sede";
+        modalActionBtn.textContent = "Crear Sede";
+        editMode = false;
+        sedeId = null;
+    }
 
     // Actualizar estado del toggle
     const estadoToggle = document.getElementById("estadoToggle");
@@ -367,4 +343,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
-});
+})();

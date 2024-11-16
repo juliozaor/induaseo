@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\MaestrasController;
+use App\Http\Controllers\SedeController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -49,11 +50,20 @@ Route::post('/logout', function () {
 Route::get('/admin/maestras', [MaestrasController::class, 'index'])->name('admin.maestras.index');
 Route::post('/admin/maestras/consultar', [MaestrasController::class, 'consultar'])->name('maestras.consultar');
 
-Route::get('/ciudades', [ClientesController::class, 'obtenerCiudades'])->name('obtener.ciudades');
+Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obtener.paises');
+Route::get('/ciudades', [MaestrasController::class, 'obtenerCiudades'])->name('obtener.ciudades');
+Route::get('/clientes-select', [MaestrasController::class, 'obtenerClientes'])->name('obtener.clientes');
+Route::get('/sectores-economicos', [MaestrasController::class, 'obtenerSectoresEconomicos'])->name('obtener.sectoresEconomicos');
 
+Route::get('/maestras/clientes', [MaestrasController::class, 'clientes'])->name('maestras.clientes');
 
 Route::post('/clientes/guardar', [ClientesController::class, 'guardar'])->name('clientes.guardar');
 Route::get('/clientes', [ClientesController::class, 'obtenerCliente'])->name('clientes.obtener');
 Route::put('/clientes/actualizar/{id}', [ClientesController::class, 'actualizarCliente'])->name('clientes.actualizar');
+
+Route::get('/maestras/sedes', [MaestrasController::class, 'clientes'])->name('maestras.sedes');
+Route::post('/sedes/guardar', [SedeController::class, 'guardar'])->name('sedes.guardar');
+Route::get('/sedes', [SedeController::class, 'obtenerSede'])->name('sedes.obtener');
+Route::put('/sedes/actualizar/{id}', [SedeController::class, 'actualizar'])->name('sedes.actualizar');
 
 

@@ -55,7 +55,7 @@
 }
 
 /* Contenedor Listado de Clientes */
-.listado-clientes-container {
+.listado-container {
     background: #FFFFFF;
     box-shadow: 0px 3px 20px #00000029;
     padding: 15px;
@@ -63,7 +63,7 @@
 }
 
 /* Título Listado de Clientes */
-.listado-clientes-titulo {
+.listado-titulo {
     font: normal normal bold 14px/20px "Neo Sans Std", sans-serif;
     color: #0D0D0D;
     margin-bottom: 10px;
@@ -128,32 +128,32 @@
 }
 
 /* Tabla de Clientes */
-.tabla-clientes-container {
+.tabla-container {
     overflow-x: auto;
     
 }
 
-.tabla-clientes {
+.tabla {
     width: 100%;
     border-collapse: collapse;
 }
 
-.tabla-clientes th,
-.tabla-clientes td {
+.tabla th,
+.tabla td {
     padding: 10px;
     text-align: center;
     font: normal normal normal 12px / 15px 'Neo Sans Std', Arial, sans-serif;
     letter-spacing: 0px;
 }
 
-.tabla-clientes th:last-child,
-.tabla-clientes td:last-child {
+.tabla th:last-child,
+.tabla td:last-child {
     position: sticky;
     right: 0;
     background: #f9f9f9;
 }
 
-.tabla-clientes tbody tr:nth-child(odd) {
+.tabla tbody tr:nth-child(odd) {
     background: transparent linear-gradient(180deg, #F9F9F9 0%, #F7F7F7 43%, #F1F1F1 100%) 0% 0% no-repeat padding-box;
 }
 .estado-activo {

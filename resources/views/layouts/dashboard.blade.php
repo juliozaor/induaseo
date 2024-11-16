@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Dashboard')</title>
@@ -17,9 +17,10 @@
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     
+    
 </head>
 <body>
-
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <!-- Incluir el menú responsivo en dispositivos móviles -->
    {{--  @include('components.responsive_menu') --}}
 
@@ -266,13 +267,14 @@
 
     <!-- jQuery y Bootstrap JS CDN para que el modal funcione -->
     
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
       <!-- Script para activar el modal con alertas dinámicas -->
         <!-- Script para el modal de alerta dinámico -->
     <script>
-      function showAlertModal(iconSrc, alertText) {
+      function showAlertModal(iconName, alertText) {
+          const iconSrc = `{{ asset('assets/images/') }}/${iconName}`; // Construct the full path
           $('#alertIcon').attr('src', iconSrc);
           $('#alertText').text(alertText);
           $('#alertModal').modal('show');
@@ -319,5 +321,8 @@ $(document).ready(function () {
 });
 
   </script>
+
+  @yield('scripts');
+
 </body>
 </html>

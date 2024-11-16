@@ -60,15 +60,7 @@ class ClientesController extends Controller
         }
     }
 
-    public function obtenerCiudades(Request $request)
-    {
-        $pais_id = $request->input('pais');
-        // Busca las ciudades que pertenecen al país seleccionado
-        $ciudades = Ciudades::where('pais_id', $pais_id)->get(['id', 'nombre']);
-
-        // Devuelve las ciudades como respuesta JSON
-        return response()->json($ciudades);
-    }
+    
 
     public function obtenerCliente(Request $request)
     {
@@ -79,6 +71,7 @@ class ClientesController extends Controller
 
     public function actualizarCliente(Request $request, $id)
     {
+
         $cliente = Cliente::findOrFail($id);
 
         try {

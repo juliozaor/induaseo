@@ -1,17 +1,17 @@
-
-document.addEventListener("DOMContentLoaded", function() {
+(function() {
+    const rutaRelativa = '/induaseo/public/';
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaClientesBody = document.querySelector("#tablaClientes tbody");
     const paginacionContainer = document.createElement('div');
     paginacionContainer.classList.add('paginacion');
-    document.querySelector(".tabla-clientes-container").appendChild(paginacionContainer);
+    document.querySelector(".tabla-container").appendChild(paginacionContainer);
 
     const busquedaInput = document.getElementById("busquedaInput");
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
     const openModalBtn = document.getElementById("openModalBtn"); // Ensure this is defined
 
-    function cargarDatos(page) {
+    function cargarDatos(page = 1) {
         const tablaSeleccionada = tablaMaestraSelect.value;
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
@@ -25,15 +25,15 @@ document.addEventListener("DOMContentLoaded", function() {
         formData.append('buscar', buscar);
         formData.append('registros_por_pagina', registrosPorPagina);
 
-        fetch(`{{ route('maestras.consultar') }}?page=${page}`, {
+        fetch(`${rutaRelativa}admin/maestras/consultar?page=${page}`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: formData
             })
             .then(response => {
-                if (!response.ok) throw new Error('Error en la solicitud');
+                if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
             })
             .then(data => {
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <td>${cliente.created_at}</td>
                     <td>${cliente.actualizador?.nombres || 'N/A'}</td>
                     <td>${cliente.updated_at}</td>
-                    <td><img src="{{ asset('assets/icons/editar.svg') }}" alt="Editar" class="icono-editar" data-id="${cliente.id}"></td>
+                    <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${cliente.id}"></td>
                 `;
                     tablaClientesBody.appendChild(row);
                 });
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 prevButton.classList.add("page-button", "ant");
                 prevButton.disabled = current_page === 1;
                 prevButton.addEventListener('click', () => {
-                    cargarDatos(`${current_page - 1}`);
+                    cargarDatos(current_page - 1);
                 });
                 paginacionContainer.appendChild(prevButton);
 
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (i === current_page) pageButton.classList.add('active');
 
                     pageButton.addEventListener('click', () => {
-                        cargarDatos(`${i}`);
+                        cargarDatos(i);
                     });
 
                     paginacionContainer.appendChild(pageButton);
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 nextButton.classList.add("page-button", "sig");
                 nextButton.disabled = current_page === last_page;
                 nextButton.addEventListener('click', () => {
-                    cargarDatos(`${current_page + 1}`);
+                    cargarDatos(current_page + 1);
                 });
                 paginacionContainer.appendChild(nextButton);
             })
@@ -119,9 +119,9 @@ document.addEventListener("DOMContentLoaded", function() {
     cargarDatos(1);
 
     // Eventos
-    consultarBtn.addEventListener("click", cargarDatos);
-    registrosPorPaginaSelect.addEventListener("change", cargarDatos);
-    busquedaInput.addEventListener("input", cargarDatos);
+    consultarBtn.addEventListener("click", () => cargarDatos(1));
+    registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
+    busquedaInput.addEventListener("input", () => cargarDatos(1));
 
     // Modal functionality
     const modal = document.getElementById("createClientModal");
@@ -131,6 +131,8 @@ document.addEventListener("DOMContentLoaded", function() {
     let editMode = false;
     let clientId = null;
 
+    cargarPaises();
+    cargarSectoresEconomicos();
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
         modal.style.display = "flex";
@@ -158,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
             modalTitle.textContent = "Editar cliente";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`{{ route('clientes.obtener') }}?id=${clientId}`)
+            fetch(`${rutaRelativa}clientes?id=${clientId}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Error al cargar los datos del cliente.");
@@ -192,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `{{ route('clientes.actualizar', ':id') }}`.replace(':id', clientId) : `{{ route('clientes.guardar') }}`;
+        const url = editMode ? `${rutaRelativa}clientes/actualizar/${clientId}` : `${rutaRelativa}clientes/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(clientForm);
@@ -205,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(url, {
                 method: "POST", // Always use POST for FormData
                 headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: formData,
             })
@@ -222,7 +224,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     showErrors(data.errors);
                 } else {
                     showAlertModal(
-                        "{{ asset('assets/images/ok.png') }}", // Ruta del ícono de éxito
+                        
+                        "ok.png", // Ruta del ícono de éxito
                         data.message // Mensaje de éxito
                     );
                     modal.style.display = "none";
@@ -254,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function cargarCiudades(paisId, ciudadId = null) {
-        fetch(`{{ route('obtener.ciudades') }}?pais=${paisId}`)
+        fetch(`${rutaRelativa}ciudades?pais=${paisId}`)
             .then((response) => response.json())
             .then((ciudades) => {
                 const ciudadSelect = document.getElementById("ciudad");
@@ -280,7 +283,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Cargar paises
     function cargarPaises() {
-        fetch(`{{ route('obtener.paises') }}`)
+        fetch(`${rutaRelativa}paises`)
             .then(response => response.json())
             .then(paises => {
                 const paisSelect = document.getElementById("pais");
@@ -297,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Cargar sectores económicos
     function cargarSectoresEconomicos() {
-        fetch(`{{ route('obtener.sectoresEconomicos') }}`)
+        fetch(`${rutaRelativa}sectores-economicos`)
             .then(response => response.json())
             .then(sectores => {
                 const sectorEconomicoSelect = document.getElementById("sectorEconomico");
@@ -313,10 +316,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Llamar a las funciones para cargar los datos al abrir el modal
-    openModalBtn.addEventListener("click", function() {
-        cargarPaises();
-        cargarSectoresEconomicos();
-    });
+    /* openModalBtn.addEventListener("click", function() {
+        
+    }); */
 
     // Cargar ciudades
     const paisSelect = document.getElementById("pais");
@@ -330,7 +332,7 @@ document.addEventListener("DOMContentLoaded", function() {
         ciudadSelect.innerHTML = '<option value="">Seleccione</option>';
 
         if (paisId) {
-            fetch(`{{ route('obtener.ciudades') }}?pais=${paisId}`)
+            fetch(`${rutaRelativa}ciudades?pais=${paisId}`)
                 .then(response => response.json())
                 .then(ciudades => {
                     // Agrega las opciones de ciudades al select de ciudad
@@ -367,4 +369,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
-});
+})();

@@ -22,4 +22,14 @@ class Sede extends Model
     {
         return $this->belongsTo(Ciudades::class);
     }
+
+    public function creador()
+    {
+        return $this->belongsTo(Usuario::class, 'creador_id');
+    }
+
+    public function actualizador()
+    {
+        return $this->belongsTo(Usuario::class, 'actualizador_id');
+    }
 }
