@@ -26,5 +26,20 @@ class ClientesTableSeeder extends Seeder
             'celular' => '3001234567',
             'estado' => 1
         ]);
+
+        // Nuevo cliente
+        Cliente::create([
+            'tipo_documento_id' => 2,
+            'numero_documento' => '87654321',
+            'ciudad_id' => 1,
+            'creador_id' => 1,
+            'actualizador_id' => 1,
+            'sector_economico_id' => 1,
+            'nombre' => 'Cliente Ejemplo 2',
+            'direccion' => 'Dirección Ejemplo 2',
+            'correo' => 'ejemplo2@correo.com',
+            'celular' => '3007654321',
+            'estado' => 1
+        ]);
     }
 }

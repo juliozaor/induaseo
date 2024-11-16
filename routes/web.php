@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\MaestrasController;
 use App\Http\Controllers\SedeController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\TurnoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,7 @@ Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obten
 Route::get('/ciudades', [MaestrasController::class, 'obtenerCiudades'])->name('obtener.ciudades');
 Route::get('/clientes-select', [MaestrasController::class, 'obtenerClientes'])->name('obtener.clientes');
 Route::get('/sectores-economicos', [MaestrasController::class, 'obtenerSectoresEconomicos'])->name('obtener.sectoresEconomicos');
+Route::get('/regionales', [MaestrasController::class, 'obtenerRegionales'])->name('obtener.regionales');
 
 Route::get('/maestras/clientes', [MaestrasController::class, 'clientes'])->name('maestras.clientes');
 
@@ -65,5 +67,17 @@ Route::get('/maestras/sedes', [MaestrasController::class, 'clientes'])->name('ma
 Route::post('/sedes/guardar', [SedeController::class, 'guardar'])->name('sedes.guardar');
 Route::get('/sedes', [SedeController::class, 'obtenerSede'])->name('sedes.obtener');
 Route::put('/sedes/actualizar/{id}', [SedeController::class, 'actualizar'])->name('sedes.actualizar');
+
+Route::get('/maestras/turnos', [MaestrasController::class, 'clientes'])->name('maestras.turnos');
+Route::post('/turnos/guardar', [TurnoController::class, 'guardar'])->name('turnos.guardar');
+Route::get('/turno', [TurnoController::class, 'obtenerTurno'])->name('turno.obtener');
+Route::put('/turnos/actualizar/{id}', [TurnoController::class, 'actualizar'])->name('turnos.actualizar');
+
+Route::get('/frecuencias', [MaestrasController::class, 'obtenerFrecuencias'])->name('obtener.frecuencias');
+Route::get('/actividades/{turnoId}', [TurnoController::class, 'obtenerActividades'])->name('obtener.actividades');
+Route::delete('/actividades/{id}', [TurnoController::class, 'eliminarActividad'])->name('eliminar.actividad');
+Route::post('/actividades', [TurnoController::class, 'guardarActividad'])->name('guardar.actividad');
+
+Route::get('/turnos', [TurnoController::class, 'obtenerTurnos'])->name('turnos.obtener');
 
 

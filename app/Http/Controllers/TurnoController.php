@@ -2,64 +2,126 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Actividades;
 use App\Models\Turno;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 
 class TurnoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function guardar(Request $request)
     {
-        //
+        
+        try {
+            $validatedData = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'frecuencia' => 'required|exists:frecuencias,id',
+                'detalleFrecuencia' => 'required|string|max:255',
+                'estado' => 'required|boolean',
+            ]);
+
+            $turno = Turno::create([
+                'nombre' => $request->nombre,
+                'frecuencia_id' => $request->frecuencia,
+                'frecuencia_cantidad' => $request->detalleFrecuencia,
+                'estado' => $request->estado,
+                'creador_id' => Auth::id(),
+            ]);
+
+            return response()->json(['message' => 'Turno creado con éxito', 'turno' => $turno]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function actualizar(Request $request, $id)
     {
-        //
+        $turno = Turno::findOrFail($id);
+
+        try {
+            $validatedData = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'frecuencia' => 'required|exists:frecuencias,id',
+                'detalleFrecuencia' => 'required|string|max:255',
+                'estado' => 'required|boolean',
+            ]);
+
+            $turno->update([
+                'nombre' => $request->nombre,
+                'frecuencia_id' => $request->frecuencia,
+                'frecuencia_cantidad' => $request->detalleFrecuencia,
+                'estado' => $request->estado,
+                'actualizador_id' => Auth::id(),
+            ]);
+
+            return response()->json(['message' => 'Turno actualizado correctamente.', 'turno' => $turno]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function obtenerTurno(Request $request)
     {
-        //
+        $id = $request->input('id');
+        $turno = Turno::with(['frecuencia', 'actividades', 'creador', 'actualizador'])->findOrFail($id);
+        return response()->json($turno);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Turno $turno)
+    public function obtenerTurnos(Request $request)
     {
-        //
+        $buscar = $request->input('buscar');
+        $registrosPorPagina = $request->input('registros_por_pagina', 10);
+
+        $query = Turno::with(['frecuencia', 'actividades', 'creador', 'actualizador']);
+
+        if ($buscar) {
+            $query->where('nombre', 'like', "%{$buscar}%");
+        }
+
+        $turnos = $query->paginate($registrosPorPagina);
+
+        return response()->json($turnos);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Turno $turno)
+    public function obtenerActividades($turnoId)
     {
-        //
+        
+        try {
+            $actividades = Actividades::where('turno_id', $turnoId)->get();
+            return response()->json($actividades);
+        } catch (Exception $e) {
+            return response()->json([]);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Turno $turno)
+    public function eliminarActividad($id)
     {
-        //
+        $actividad = Actividades::findOrFail($id);
+        $actividad->delete();
+        return response()->json(['message' => 'Actividad eliminada correctamente.']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Turno $turno)
+    public function guardarActividad(Request $request)
     {
-        //
+        try {
+            $validatedData = $request->validate([
+                'turno_id' => 'required|exists:turnos,id',
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string|max:255',
+            ]);
+            
+            $actividad = Actividades::create([
+                'turno_id' => $request->turno_id,
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+            ]);
+            
+            
+            return response()->json(['message' => 'Actividad creada con éxito', 'actividad' => $actividad]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 }

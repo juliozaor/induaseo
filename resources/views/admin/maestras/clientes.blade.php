@@ -62,6 +62,7 @@
             <tbody></tbody>
         </table>
     </div>
+    <div class="tabla-paginacion"></div>
 </div>
 </div>
 

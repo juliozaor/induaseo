@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('sedes', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre');
             $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');
             $table->foreignId('ciudad_id')->constrained('ciudades')->onDelete('cascade');
             $table->string('direccion');
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->time('horario_inicio');
             $table->time('horario_fin');
             $table->boolean('estado')->default(1);
+            $table->foreignId('regional_id')->nullable()->constrained('regionales')->onDelete('set null');
             $table->foreignId('creador_id')->nullable()->constrained('usuarios')->onDelete('set null');
             $table->foreignId('actualizador_id')->nullable()->constrained('usuarios')->onDelete('set null');
             $table->timestamps();

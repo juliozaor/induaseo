@@ -22,6 +22,15 @@
         <div class="input-container">
             <input type="text" class="busqueda-input" id="busquedaInput" placeholder="Buscar...">
         </div>
+        <select class="filtro form-control" id="filtroCliente" name="filtroCliente">
+            <option value="">Todos los clientes</option>
+            <!-- Opciones de clientes se llenarán dinámicamente -->
+        </select>
+        <select class="filtro form-control" id="filtroEstado">
+            <option value="">Todos los estados</option>
+            <option value="1">Activo</option>
+            <option value="0">Inactivo</option>
+        </select>
         <span class="registros-encontrados">Total: 0</span>
         <select class="registros-por-pagina" id="registrosPorPagina">
             <option value="5">5</option>
@@ -37,7 +46,9 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Nombre</th>
                     <th>Cliente</th>
+                    <th>País</th>
                     <th>Ciudad</th>
                     <th>Dirección</th>
                     <th>Teléfono</th>
@@ -48,12 +59,14 @@
                     <th>Fecha de creación</th>
                     <th>Actualizado por</th>
                     <th>Fecha actualización</th>
+                    <th>Regional</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
+    <div class="tabla-paginacion"></div>
 </div>
 
 <div id="createSedeModal" class="modal">
@@ -70,6 +83,11 @@
         <div class="modal-body">
             <form id="sedeForm">
                 <div class="form-group flex-grow-1 row">
+                    <div class="col-3">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" required>
+                        <span class="error-message" id="errorNombre"></span>
+                    </div>
                     <div class="col-3">
                         <label for="cliente">Cliente:</label>
                         <select id="cliente" name="cliente" class="form-control" required>
@@ -92,14 +110,14 @@
                         </select>
                         <span class="error-message" id="errorCiudad"></span>
                     </div>
+                </div>
+
+                <div class="form-group flex-grow-1 row">
                     <div class="col-3">
                         <label for="direccion">Dirección:</label>
                         <input type="text" id="direccion" name="direccion" class="form-control" required>
                         <span class="error-message" id="errorDireccion"></span>
                     </div>
-                </div>
-
-                <div class="form-group flex-grow-1 row">
                     <div class="col-3">
                         <label for="telefono">Teléfono:</label>
                         <input type="text" id="telefono" name="telefono" class="form-control" required>
@@ -114,6 +132,14 @@
                         <label for="horarioFin">Horario Fin:</label>
                         <input type="time" id="horarioFin" name="horarioFin" class="form-control" required>
                         <span class="error-message" id="errorHorarioFin"></span>
+                    </div>
+                    <div class="col-3">
+                        <label for="regional">Regional:</label>
+                        <select id="regional" name="regional" class="form-control" required>
+                            <option value="">Seleccione</option>
+                            <!-- Opciones de regionales se llenarán dinámicamente -->
+                        </select>
+                        <span class="error-message" id="errorRegional"></span>
                     </div>
                 </div>
             </form>

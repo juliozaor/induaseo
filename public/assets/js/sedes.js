@@ -5,16 +5,20 @@
     const tablaSedesBody = document.querySelector("#tablaSedes tbody");
     const paginacionContainer = document.createElement('div');
     paginacionContainer.classList.add('paginacion');
-    document.querySelector(".tabla-container").appendChild(paginacionContainer);
+    document.querySelector(".tabla-paginacion").appendChild(paginacionContainer);
 
     const busquedaInput = document.getElementById("busquedaInput");
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
     const openModalBtn = document.getElementById("openModalBtn");
+    const filtroCliente = document.getElementById("filtroCliente");
+    const filtroEstado = document.getElementById("filtroEstado");
 
     function cargarDatos(page = 1) {
         const tablaSeleccionada = tablaMaestraSelect.value;
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
+        const cliente = filtroCliente.value;
+        const estado = filtroEstado.value;
 
         if (!tablaSeleccionada) {
             return;
@@ -24,6 +28,9 @@
         formData.append('tabla', tablaSeleccionada);
         formData.append('buscar', buscar);
         formData.append('registros_por_pagina', registrosPorPagina);
+        formData.append('cliente', cliente);
+        formData.append('estado', estado);
+       /*  formData.append('regional', filtroRegional.value); */
 
         fetch(`${rutaRelativa}admin/maestras/consultar?page=${page}`, {
                 method: 'POST',
@@ -42,22 +49,25 @@
                 paginacionContainer.innerHTML = '';
 
                 // Llenar la tabla con los datos
-                data.data.forEach(sede => {
+                data.data.forEach(sede => {                    
                     const row = document.createElement("tr");
                     const estadoClase = sede.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
                     <td>${sede.id}</td>
+                    <td>${sede.nombre}</td>
                     <td>${sede.cliente.nombre}</td>
-                    <td>${sede.ciudad.nombre}</td>
+                    <td>${sede.ciudad?.pais?.nombre}</td>
+                    <td>${sede.ciudad?.nombre}</td>
                     <td>${sede.direccion}</td>
                     <td>${sede.telefono}</td>
                     <td>${sede.horario_inicio}</td>
                     <td>${sede.horario_fin}</td>
                     <td><div class="${estadoClase}">${sede.estado ? 'Activo' : 'Inactivo'}</div></td>
                     <td>${sede.creador?.nombres || 'N/A'}</td>
-                    <td>${sede.created_at}</td>
+                    <td>${formatDate(sede.created_at)}</td>
                     <td>${sede.actualizador?.nombres || 'N/A'}</td>
-                    <td>${sede.updated_at}</td>
+                    <td>${formatDate(sede.updated_at)}</td>
+                    <td>${sede.regional?.nombre || 'N/A'}</td>
                     <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}"></td>
                 `;
                     tablaSedesBody.appendChild(row);
@@ -113,12 +123,23 @@
             .catch(error => console.error('Error:', error));
     }
 
+    function formatDate(dateString) {
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('es-ES', options);
+    }
+
     cargarDatos(1);
+    cargarClientes(2);
+    cargarClientes(1);
+    cargarPaises()
+    cargarRegionales();
 
     // Eventos
     consultarBtn.addEventListener("click", () => cargarDatos(1));
     registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
     busquedaInput.addEventListener("input", () => cargarDatos(1));
+    filtroCliente.addEventListener("change", () => cargarDatos(1));
+    filtroEstado.addEventListener("change", () => cargarDatos(1));
 
     // Modal functionality
     const modal = document.getElementById("createSedeModal");
@@ -128,11 +149,9 @@
     let editMode = false;
     let sedeId = null;
 
-    cargarClientes();
-    cargarCiudades();
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
-        modal.style.display = "flex";
+        modal.style.display = "flex";        
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -164,17 +183,19 @@
                     }
                     return response.json();
                 })
-                .then((sede) => {
-                    console.log(sede);
-                    
+                .then((sede) => {     
+
+                    document.getElementById("nombre").value = sede.nombre;
                     document.getElementById("cliente").value = sede.cliente_id;
-                    document.getElementById("ciudad").value = sede.ciudad_id;
+                    document.getElementById("pais").value = sede.ciudad.pais_id;
+                    cargarCiudades(sede.ciudad.pais_id, sede.ciudad_id);
                     document.getElementById("direccion").value = sede.direccion;
                     document.getElementById("telefono").value = sede.telefono;
                     document.getElementById("horarioInicio").value = sede.horario_inicio;
                     document.getElementById("horarioFin").value = sede.horario_fin;
                     document.getElementById("estadoToggle").checked = sede.estado === 1;
                     document.querySelector("label[for='estadoToggle']").textContent = sede.estado ? "Activo" : "Inactivo";
+                    document.getElementById("regional").value = sede.regional_id;
 
                     modal.style.display = "flex"; // Muestra el modal
                 })
@@ -195,6 +216,7 @@
 
         const formData = new FormData(sedeForm);
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
+        formData.append("regional", document.getElementById("regional").value);
 
         if (editMode) {
             formData.append("_method", "PUT");
@@ -251,19 +273,32 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    function cargarClientes() {
+    function cargarClientes(tipo) {
         fetch(`${rutaRelativa}clientes-select`)
             .then(response => response.json())
             .then(clientes => {
-                const clienteSelect = document.getElementById("cliente");
-                clienteSelect.innerHTML = '<option value="">Seleccione</option>';
+                if (tipo === 1) {
+
+                    const clienteSelect = document.getElementById("cliente");
+                    clienteSelect.innerHTML = '<option value="">Seleccione</option>';
+                    clientes.forEach(cliente => {
+                        const option = document.createElement("option");
+                        option.value = cliente.id;
+                        option.textContent = cliente.nombre;
+                        clienteSelect.appendChild(option);
+                    });
+                } else {
+                const clienteSelectFiltro = document.getElementById("filtroCliente");
+                clienteSelectFiltro.innerHTML = '<option value="">Seleccione</option>';
                 clientes.forEach(cliente => {
                     const option = document.createElement("option");
                     option.value = cliente.id;
                     option.textContent = cliente.nombre;
-                    clienteSelect.appendChild(option);
+                    clienteSelectFiltro.appendChild(option);
                 });
+                }
             })
+            
             .catch(error => console.error("Error al cargar los clientes:", error));
     }
 
@@ -300,6 +335,23 @@
             .catch(error => console.error("Error al cargar las ciudades:", error));
     }
 
+    function cargarRegionales() {
+        
+        fetch(`${rutaRelativa}regionales`)
+            .then(response => response.json())
+            .then(regionales => {                
+                const regionalSelect = document.getElementById("regional");
+                regionalSelect.innerHTML = '<option value="">Seleccione</option>';
+                regionales.forEach(regional => {
+                    const option = document.createElement("option");
+                    option.value = regional.id;
+                    option.textContent = regional.nombre;
+                    regionalSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error al cargar los regionales:", error));
+    }
+
     // Escucha los cambios en el select de país
     document.getElementById("pais").addEventListener("change", function() {
         const paisId = this.value;
@@ -307,11 +359,9 @@
     });
 
     // Llamar a las funciones para cargar los datos al abrir el modal
-    openModalBtn.addEventListener("click", function() {
-        cargarClientes();
-        cargarPaises()
-        
-    });
+  /*   openModalBtn.addEventListener("click", function() {
+        cargarRegionales();
+    }); */
 
     function resetForm() {
         sedeForm.reset();

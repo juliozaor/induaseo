@@ -39,6 +39,16 @@
     font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
 }
 
+.btn-actividad {
+    padding: 10px 15px;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    background: #EC6F35;
+    box-shadow: 0px 3px 10px #00000040;
+    font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+}
+
 .btn-consultar svg {
     margin-right: 5px;
 }
@@ -106,8 +116,6 @@
 }
 
 .registros-encontrados {
-    /* margin-left: auto;
-    font-size: 14px; */
     background: #B7B7B7 0% 0% no-repeat padding-box;
     border-radius: 12px;
     text-align: center;
@@ -144,6 +152,7 @@
     text-align: center;
     font: normal normal normal 12px / 15px 'Neo Sans Std', Arial, sans-serif;
     letter-spacing: 0px;
+    min-width: 120px; /* Fixed width for all columns */
 }
 
 .tabla th:last-child,
@@ -151,6 +160,7 @@
     position: sticky;
     right: 0;
     background: #f9f9f9;
+    border-left: 1px solid #CBCBCB; /* Add left border */
 }
 
 .tabla tbody tr:nth-child(odd) {
@@ -237,7 +247,7 @@
 
 .modal-content {
     background: #FFFFFF;
-    padding: 20px;
+    padding: 5px 20px;
     width: 80%!important;
     border-radius: 10px!important;
     box-shadow: 0px 3px 20px #00000029;  
@@ -346,3 +356,12 @@
     letter-spacing: 0px;
     color: #CC0000;
   }
+
+  .filtro{
+    width: auto!important;
+  }
+
+/* Estilo para las filas de la tabla */
+tr {
+    border-bottom: 1px solid #CBCBCB;
+}

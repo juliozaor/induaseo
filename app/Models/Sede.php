@@ -9,8 +9,8 @@ class Sede extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'cliente_id', 'ciudad_id', 'direccion', 'telefono', 
-        'horario_inicio', 'horario_fin', 'estado', 'creador_id', 'actualizador_id'
+        'nombre', 'cliente_id', 'ciudad_id', 'direccion', 'telefono',
+        'horario_inicio', 'horario_fin', 'estado', 'regional_id', 'creador_id', 'actualizador_id'
     ];
 
     public function cliente()
@@ -21,6 +21,11 @@ class Sede extends Model
     public function ciudad()
     {
         return $this->belongsTo(Ciudades::class);
+    }
+
+    public function regional()
+    {
+        return $this->belongsTo(Regionales::class, 'regional_id');
     }
 
     public function creador()

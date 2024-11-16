@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             SectoresEconomicosSeeder::class,
             ClientesTableSeeder::class,
             FrecuenciaSeeder::class,
+            RegionalesSeeder::class,
         ]);
     }
 }

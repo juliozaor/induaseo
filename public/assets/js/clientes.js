@@ -5,7 +5,7 @@
     const tablaClientesBody = document.querySelector("#tablaClientes tbody");
     const paginacionContainer = document.createElement('div');
     paginacionContainer.classList.add('paginacion');
-    document.querySelector(".tabla-container").appendChild(paginacionContainer);
+    document.querySelector(".tabla-paginacion").appendChild(paginacionContainer);
 
     const busquedaInput = document.getElementById("busquedaInput");
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
@@ -58,9 +58,9 @@
                     <td>${cliente.correo}</td>
                     <td>${cliente.sector_economico?.nombre || 'N/A'}</td>
                     <td>${cliente.creador?.nombres || 'N/A'}</td>
-                    <td>${cliente.created_at}</td>
+                    <td>${formatDate(cliente.created_at)}</td>
                     <td>${cliente.actualizador?.nombres || 'N/A'}</td>
-                    <td>${cliente.updated_at}</td>
+                    <td>${formatDate(cliente.updated_at)}</td>
                     <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${cliente.id}"></td>
                 `;
                     tablaClientesBody.appendChild(row);
@@ -116,7 +116,14 @@
             .catch(error => console.error('Error:', error));
     }
 
+    function formatDate(dateString) {
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('es-ES', options);
+    }
+
     cargarDatos(1);
+    cargarPaises();
+    cargarSectoresEconomicos();
 
     // Eventos
     consultarBtn.addEventListener("click", () => cargarDatos(1));
@@ -131,8 +138,7 @@
     let editMode = false;
     let clientId = null;
 
-    cargarPaises();
-    cargarSectoresEconomicos();
+    
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
         modal.style.display = "flex";
