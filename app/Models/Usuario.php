@@ -23,9 +23,11 @@ class Usuario extends Authenticatable
         'apellidos',
         'fecha_nacimiento',
         'telefono',
-        'correo',
+        'email',
         'cargo',
         'password',
+        'estado',
+        'rol'
     ];
 
     /**
@@ -34,6 +36,16 @@ class Usuario extends Authenticatable
     public function tipoDocumento()
     {
         return $this->belongsTo(TiposDocumento::class, 'tipo_documento_id');
+    }
+
+    /* public function rol()
+    {
+        return $this->belongsTo(Roles::class, 'rol');
+    }
+ */
+    public function clientes()
+    {
+        return $this->belongsToMany(Cliente::class, 'cliente_usuario');
     }
 
     /**

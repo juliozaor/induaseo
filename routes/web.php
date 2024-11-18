@@ -7,6 +7,7 @@ use App\Http\Controllers\MaestrasController;
 use App\Http\Controllers\SedeController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\TurnoController;
+use App\Http\Controllers\UsuarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,5 +80,14 @@ Route::delete('/actividades/{id}', [TurnoController::class, 'eliminarActividad']
 Route::post('/actividades', [TurnoController::class, 'guardarActividad'])->name('guardar.actividad');
 
 Route::get('/turnos', [TurnoController::class, 'obtenerTurnos'])->name('turnos.obtener');
+
+Route::get('/admin/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
+Route::post('/admin/usuarios', [UsuarioController::class, 'cargarUsuarios'])->name('usuarios.cargar');
+Route::post('/usuarios/guardar', [UsuarioController::class, 'guardar'])->name('usuarios.guardar');
+Route::get('/usuarios', [UsuarioController::class, 'obtenerUsuario'])->name('usuarios.obtener');
+Route::put('/usuarios/actualizar/{id}', [UsuarioController::class, 'actualizarUsuario'])->name('usuarios.actualizar');
+
+Route::get('/roles', [UsuarioController::class, 'obtenerRoles'])->name('roles.obtener');
+Route::get('/tipos-documentos', [UsuarioController::class, 'obtenerTiposDocumentos'])->name('tipos.documentos.obtener');
 
 

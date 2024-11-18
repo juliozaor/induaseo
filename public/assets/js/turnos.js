@@ -1,5 +1,5 @@
 (function() {
-    const rutaRelativa = '/induaseo/public/';
+   // const rutaRelativa = '/induaseo/public/';
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaTurnosBody = document.querySelector("#tablaTurnos tbody");

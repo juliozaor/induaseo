@@ -44,8 +44,8 @@
                     </a>
                 </li>
 
-                <li class="{{ Route::currentRouteName() == 'usuarios-perfiles' ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}">
+                <li class="{{ Route::currentRouteName() == 'admin.usuarios.index' ? 'active' : '' }}">
+                    <a href="{{ route('admin.usuarios.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="27.903" height="20.75" viewBox="0 0 27.903 20.75">
                             <g id="Grupo_23040" data-name="Grupo 23040" transform="translate(-1308.381 -79.678)">
                               <g id="Grupo_1116" data-name="Grupo 1116">
@@ -279,6 +279,9 @@
           $('#alertText').text(alertText);
           $('#alertModal').modal('show');
       }
+
+
+      const rutaRelativa = '/induaseo/public/';
   </script>
 
   <!-- JavaScript para el menú desplegable de usuario -->
@@ -298,6 +301,16 @@
             userDropdownMenu.hide();
         }
     });
+
+    // Actualizar el título y el icono del menú seleccionado
+   /*  $('.menu a').on('click', function (e) {
+        e.preventDefault();
+        const selectedIcon = $(this).find('svg').clone();
+        const selectedTitle = $(this).find('span').text();
+        $('.menu-title .selected-menu-icon').replaceWith(selectedIcon.addClass('selected-menu-icon'));
+        $('#menuTitle').text(selectedTitle);
+    }); */
+
 });
 
 document.getElementById('hamburgerMenu').addEventListener('click', function () {
@@ -322,7 +335,7 @@ $(document).ready(function () {
 
   </script>
 
-  @yield('scripts');
+  @stack('scripts')
 
 </body>
 </html>
