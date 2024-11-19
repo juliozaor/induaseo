@@ -6,7 +6,7 @@
     <meta name="viewport"="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Dashboard')</title>
+    <title>@yield('title', env('APP_NAME', 'Dashboard'))</title>
 
      <!-- Bootstrap CSS CDN -->
      <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -281,7 +281,7 @@
       }
 
 
-      const rutaRelativa = '/induaseo/public/';
+      const rutaRelativa = '{{ env('APP_URL') }}/';
   </script>
 
   <!-- JavaScript para el menú desplegable de usuario -->
