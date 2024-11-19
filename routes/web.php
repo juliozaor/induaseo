@@ -8,6 +8,7 @@ use App\Http\Controllers\SedeController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\TurnoController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\SupervisorTurnoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,7 +67,7 @@ Route::put('/clientes/actualizar/{id}', [ClientesController::class, 'actualizarC
 
 Route::get('/maestras/sedes', [MaestrasController::class, 'clientes'])->name('maestras.sedes');
 Route::post('/sedes/guardar', [SedeController::class, 'guardar'])->name('sedes.guardar');
-Route::get('/sedes', [SedeController::class, 'obtenerSede'])->name('sedes.obtener');
+Route::get('/sedes', [SupervisorTurnoController::class, 'getSedes'])->name('sedes.obtener');
 Route::put('/sedes/actualizar/{id}', [SedeController::class, 'actualizar'])->name('sedes.actualizar');
 
 Route::get('/maestras/turnos', [MaestrasController::class, 'clientes'])->name('maestras.turnos');
@@ -89,5 +90,13 @@ Route::put('/usuarios/actualizar/{id}', [UsuarioController::class, 'actualizarUs
 
 Route::get('/roles', [UsuarioController::class, 'obtenerRoles'])->name('roles.obtener');
 Route::get('/tipos-documentos', [UsuarioController::class, 'obtenerTiposDocumentos'])->name('tipos.documentos.obtener');
+
+Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
+Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
+Route::post('/asignar-turnos/guardar', [SupervisorTurnoController::class, 'guardar'])->name('asignar.turnos.guardar');
+
+Route::get('/supervisores', [SupervisorTurnoController::class, 'getSupervisores']);
+Route::get('/asignar-turnos/{id}', [SupervisorTurnoController::class, 'getTurno']);
+Route::put('/asignar-turnos/actualizar/{id}', [SupervisorTurnoController::class, 'actualizar']);
 
 

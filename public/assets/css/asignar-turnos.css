@@ -1,0 +1,336 @@
+.container {
+    margin-top: 20px;
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Botón Nueva Asignación */
+.btn-nuevo {
+    text-align: end;
+    padding: 15px;
+}
+
+.btn-consultar {
+    padding: 10px 15px;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    background: #000000;
+    box-shadow: 0px 3px 10px #00000040;
+    font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+}
+
+.btn-consultar svg {
+    margin-right: 5px;
+}
+
+/* Contenedor Listado de Turnos */
+.listado-container {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 20px #00000029;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+/* Título Listado de Turnos */
+.listado-titulo {
+    font: normal normal bold 14px/20px "Neo Sans Std", sans-serif;
+    color: #0D0D0D;
+    margin-bottom: 10px;
+}
+
+/* Barra de Búsqueda */
+.busqueda-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.input-container {
+    position: relative;
+    display: inline-block;
+}
+
+.busqueda-input {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #B7B7B7;
+    border-radius: 6px;
+    padding-left: 30px; /* Espacio para el ícono */
+    width: 100%;
+}
+
+.input-container::before {
+    content: url('../icons/lupa.svg'); /* Cambia por la URL o código del ícono */
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Evita que el ícono interfiera con el input */
+}
+
+.registros-encontrados {
+    background: #B7B7B7 0% 0% no-repeat padding-box;
+    border-radius: 12px;
+    text-align: center;
+    font: normal normal normal 12px / 16px 'Neo Sans Std', Arial, sans-serif;
+    letter-spacing: 0px;
+    color: #FFFFFF;
+    padding: 5px 10px;
+}
+
+.registros-por-pagina {
+    margin-left: auto;
+    border: 1px solid #CFCBCB;
+    border-radius: 6px;
+    padding: 5px;
+    font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+    letter-spacing: 0px;
+    color: #9B9B9B;
+}
+
+/* Tabla de Turnos */
+.tabla-container {
+    overflow-x: auto;
+}
+
+.tabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla th,
+.tabla td {
+    padding: 10px;
+    text-align: center;
+    font: normal normal normal 12px / 15px 'Neo Sans Std', Arial, sans-serif;
+    letter-spacing: 0px;
+    min-width: 120px; /* Fixed width for all columns */
+}
+
+.tabla th:last-child,
+.tabla td:last-child {
+    position: sticky;
+    right: 0;
+    background: #f9f9f9;
+    border-left: 1px solid #CBCBCB; /* Add left border */
+}
+
+.tabla tbody tr:nth-child(odd) {
+    background: transparent linear-gradient(180deg, #F9F9F9 0%, #F7F7F7 43%, #F1F1F1 100%) 0% 0% no-repeat padding-box;
+}
+
+.paginacion {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.page-button {
+    font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+    color: #4B4B4B;
+    padding: 5px 10px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    cursor: pointer;
+    border: 1px solid #B7B7B7;
+}
+
+.page-button.active {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.page-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Botón de cerrar (X) */
+.close {
+    border: 2px solid #AC0404;
+    border-radius: 50%;
+    padding: 0 4px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #AC0404;
+    cursor: pointer;
+}
+
+/* Modal estilos generales */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #FFFFFF;
+    padding: 5px 20px;
+   /*  width: 80%!important; */
+    border-radius: 10px!important;
+    box-shadow: 0px 3px 20px #00000029;  
+}
+
+.modal h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.modal-divider {
+    border: none;
+    height: 1px;
+    background-color: #CFCBCB;
+    margin: 10px 0;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 28px;
+    height: 15px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 11px;
+    width: 11px;
+    left: 4px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #000;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(11px);
+    -ms-transform: translateX(11px);
+    transform: translateX(11px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.contenedor-titulo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.titulo-modal {
+    font: normal normal bold 14px/20px "Neo Sans Std", sans-serif;
+    color: #000;
+    letter-spacing: 0px;
+}
+
+.subtitulo-modal {
+    font: normal normal bold 12px/10px "Neo Sans Std", sans-serif;
+    color: #EC6F35;
+    letter-spacing: 0px;
+}
+
+.error-message {
+    font: normal normal normal 10px/12px "Neo Sans Std", sans-serif;
+    letter-spacing: 0px;
+    color: #CC0000;
+}
+
+.icono-editar {
+    width: 15px;
+    cursor: pointer;
+}
+.select-container2 {
+    align-items: flex-end;
+}
+
+.select-container {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 20px #00000029;
+    padding: 15px;
+    border-radius: 6px;
+}

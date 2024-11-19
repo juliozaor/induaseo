@@ -70,7 +70,7 @@ class UsuarioController extends Controller
             }
 
             // Enviar correo con la contraseña temporal
-            // Mail::to($usuario->email)->send(new \App\Mail\UsuarioCreado($usuario, $password));
+             Mail::to($usuario->email)->send(new \App\Mail\UsuarioCreado($usuario, $password));
 
             return response()->json(['message' => 'Usuario creado con éxito']);
         } catch (ValidationException $e) {

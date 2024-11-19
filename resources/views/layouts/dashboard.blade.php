@@ -84,8 +84,8 @@
                     </a>
                 </li>
 
-                <li class="{{ Route::currentRouteName() == '#' ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}">
+                <li class="{{ Route::currentRouteName() == 'asignar.turnos' ? 'active' : '' }}">
+                    <a href="{{ route('asignar.turnos') }}">
                         <svg id="Grupo_23030" data-name="Grupo 23030" xmlns="http://www.w3.org/2000/svg" width="19.962" height="25.375" viewBox="0 0 19.962 25.375">
                             <path id="Trazado_17398" data-name="Trazado 17398" d="M208.86,2098.528c0,.161,0,.322,0,.482,0,.1.039.134.135.133.3,0,.6,0,.907,0a.57.57,0,1,1,0,1.139c-.3,0-.6,0-.893,0-.109,0-.152.038-.15.149,0,.3,0,.6,0,.907a.569.569,0,0,1-1.138,0c0-.3,0-.6,0-.893,0-.121-.037-.169-.162-.166-.293.006-.586,0-.879,0a.558.558,0,0,1-.583-.575.547.547,0,0,1,.576-.564c.3,0,.6,0,.893,0,.118,0,.158-.041.156-.157-.005-.3,0-.6,0-.893a.538.538,0,0,1,.565-.574.547.547,0,0,1,.573.569c0,.146,0,.293,0,.439Z" transform="translate(-198.323 -2085.305)"/>
                             <path id="Trazado_17399" data-name="Trazado 17399" d="M133.509,2030.308a5.18,5.18,0,1,1,5.178,5.188A5.186,5.186,0,0,1,133.509,2030.308Zm5.186-3.822a3.827,3.827,0,1,0,3.816,3.821A3.836,3.836,0,0,0,138.695,2026.486Z" transform="translate(-128.725 -2015.893)"/>
@@ -281,7 +281,7 @@
       }
 
 
-      const rutaRelativa = '{{ env('APP_URL') }}/';
+      const rutaRelativa = '{{ url('/') }}/';
   </script>
 
   <!-- JavaScript para el menú desplegable de usuario -->

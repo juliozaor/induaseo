@@ -1,5 +1,5 @@
 (function() {
-    const rutaRelativa = '/induaseo/public/';
+   // const rutaRelativa = '/induaseo/public/';
     const openUserModalBtn = document.getElementById("openUserModalBtn");
     const userModal = document.getElementById("createUserModal");
     const userModalTitle = document.getElementById("userModalTitle");
