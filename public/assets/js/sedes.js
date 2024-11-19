@@ -1,5 +1,4 @@
 (function() {
-   // const rutaRelativa = '/induaseo/public/';
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaSedesBody = document.querySelector("#tablaSedes tbody");
@@ -32,7 +31,7 @@
         formData.append('estado', estado);
        /*  formData.append('regional', filtroRegional.value); */
 
-        fetch(`${rutaRelativa}admin/maestras/consultar?page=${page}`, {
+        fetch(`../admin/maestras/consultar?page=${page}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -68,7 +67,7 @@
                     <td>${sede.actualizador?.nombres || 'N/A'}</td>
                     <td>${formatDate(sede.updated_at)}</td>
                     <td>${sede.regional?.nombre || 'N/A'}</td>
-                    <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}"></td>
+                    <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}"></td>
                 `;
                     tablaSedesBody.appendChild(row);
                 });
@@ -176,7 +175,7 @@
             modalTitle.textContent = "Editar sede";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`${rutaRelativa}sedes?id=${sedeId}`)
+            fetch(`../sedes?id=${sedeId}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Error al cargar los datos de la sede.");
@@ -211,7 +210,7 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `${rutaRelativa}sedes/actualizar/${sedeId}` : `${rutaRelativa}sedes/guardar`;
+        const url = editMode ? `sedes/actualizar/${sedeId}` : `sedes/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(sedeForm);
@@ -274,7 +273,7 @@
     }
 
     function cargarClientes(tipo) {
-        fetch(`${rutaRelativa}clientes-select`)
+        fetch(`../clientes-select`)
             .then(response => response.json())
             .then(clientes => {
                 if (tipo === 1) {
@@ -303,7 +302,7 @@
     }
 
     function cargarPaises() {
-        fetch(`${rutaRelativa}paises`)
+        fetch(`../paises`)
             .then(response => response.json())
             .then(paises => {
                 const paisSelect = document.getElementById("pais");
@@ -319,7 +318,7 @@
     }
 
     function cargarCiudades(paisId, ciudadId = null) {
-        fetch(`${rutaRelativa}ciudades?pais=${paisId}`)
+        fetch(`../ciudades?pais=${paisId}`)
             .then(response => response.json())
             .then(ciudades => {
                 const ciudadSelect = document.getElementById("ciudad");
@@ -337,7 +336,7 @@
 
     function cargarRegionales() {
         
-        fetch(`${rutaRelativa}regionales`)
+        fetch(`../regionales`)
             .then(response => response.json())
             .then(regionales => {                
                 const regionalSelect = document.getElementById("regional");

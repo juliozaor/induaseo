@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     clienteSelect.addEventListener('change', function() {
         const clienteId = this.value;
-        fetch(`${rutaRelativa}sedes?cliente_id=${clienteId}`)
+        fetch(`sedes?cliente_id=${clienteId}`)
             .then(response => response.json())
             .then(data => {
                 sedeSelect.innerHTML = '<option value="">Seleccione una sede</option>';
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     consultarBtn.addEventListener('click', function() {
         const sedeId = sedeSelect.value;
-        fetch(`${rutaRelativa}asignar-turnos/consultar?sede_id=${sedeId}`)
+        fetch(`asignar-turnos/consultar?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {
                 console.log('Turnos data:', data); // Add this line to inspect the response data
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${turno.supervisor.nombres} ${turno.supervisor.apellidos}</td>
                         <td>${turno.turno.nombre}</td>
                         <td>${turno.turno.actividades_count}</td>
-                        <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar editarTurnoBtn" data-id="${turno.id}"></td>
+                        <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar editarTurnoBtn" data-id="${turno.id}"></td>
                     `;
                     turnosTableBody.appendChild(row);
                 });
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('fecha_inicio', fechaInicioInput.value);
         formData.append('fecha_fin', fechaFinInput.value);
 
-        const url = editMode ? `${rutaRelativa}asignar-turnos/actualizar/${turnoId}` : `${rutaRelativa}asignar-turnos/guardar`;
+        const url = editMode ? `asignar-turnos/actualizar/${turnoId}` : `asignar-turnos/guardar`;
         const method = editMode ? 'PUT' : 'POST';
 
         if (editMode) {
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
             turnoId = event.target.getAttribute('data-id');
             editMode = true;
 
-            fetch(`${rutaRelativa}asignar-turnos/${turnoId}`)
+            fetch(`asignar-turnos/${turnoId}`)
                 .then(response => response.json())
                 .then(turno => {
                     document.getElementById('supervisorSelect').value = turno.supervisor_id;
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function cargarSupervisores() {
-        fetch(`${rutaRelativa}supervisores`)
+        fetch(`supervisores`)
             .then(response => response.json())
             .then(data => {
                 supervisorSelect.innerHTML = '<option value="">Seleccione un supervisor</option>';
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function cargarTurnos() {
-        fetch(`${rutaRelativa}turnos`)
+        fetch(`turnos`)
             .then(response => response.json())
             .then(data => {
                 turnoSelect.innerHTML = '<option value="">Seleccione un turno</option>';

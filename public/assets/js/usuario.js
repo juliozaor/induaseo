@@ -1,5 +1,4 @@
 (function() {
-   // const rutaRelativa = '/induaseo/public/';
     const openUserModalBtn = document.getElementById("openUserModalBtn");
     const userModal = document.getElementById("createUserModal");
     const userModalTitle = document.getElementById("userModalTitle");
@@ -39,7 +38,7 @@
             userModalTitle.textContent = "Editar usuario";
             userModalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`${rutaRelativa}usuarios?id=${userId}`)
+            fetch(`../usuarios?id=${userId}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Error al cargar los datos del usuario.");
@@ -84,7 +83,7 @@
 
     // Guardar cambios
     userModalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `${rutaRelativa}usuarios/actualizar/${userId}` : `${rutaRelativa}usuarios/guardar`;
+        const url = editMode ? `usuarios/actualizar/${userId}` : `usuarios/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(userForm);
@@ -154,7 +153,7 @@
 
     // Cargar roles
     function cargarRoles() {
-        return fetch(`${rutaRelativa}roles`)
+        return fetch(`../roles`)
             .then(response => response.json())
             .then(roles => {
                 const perfilSelect = document.getElementById("perfil");
@@ -171,7 +170,7 @@
 
     // Cargar tipos de documentos
     function cargarTiposDocumentos() {
-        fetch(`${rutaRelativa}tipos-documentos`)
+        fetch(`../tipos-documentos`)
             .then(response => response.json())
             .then(tiposDocumentos => {
                 const tipoIdentificacionSelect = document.getElementById("tipoIdentificacion");
@@ -194,7 +193,7 @@
         formData.append('buscar', buscar);
         formData.append('registros_por_pagina', registrosPorPagina);
 
-        fetch(`${rutaRelativa}admin/usuarios?page=${page}`, {
+        fetch(`../admin/usuarios?page=${page}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -222,7 +221,7 @@
                     <td>${usuario.email}</td>
                     <td>${usuario.telefono}</td>
                     <td><div class="${estadoClase}">${usuario.estado ? 'Activo' : 'Inactivo'}</div></td>
-                    <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${usuario.id}"></td>
+                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${usuario.id}"></td>
                 `;
                     tablaUsuariosBody.appendChild(row);
                 });
@@ -305,7 +304,7 @@
     });
 
     function cargarClientes() {
-        return fetch(`${rutaRelativa}clientes-select`)
+        return fetch(`../clientes-select`)
             .then(response => response.json())
             .then(clientes => {
                 const clienteSelect = document.getElementById("cliente_id");

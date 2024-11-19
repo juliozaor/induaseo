@@ -281,7 +281,6 @@
       }
 
 
-      const rutaRelativa = '{{ url('/') }}/';
   </script>
 
   <!-- JavaScript para el menú desplegable de usuario -->

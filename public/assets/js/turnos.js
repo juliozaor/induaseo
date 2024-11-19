@@ -1,5 +1,4 @@
 (function() {
-   // const rutaRelativa = '/induaseo/public/';
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaTurnosBody = document.querySelector("#tablaTurnos tbody");
@@ -22,7 +21,7 @@
     let frecuenciaArr = [];
 
     function cargarFrecuencias() {
-        fetch(`${rutaRelativa}frecuencias`)
+        fetch(`../frecuencias`)
             .then(response => response.json())
             .then(frecuencias => {
                 frecuenciaArr = frecuencias;
@@ -40,7 +39,7 @@
 
     function cargarActividades(turnoId) {
         
-        fetch(`${rutaRelativa}actividades/${turnoId}`)
+        fetch(`../actividades/${turnoId}`)
             .then(response => response.json())
             .then(data => {                
                 tablaActividadesBody.innerHTML = '';
@@ -74,7 +73,7 @@
     }
 
     function agregarActividad(turnoId, nombreActividad, descripcionActividad) {
-        fetch(`${rutaRelativa}actividades`, {
+        fetch(`../actividades`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -92,7 +91,7 @@
     }
 
     function eliminarActividad(id) {
-        fetch(`${rutaRelativa}actividades/${id}`, {
+        fetch(`../actividades/${id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -109,7 +108,7 @@
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
 
-        fetch(`${rutaRelativa}turnos?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
+        fetch(`../turnos?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -138,7 +137,7 @@
                     <td>${turno.actualizador?.nombres || 'N/A'}</td>
                     <td>${turno.creador?.nombres || 'N/A'}</td>
                     <td>${formatDate(turno.created_at)}</td>
-                    <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
+                    <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
                 `;
                     tablaTurnosBody.appendChild(row);
                 });
@@ -241,7 +240,7 @@
             modalTitle.textContent = "Editar turno";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`${rutaRelativa}turno?id=${turnoId}`)
+            fetch(`../turno?id=${turnoId}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Error al cargar los datos del turno.");
@@ -273,7 +272,7 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `${rutaRelativa}turnos/actualizar/${turnoId}` : `${rutaRelativa}turnos/guardar`;
+        const url = editMode ? `turnos/actualizar/${turnoId}` : `turnos/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(turnoForm);

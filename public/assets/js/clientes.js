@@ -1,5 +1,4 @@
 (function() {
-    //const rutaRelativa = '/induaseo/public/';
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaClientesBody = document.querySelector("#tablaClientes tbody");
@@ -25,7 +24,7 @@
         formData.append('buscar', buscar);
         formData.append('registros_por_pagina', registrosPorPagina);
 
-        fetch(`${rutaRelativa}admin/maestras/consultar?page=${page}`, {
+        fetch(`../admin/maestras/consultar?page=${page}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -61,7 +60,7 @@
                     <td>${formatDate(cliente.created_at)}</td>
                     <td>${cliente.actualizador?.nombres || 'N/A'}</td>
                     <td>${formatDate(cliente.updated_at)}</td>
-                    <td><img src="${rutaRelativa}assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${cliente.id}"></td>
+                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${cliente.id}"></td>
                 `;
                     tablaClientesBody.appendChild(row);
                 });
@@ -166,7 +165,7 @@
             modalTitle.textContent = "Editar cliente";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`${rutaRelativa}clientes?id=${clientId}`)
+            fetch(`../clientes?id=${clientId}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Error al cargar los datos del cliente.");
@@ -200,7 +199,7 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `${rutaRelativa}clientes/actualizar/${clientId}` : `${rutaRelativa}clientes/guardar`;
+        const url = editMode ? `clientes/actualizar/${clientId}` : `clientes/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(clientForm);
@@ -263,7 +262,7 @@
     }
 
     function cargarCiudades(paisId, ciudadId = null) {
-        fetch(`${rutaRelativa}ciudades?pais=${paisId}`)
+        fetch(`../ciudades?pais=${paisId}`)
             .then((response) => response.json())
             .then((ciudades) => {
                 const ciudadSelect = document.getElementById("ciudad");
@@ -289,7 +288,7 @@
 
     // Cargar paises
     function cargarPaises() {
-        fetch(`${rutaRelativa}paises`)
+        fetch(`../paises`)
             .then(response => response.json())
             .then(paises => {
                 const paisSelect = document.getElementById("pais");
@@ -306,7 +305,7 @@
 
     // Cargar sectores económicos
     function cargarSectoresEconomicos() {
-        fetch(`${rutaRelativa}sectores-economicos`)
+        fetch(`../sectores-economicos`)
             .then(response => response.json())
             .then(sectores => {
                 const sectorEconomicoSelect = document.getElementById("sectorEconomico");
@@ -338,7 +337,7 @@
         ciudadSelect.innerHTML = '<option value="">Seleccione</option>';
 
         if (paisId) {
-            fetch(`${rutaRelativa}ciudades?pais=${paisId}`)
+            fetch(`../ciudades?pais=${paisId}`)
                 .then(response => response.json())
                 .then(ciudades => {
                     // Agrega las opciones de ciudades al select de ciudad
