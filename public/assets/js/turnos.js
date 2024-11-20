@@ -137,7 +137,7 @@
                     <td>${turno.actualizador?.nombres || 'N/A'}</td>
                     <td>${turno.creador?.nombres || 'N/A'}</td>
                     <td>${formatDate(turno.created_at)}</td>
-                    <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
+                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
                 `;
                     tablaTurnosBody.appendChild(row);
                 });
@@ -272,7 +272,7 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `turnos/actualizar/${turnoId}` : `turnos/guardar`;
+        const url = editMode ? `../turnos/actualizar/${turnoId}` : `../turnos/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(turnoForm);

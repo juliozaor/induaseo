@@ -67,7 +67,7 @@
                     <td>${sede.actualizador?.nombres || 'N/A'}</td>
                     <td>${formatDate(sede.updated_at)}</td>
                     <td>${sede.regional?.nombre || 'N/A'}</td>
-                    <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}"></td>
+                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}"></td>
                 `;
                     tablaSedesBody.appendChild(row);
                 });
@@ -210,7 +210,7 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `sedes/actualizar/${sedeId}` : `sedes/guardar`;
+        const url = editMode ? `../sedes/actualizar/${sedeId}` : `../sedes/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(sedeForm);

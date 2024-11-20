@@ -83,7 +83,7 @@
 
     // Guardar cambios
     userModalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `usuarios/actualizar/${userId}` : `usuarios/guardar`;
+        const url = editMode ? `../usuarios/actualizar/${userId}` : `../usuarios/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(userForm);

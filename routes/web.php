@@ -94,9 +94,11 @@ Route::get('/tipos-documentos', [UsuarioController::class, 'obtenerTiposDocument
 Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
 Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
 Route::post('/asignar-turnos/guardar', [SupervisorTurnoController::class, 'guardar'])->name('asignar.turnos.guardar');
+Route::post('/asignar-turnos/validar', [SupervisorTurnoController::class, 'validarAsignacion'])->name('asignar.turnos.validar');
 
 Route::get('/supervisores', [SupervisorTurnoController::class, 'getSupervisores']);
 Route::get('/asignar-turnos/{id}', [SupervisorTurnoController::class, 'getTurno']);
 Route::put('/asignar-turnos/actualizar/{id}', [SupervisorTurnoController::class, 'actualizar']);
+Route::get('/asignar-turnos/tareas/{id}', [SupervisorTurnoController::class, 'getTareas'])->name('asignar.turnos.tareas');
 
 

@@ -78,4 +78,24 @@ class SupervisorTurnoController extends Controller
         $turno = SupervisorTurno::with(['supervisor', 'sede', 'turno'])->findOrFail($id);
         return response()->json($turno);
     }
+
+    public function getTareas($id)
+    {
+        $turno = SupervisorTurno::with(['supervisor', 'sede', 'turno.actividades'])->findOrFail($id);
+        return response()->json([
+            'supervisor' => $turno->supervisor,
+            'sede' => $turno->sede,
+            'tareas' => $turno->turno->actividades
+        ]);
+    }
+
+    public function validarAsignacion(Request $request)
+    {
+        $exists = SupervisorTurno::where('supervisor_id', $request->supervisor_id)
+            ->where('sede_id', $request->sede_id)
+            ->where('turno_id', $request->turno_id)
+            ->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
 }
