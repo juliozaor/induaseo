@@ -14,8 +14,8 @@
      <link href="https://fonts.cdnfonts.com/css/neo-sans-std" rel="stylesheet">
 
     <!-- CSS y fuentes -->
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
     
     
 </head>
