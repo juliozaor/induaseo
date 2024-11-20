@@ -23,7 +23,7 @@ class AuthController extends Controller
         $request->validate([
             'usuario' => 'required',
             'password' => 'required',
-            'g-recaptcha-response' => 'required|captcha', // Validación del captcha
+         //   'g-recaptcha-response' => 'required|captcha', // Validación del captcha
         ]);
     
         if (Auth::attempt(['numero_documento' => $request->usuario, 'password' => $request->password])) {

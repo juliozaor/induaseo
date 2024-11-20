@@ -31,12 +31,12 @@
             @enderror
 
             <!-- CAPTCHA -->
-            <div class="form-group mt-3">
+          {{--   <div class="form-group mt-3">
                 {!! NoCaptcha::display(['class' => $errors->has('g-recaptcha-response') ? 'is-invalid' : '']) !!}
                 @error('g-recaptcha-response')
                     <span class="invalid-feedback">{{ $message }}</span>
                 @enderror
-            </div>
+            </div> --}}
 
             <!-- Botón de Iniciar Sesión -->
             <button type="submit" class="btn btn-login">Iniciar Sesión</button>
