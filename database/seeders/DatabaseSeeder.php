@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             ClientesTableSeeder::class,
             FrecuenciaSeeder::class,
             RegionalesSeeder::class,
+            MenuSeeder::class,
         ]);
     }
 }

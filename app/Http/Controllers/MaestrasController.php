@@ -46,6 +46,7 @@ class MaestrasController extends Controller
                 // Obtener datos paginados
                 $clientes = $query->paginate($registrosPorPagina);
 
+
                 return response()->json($clientes);
             } elseif ($tabla === 'sedes') {
                 $query = Sede::with(['cliente', 'ciudad.pais', 'creador', 'actualizador', 'regional']);
