@@ -21,6 +21,13 @@ body, .login-card, .requirements-list li {
     justify-content: center;
 }
 
+/* Estilos globales para modal en dispositivos de escritorio */
+.modal-dialog {
+    display: flex;
+    max-width: 751px; /* Ancho máximo del modal en pantallas grandes */
+}
+
+
 /* Botón de enviar */
 .btn-submit {
     background: #000000;

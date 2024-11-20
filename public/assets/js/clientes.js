@@ -199,7 +199,7 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `clientes/actualizar/${clientId}` : `clientes/guardar`;
+        const url = editMode ? `../clientes/actualizar/${clientId}` : `../clientes/guardar`;
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(clientForm);

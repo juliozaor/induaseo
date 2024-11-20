@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-<link rel="stylesheet" href="{{ asset('assets/css/maestras.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/maestras.css') }}?v={{ time() }}">
 
 @section('content')
     <div class="maestra-container">
@@ -54,17 +54,26 @@
                         if (existingScript3) {
                             existingScript3.remove();
                         }
+
+                        const existingScript4 = document.querySelector('script[src="{{ asset('assets/js/areas.js') }}"]');
+                        if (existingScript4) {
+                            existingScript4.remove();
+                        }
+
                         // Load the script after content is inserted
                         const script = document.createElement('script');
                         switch (tablaSeleccionada) {
                             case 'clientes':
-                                script.src = "{{ asset('assets/js/clientes.js') }}";
+                                script.src = "{{ asset('assets/js/clientes.js') }}?v={{ time() }}";
                                 break;
                             case 'sedes':
-                                script.src = "{{ asset('assets/js/sedes.js') }}";
+                                script.src = "{{ asset('assets/js/sedes.js') }}?v={{ time() }}";
                                 break;
                             case 'turnos':
-                                script.src = "{{ asset('assets/js/turnos.js') }}";
+                                script.src = "{{ asset('assets/js/turnos.js') }}?v={{ time() }}";
+                                break;
+                            case 'areas':
+                                script.src = "{{ asset('assets/js/areas.js') }}?v={{ time() }}";
                                 break;
                             default:
                                 console.error('Tabla no encontrada');

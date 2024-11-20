@@ -9,20 +9,14 @@ class Tarea extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['descripcion', 'tipo_servicio_id', 'supervisor_id', 'estado', 'fecha_inicio', 'fecha_fin', 'evidencias'];
+    protected $fillable = [
+        'nombre',
+        'descripcion',
+        'area_id',
+    ];
 
-    public function tipoDeServicio()
+    public function area()
     {
-        return $this->belongsTo(TipoDeServicio::class);
-    }
-
-    public function supervisor()
-    {
-        return $this->belongsTo(Usuario::class, 'supervisor_id');
-    }
-
-    public function centroDeTrabajo()
-    {
-        return $this->belongsTo(CentroDeTrabajo::class);
+        return $this->belongsTo(Area::class);
     }
 }

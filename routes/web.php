@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientesController;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\TurnoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\SupervisorTurnoController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,15 +27,9 @@ Route::get('/welcome', function () {
     return view('welcome');
 })->name('welcome')->middleware('guest');
 
-
 Route::get('/', function () {
     return redirect()->route('welcome');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth')->name('dashboard');
-
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
 Route::post('login', [AuthController::class, 'login']);
@@ -50,7 +46,14 @@ Route::post('/logout', function () {
     return redirect('/welcome'); // Redirige a la página de bienvenida o login después de salir
 })->name('logout');
 
-Route::get('/admin/maestras', [MaestrasController::class, 'index'])->name('admin.maestras.index');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/admin/maestras', [MaestrasController::class, 'index'])->name('admin.maestras.index');
+    Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
+    Route::get('/admin/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
+    // ...other routes...
+});
+
 Route::post('/admin/maestras/consultar', [MaestrasController::class, 'consultar'])->name('maestras.consultar');
 
 Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obtener.paises');
@@ -82,7 +85,6 @@ Route::post('/actividades', [TurnoController::class, 'guardarActividad'])->name(
 
 Route::get('/turnos', [TurnoController::class, 'obtenerTurnos'])->name('turnos.obtener');
 
-Route::get('/admin/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
 Route::post('/admin/usuarios', [UsuarioController::class, 'cargarUsuarios'])->name('usuarios.cargar');
 Route::post('/usuarios/guardar', [UsuarioController::class, 'guardar'])->name('usuarios.guardar');
 Route::get('/usuarios', [UsuarioController::class, 'obtenerUsuario'])->name('usuarios.obtener');
@@ -91,12 +93,21 @@ Route::put('/usuarios/actualizar/{id}', [UsuarioController::class, 'actualizarUs
 Route::get('/roles', [UsuarioController::class, 'obtenerRoles'])->name('roles.obtener');
 Route::get('/tipos-documentos', [UsuarioController::class, 'obtenerTiposDocumentos'])->name('tipos.documentos.obtener');
 
-Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
-Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
-Route::post('/asignar-turnos/guardar', [SupervisorTurnoController::class, 'guardar'])->name('asignar.turnos.guardar');
-
 Route::get('/supervisores', [SupervisorTurnoController::class, 'getSupervisores']);
 Route::get('/asignar-turnos/{id}', [SupervisorTurnoController::class, 'getTurno']);
 Route::put('/asignar-turnos/actualizar/{id}', [SupervisorTurnoController::class, 'actualizar']);
+Route::get('/asignar-turnos/tareas/{id}', [SupervisorTurnoController::class, 'getTareas'])->name('asignar.turnos.tareas');
 
+Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
+Route::post('/areas/guardar', [AreaController::class, 'store'])->name('areas.store');
+Route::get('/area', [AreaController::class, 'show'])->name('areas.show');
+Route::put('/areas/actualizar/{id}', [AreaController::class, 'update'])->name('areas.update');
+Route::delete('/areas/{id}', [AreaController::class, 'destroy'])->name('areas.destroy');
+Route::get('/tareas/{areaId}', [AreaController::class, 'obtenerTareas'])->name('areas.tareas');
+Route::post('/tareas', [AreaController::class, 'guardarTarea'])->name('areas.tareas.store');
+Route::delete('/tareas/{id}', [AreaController::class, 'eliminarTarea'])->name('areas.tareas.destroy');
 
+Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
+Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
+Route::post('/asignar-turnos/guardar', [SupervisorTurnoController::class, 'guardar'])->name('asignar.turnos.guardar');
+Route::post('/asignar-turnos/validar', [SupervisorTurnoController::class, 'validarAsignacion'])->name('asignar.turnos.validar');

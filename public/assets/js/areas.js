@@ -1,7 +1,7 @@
 (function() {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
-    const tablaTurnosBody = document.querySelector("#tablaTurnos tbody");
+    const tablaAreasBody = document.querySelector("#tablaAreas tbody");
     const paginacionContainer = document.createElement('div');
     paginacionContainer.classList.add('paginacion');
     document.querySelector(".tabla-paginacion").appendChild(paginacionContainer);
@@ -10,88 +10,105 @@
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
     const openModalBtn = document.getElementById("openModalBtn");
 
-    const frecuenciaSelect = document.getElementById("frecuencia");
-    const detalleFrecuenciaInput = document.getElementById("detalleFrecuencia");
-    const actividadSection = document.getElementById("actividadSection");
-    const nuevaActividadInput = document.getElementById("nuevaActividad");
-    const agregarActividadBtn = document.getElementById("agregarActividadBtn");
-    const tablaActividadesBody = document.querySelector("#tablaActividades tbody");
-    const descripcionActividadInput = document.getElementById("descripcionActividad");
+    const clienteSelect = document.getElementById("cliente");
+    const sedeSelect = document.getElementById("sede");
+    const tareaSection = document.getElementById("tareaSection");
+    const nuevaTareaInput = document.getElementById("nuevaTarea");
+    const agregarTareaBtn = document.getElementById("agregarTareaBtn");
+    const tablaTareasBody = document.querySelector("#tablaTareas tbody");
+    const descripcionTareaInput = document.getElementById("descripcionTarea");
 
-    let frecuenciaArr = [];
+    let clienteArr = [];
+    let sedeArr = [];
 
-    function cargarFrecuencias() {
-        fetch(`../frecuencias`)
+    function cargarClientes() {
+        fetch(`../clientes-select`)
             .then(response => response.json())
-            .then(frecuencias => {
-                frecuenciaArr = frecuencias;
+            .then(clientes => {
+                clienteArr = clientes;
                 
-                frecuenciaSelect.innerHTML = '<option value="">Seleccione</option>';
-                frecuencias.forEach(frecuencia => {
+                clienteSelect.innerHTML = '<option value="">Seleccione</option>';
+                clientes.forEach(cliente => {
                     const option = document.createElement("option");
-                    option.value = frecuencia.id;
-                    option.textContent = frecuencia.nombre;
-                    frecuenciaSelect.appendChild(option);
+                    option.value = cliente.id;
+                    option.textContent = cliente.nombre;
+                    clienteSelect.appendChild(option);
                 });
             })
-            .catch(error => console.error('Error al cargar frecuencias:', error));
+            .catch(error => console.error('Error al cargar clientes:', error));
     }
 
-    function cargarActividades(turnoId) {
-        
-        fetch(`../actividades/${turnoId}`)
+    function cargarSedes(clienteId) {
+        return fetch(`../sedes?cliente_id=${clienteId}`)
+            .then(response => response.json())
+            .then(sedes => {
+                sedeArr = sedes;
+                
+                sedeSelect.innerHTML = '<option value="">Seleccione</option>';
+                sedes.forEach(sede => {
+                    const option = document.createElement("option");
+                    option.value = sede.id;
+                    option.textContent = sede.nombre;
+                    sedeSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar sedes:', error));
+    }
+
+    function cargarTareas(areaId) {
+        fetch(`../tareas/${areaId}`)
             .then(response => response.json())
             .then(data => {                
-                tablaActividadesBody.innerHTML = '';
+                tablaTareasBody.innerHTML = '';
                 if (data.length > 0) {                    
-                    data.forEach(actividad => {
+                    data.forEach(tarea => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
-                            <td>${actividad.id}</td>
-                            <td>${actividad.nombre}</td>
-                            <td>${actividad.descripcion}</td>
-                            <td><button class="btn-eliminar" data-id="${actividad.id}">Eliminar</button></td>
+                            <td>${tarea.id}</td>
+                            <td>${tarea.nombre}</td>
+                            <td>${tarea.descripcion}</td>
+                            <td><button class="btn-eliminar" data-id="${tarea.id}">Eliminar</button></td>
                         `;                        
-                        tablaActividadesBody.appendChild(row);
+                        tablaTareasBody.appendChild(row);
                     });
                 } else {
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td colspan="4">No se encontraron actividades.</td>
+                        <td colspan="4">No se encontraron tareas.</td>
                     `;
-                    tablaActividadesBody.appendChild(row);
+                    tablaTareasBody.appendChild(row);
                 }
             })
             .catch(error => {
-                console.error('Error al cargar actividades:', error);
-                tablaActividadesBody.innerHTML = `
+                console.error('Error al cargar tareas:', error);
+                tablaTareasBody.innerHTML = `
                     <tr>
-                        <td colspan="4">No se encontraron actividades.</td>
+                        <td colspan="4">No se encontraron tareas.</td>
                     </tr>
                 `;
             });
     }
 
-    function agregarActividad(turnoId, nombreActividad, descripcionActividad) {
-        fetch(`../actividades`, {
+    function agregarTarea(areaId, nombreTarea, descripcionTarea) {
+        fetch(`../tareas`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ turno_id: turnoId, nombre: nombreActividad, descripcion: descripcionActividad })
+            body: JSON.stringify({ area_id: areaId, nombre: nombreTarea, descripcion: descripcionTarea })
         })
         .then(response => response.json())
         .then(data => {
-            cargarActividades(turnoId);
-            nuevaActividadInput.value = '';
-            descripcionActividadInput.value = '';
+            cargarTareas(areaId);
+            nuevaTareaInput.value = '';
+            descripcionTareaInput.value = '';
         })
-        .catch(error => console.error('Error al agregar actividad:', error));
+        .catch(error => console.error('Error al agregar tarea:', error));
     }
 
-    function eliminarActividad(id) {
-        fetch(`../actividades/${id}`, {
+    function eliminarTarea(id) {
+        fetch(`../tareas/${id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -99,16 +116,16 @@
         })
         .then(response => response.json())
         .then(data => {
-            cargarActividades(turnoId);
+            cargarTareas(areaId);
         })
-        .catch(error => console.error('Error al eliminar actividad:', error));
+        .catch(error => console.error('Error al eliminar tarea:', error));
     }
 
     function cargarDatos(page = 1) {
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
 
-        fetch(`../turnos?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
+        fetch(`../areas?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -120,26 +137,26 @@
             })
             .then(data => {
                 // Limpiar la tabla y la paginación
-                tablaTurnosBody.innerHTML = '';
+                tablaAreasBody.innerHTML = '';
                 paginacionContainer.innerHTML = '';
 
                 // Llenar la tabla con los datos
-                data.data.forEach(turno => {
+                data.data.forEach(area => {
                     const row = document.createElement("tr");
-                    const estadoClase = turno.estado ? 'estado-activo' : 'estado-inactivo';
+                    const estadoClase = area.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
-                    <td>${turno.id}</td>
-                    <td>${turno.nombre}</td>
-                    <td>${turno.frecuencia.nombre}</td>
-                    <td>${turno.actividades.length}</td>
-                    <td><div class="${estadoClase}">${turno.estado ? 'Activo' : 'Inactivo'}</div></td>
-                    <td>${formatDate(turno.updated_at)}</td>
-                    <td>${turno.actualizador?.nombres || 'N/A'}</td>
-                    <td>${turno.creador?.nombres || 'N/A'}</td>
-                    <td>${formatDate(turno.created_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
+                    <td>${area.id}</td>
+                    <td>${area.nombre}</td>
+                    <td>${area.sede.cliente.nombre}</td>
+                    <td>${area.sede.nombre}</td>
+                    <td><div class="${estadoClase}">${area.estado ? 'Activo' : 'Inactivo'}</div></td>
+                    <td>${formatDate(area.updated_at)}</td>
+                    <td>${area.actualizador?.nombres || 'N/A'}</td>
+                    <td>${area.creador?.nombres || 'N/A'}</td>
+                    <td>${formatDate(area.created_at)}</td>
+                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${area.id}"></td>
                 `;
-                    tablaTurnosBody.appendChild(row);
+                    tablaAreasBody.appendChild(row);
                 });
 
                 // Mostrar total de registros
@@ -198,7 +215,7 @@
     }
 
     cargarDatos(1);
-    cargarFrecuencias();
+    cargarClientes();
 
     // Eventos
     consultarBtn.addEventListener("click", () => cargarDatos(1));
@@ -206,12 +223,12 @@
     busquedaInput.addEventListener("input", () => cargarDatos(1));
 
     // Modal functionality
-    const modal = document.getElementById("createTurnoModal");
+    const modal = document.getElementById("createAreaModal");
     const modalTitle = document.getElementById("modalTitle");
     const modalActionBtn = document.getElementById("modalActionBtn");
-    const turnoForm = document.getElementById("turnoForm");
+    const areaForm = document.getElementById("areaForm");
     let editMode = false;
-    let turnoId = null;
+    let areaId = null;
 
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
@@ -228,39 +245,42 @@
 
     document.addEventListener("click", function(event) {
         if (event.target.classList.contains("icono-editar")) {
-            turnoId = event.target.getAttribute("data-id");
-            if (!turnoId) {
-                console.error("Error: No se encontró el ID del turno en el botón.");
+            areaId = event.target.getAttribute("data-id");
+            if (!areaId) {
+                console.error("Error: No se encontró el ID del área en el botón.");
                 return;
             }
 
             editMode = true;
 
             // Aquí continúa el código de apertura del modal y carga de datos
-            modalTitle.textContent = "Editar turno";
+            modalTitle.textContent = "Editar área";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`../turno?id=${turnoId}`)
+            fetch(`../area?id=${areaId}`)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error("Error al cargar los datos del turno.");
+                        throw new Error("Error al cargar los datos del área.");
                     }
                     return response.json();
                 })
-                .then((turno) => {
+                .then((area) => {
+                    console.log({area});
                     
-                    document.getElementById("nombre").value = turno.nombre;
-                    document.getElementById("frecuencia").value = turno.frecuencia_id;
-                    document.getElementById("detalleFrecuencia").value = turno.frecuencia_cantidad;
-                    document.getElementById("estadoToggle").checked = turno.estado === 1;
-                    document.querySelector("label[for='estadoToggle']").textContent = turno.estado ? "Activo" : "Inactivo";
+                    document.getElementById("nombre").value = area.nombre;
+                    document.getElementById("cliente").value = area.sede.cliente.id;
+                    cargarSedes(area.sede.cliente.id).then(() => {
+                        document.getElementById("sede").value = area.sede_id;
+                    });
+                    document.getElementById("estadoToggle").checked = area.estado === 1;
+                    document.querySelector("label[for='estadoToggle']").textContent = area.estado ? "Activo" : "Inactivo";
 
-                    actividadSection.style.display = "block";
-                    cargarActividades(turno.id);
+                    tareaSection.style.display = "block";
+                    cargarTareas(area.id);
 
                     modal.style.display = "flex"; // Muestra el modal
                 })
-                .catch((error) => console.error("Error al cargar los datos del turno:", error));
+                .catch((error) => console.error("Error al cargar los datos del área:", error));
         }
     });
 
@@ -272,18 +292,14 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `../turnos/actualizar/${turnoId}` : `../turnos/guardar`;
+        const url = editMode ? `../areas/actualizar/${areaId}` : `../areas/guardar`;
         const method = editMode ? "PUT" : "POST";
 
-        const formData = new FormData(turnoForm);
+        const formData = new FormData(areaForm);
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
 
-        if (editMode) {
-            formData.append("_method", "PUT");
-        }
-
         fetch(url, {
-                method: "POST", // Always use POST for FormData
+                method: method,
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
@@ -305,44 +321,38 @@
                         "ok.png", // Ruta del ícono de éxito
                         data.message // Mensaje de éxito
                     );
-                    actividadSection.style.display = "block";
-                    turnoId = data.turno.id; // Set the turnoId to the newly created or updated turno ID
-                    cargarActividades(turnoId);
+                    tareaSection.style.display = "block";
+                    areaId = data.area.id; // Set the areaId to the newly created or updated area ID
+                    cargarTareas(areaId);
                 }
             })
             .catch((error) => {
                 if (error.errors) {
                     showErrors(error.errors);
                 } else {
-                    console.error("Error al guardar el turno:", error);
+                    console.error("Error al guardar el área:", error);
                 }
             });
     });
 
-    
-        // Escucha los cambios en el select de frecuencia
-        frecuenciaSelect.addEventListener("change", function() {
-            const frecuenciaId = parseInt(frecuenciaSelect.value);
-            const frecuencia = frecuenciaArr.find(f => f.id === frecuenciaId);
+    clienteSelect.addEventListener("change", function() {
+        const clienteId = parseInt(clienteSelect.value);
+        cargarSedes(clienteId);
+    });
 
-            if (frecuencia) {
-                detalleFrecuenciaInput.value = frecuencia.detalle;
-            }
-        });
-
-    agregarActividadBtn.addEventListener("click", function() {
-        const nombreActividad = nuevaActividadInput.value;
-        const descripcionActividad = descripcionActividadInput.value;
-        if (nombreActividad && descripcionActividad && turnoId) {
-            agregarActividad(turnoId, nombreActividad, descripcionActividad);
+    agregarTareaBtn.addEventListener("click", function() {
+        const nombreTarea = nuevaTareaInput.value;
+        const descripcionTarea = descripcionTareaInput.value;
+        if (nombreTarea && descripcionTarea && areaId) {
+            agregarTarea(areaId, nombreTarea, descripcionTarea);
         }
     });
 
     document.addEventListener("click", function(event) {
         if (event.target.classList.contains("btn-eliminar")) {
-            const actividadId = event.target.getAttribute("data-id");
-            if (actividadId) {
-                eliminarActividad(actividadId);
+            const tareaId = event.target.getAttribute("data-id");
+            if (tareaId) {
+                eliminarTarea(tareaId);
             }
         }
     });
@@ -362,11 +372,11 @@
     }
 
     function resetForm() {
-        turnoForm.reset();
-        modalTitle.textContent = "Crear nuevo turno";
-        modalActionBtn.textContent = "Crear Turno";
+        areaForm.reset();
+        modalTitle.textContent = "Crear nueva área";
+        modalActionBtn.textContent = "Crear Área";
         editMode = false;
-        turnoId = null;
+        areaId = null;
     }
 
     // Actualizar estado del toggle

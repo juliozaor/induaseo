@@ -334,3 +334,6 @@ input:checked + .slider:before {
     padding: 15px;
     border-radius: 6px;
 }
+.tabla-tareas{
+    max-height: 100px;
+}
