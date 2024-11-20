@@ -10,6 +10,7 @@ use App\Models\Regionales;
 use App\Models\SectoresEconomico;
 use App\Models\Sede;
 use App\Models\Turno;
+use App\Models\Area;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,7 +19,7 @@ class MaestrasController extends Controller
 {
     public function index()
     {
-        $tablasMaestras = ['clientes','sedes', 'turnos']; // Agregar más tablas maestras aquí si es necesario
+        $tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas']; // Agregar más tablas maestras aquí si es necesario
         return view('admin.maestras.index', compact('tablasMaestras'));
     }
 
@@ -49,7 +50,6 @@ class MaestrasController extends Controller
             } elseif ($tabla === 'sedes') {
                 $query = Sede::with(['cliente', 'ciudad.pais', 'creador', 'actualizador', 'regional']);
 
-               
                 // Filtro de búsqueda
                 if ($request->has('buscar')) {
                     $buscar = $request->input('buscar');
@@ -79,6 +79,21 @@ class MaestrasController extends Controller
                 // Obtener datos paginados
                 $turnos = $query->paginate($registrosPorPagina);
                 return response()->json($turnos);
+            } elseif ($tabla === 'areas') {
+                $query = Area::with(['cliente', 'sede', 'creador', 'actualizador']);
+
+                // Filtro de búsqueda
+                if ($request->has('buscar')) {
+                    $buscar = $request->input('buscar');
+                    $query->where('nombre', 'like', "%$buscar%");
+                }
+
+                // Cantidad de registros por página
+                $registrosPorPagina = $request->input('registros_por_pagina', 10);
+
+                // Obtener datos paginados
+                $areas = $query->paginate($registrosPorPagina);
+                return response()->json($areas);
             }
 
             return response()->json(['error' => 'Tabla no encontrada'], 404);
@@ -97,6 +112,8 @@ class MaestrasController extends Controller
             return view('admin.maestras.sedes', compact('tabla'));
         } elseif ($tabla === 'turnos') {
             return view('admin.maestras.turnos', compact('tabla'));
+        } elseif ($tabla === 'areas') {
+            return view('admin.maestras.areas', compact('tabla'));
         }
         return response()->json(['error' => 'Tabla no encontrada'], 404);
     }

@@ -13,13 +13,9 @@ return new class extends Migration
     {
         Schema::create('tareas', function (Blueprint $table) {
             $table->id();
-            $table->string('descripcion');
-            $table->foreignId('tipo_servicio_id')->constrained('tipos_de_servicios')->onDelete('cascade');
-            $table->foreignId('supervisor_id')->constrained('usuarios')->onDelete('cascade');
-            $table->boolean('estado')->default(true);
-            $table->date('fecha_inicio')->nullable();
-            $table->date('fecha_fin')->nullable();
-            $table->text('evidencias')->nullable();
+            $table->string('nombre');
+            $table->text('descripcion')->nullable();
+            $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
             $table->timestamps();
         });
     }

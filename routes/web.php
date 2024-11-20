@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientesController;
@@ -100,5 +101,14 @@ Route::get('/supervisores', [SupervisorTurnoController::class, 'getSupervisores'
 Route::get('/asignar-turnos/{id}', [SupervisorTurnoController::class, 'getTurno']);
 Route::put('/asignar-turnos/actualizar/{id}', [SupervisorTurnoController::class, 'actualizar']);
 Route::get('/asignar-turnos/tareas/{id}', [SupervisorTurnoController::class, 'getTareas'])->name('asignar.turnos.tareas');
+
+Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
+Route::post('/areas/guardar', [AreaController::class, 'store'])->name('areas.store');
+Route::get('/area', [AreaController::class, 'show'])->name('areas.show');
+Route::put('/areas/actualizar/{id}', [AreaController::class, 'update'])->name('areas.update');
+Route::delete('/areas/{id}', [AreaController::class, 'destroy'])->name('areas.destroy');
+Route::get('/tareas/{areaId}', [AreaController::class, 'obtenerTareas'])->name('areas.tareas');
+Route::post('/tareas', [AreaController::class, 'guardarTarea'])->name('areas.tareas.store');
+Route::delete('/tareas/{id}', [AreaController::class, 'eliminarTarea'])->name('areas.tareas.destroy');
 
 

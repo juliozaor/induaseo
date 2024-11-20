@@ -54,6 +54,12 @@
                         if (existingScript3) {
                             existingScript3.remove();
                         }
+
+                        const existingScript4 = document.querySelector('script[src="{{ asset('assets/js/areas.js') }}"]');
+                        if (existingScript4) {
+                            existingScript4.remove();
+                        }
+
                         // Load the script after content is inserted
                         const script = document.createElement('script');
                         switch (tablaSeleccionada) {
@@ -65,6 +71,9 @@
                                 break;
                             case 'turnos':
                                 script.src = "{{ asset('assets/js/turnos.js') }}?v={{ time() }}";
+                                break;
+                            case 'areas':
+                                script.src = "{{ asset('assets/js/areas.js') }}?v={{ time() }}";
                                 break;
                             default:
                                 console.error('Tabla no encontrada');
