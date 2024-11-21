@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
         $table->string('nombre');
         $table->text('descripcion')->nullable();
+        $table->integer('calificacion')->nullable();
+        $table->boolean('estado')->default(1);
         $table->foreignId('turno_id')->constrained('turnos')->onDelete('cascade');
         $table->timestamps();
         });

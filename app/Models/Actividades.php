@@ -9,7 +9,7 @@ class Actividades extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'descripcion', 'turno_id'];
+    protected $fillable = ['nombre', 'descripcion', 'turno_id', 'calificacion'];
 
     public function turno()
     {

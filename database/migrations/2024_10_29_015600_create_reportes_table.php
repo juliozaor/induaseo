@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('tipo_reporte');
             $table->foreignId('cliente_id')->nullable()->constrained('clientes')->onDelete('cascade');
-            $table->foreignId('centro_trabajo_id')->nullable()->constrained('centros_de_trabajo')->onDelete('cascade');
             $table->foreignId('supervisor_id')->nullable()->constrained('usuarios')->onDelete('cascade');
             $table->date('fecha');
             $table->boolean('estado')->default(true);

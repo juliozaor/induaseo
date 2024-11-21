@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             FrecuenciaSeeder::class,
             RegionalesSeeder::class,
             MenuSeeder::class,
+            CategoriasSeeder::class,
+            EstadosSeeder::class,
+            ClasificacionesSeeder::class,
         ]);
     }
 }
