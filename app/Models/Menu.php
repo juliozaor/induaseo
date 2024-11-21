@@ -8,7 +8,7 @@ class Menu extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'route', 'icon'];
+    protected $fillable = ['name', 'route', 'icon', 'route_name'];
 
     public function roles()
     {

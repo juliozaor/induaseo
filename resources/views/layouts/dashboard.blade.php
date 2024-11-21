@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"="width=device-width, initial-scale=1.0">
+    <meta name="viewport"="width=device, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', env('APP_NAME', 'Dashboard'))</title>
@@ -46,7 +46,8 @@
                 <img src="{{ asset('assets/icons/hamburger.svg') }}" alt="Menú" class="hamburger-icon">
             </div>
                 <div class="menu-title">
-                    <img src="{{ asset('assets/icons/home.svg') }}" alt="Ícono de Menú" class="selected-menu-icon">
+                  <div class="selected-menu-icon"></div>
+                   {{--  <img src="{{ asset('assets/icons/home.svg') }}" alt="Ícono de Menú" class="selected-menu-icon"> --}}
                     <span id="menuTitle">Inicio</span>
                 </div>
                 <div class="user-info">
@@ -77,7 +78,7 @@
             
             <!-- Contenido principal -->
             <div class="content">
-                @yield('content')
+                @yield('content', view('default_content'))
             </div>
           </div>
     </div>
@@ -112,9 +113,21 @@
           const menuList = document.getElementById('menuList');
           storedMenus.forEach(menu => {
               const li = document.createElement('li');
-              li.className = "{{ Route::currentRouteName() == '" + menu.route + "' ? 'active' : '' }}";
+              const currentRoute = "{{ Route::currentRouteName() }}";
+             
+              const isActive = currentRoute.startsWith(menu.route_name) ? 'active' : '';
+              li.className = isActive;
               li.innerHTML = `<a href="{{ url('${menu.route}') }}">${menu.icon}<span>${menu.name}</span></a>`;
               menuList.appendChild(li);
+
+              // Set the selected menu name and icon in the top bar
+              if (isActive) {
+                  const icono = document.querySelector('.selected-menu-icon');
+                  if (icono) {
+                      icono.innerHTML = menu.icon; // Insert the SVG directly
+                      document.getElementById('menuTitle').textContent = menu.name;
+                  }
+              }
           });
       }
 

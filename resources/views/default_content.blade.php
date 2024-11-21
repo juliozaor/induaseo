@@ -1,8 +1,3 @@
-@extends('layouts.dashboard')
-
-@section('title', 'Inicio')
-
-@section('content')
 <div class="dashboard-container">
     <!-- Rectángulo de bienvenida -->
     <div class="welcome-banner">
@@ -49,4 +44,3 @@
         </div>
     </div>
 </div>
-@endsection
