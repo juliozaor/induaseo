@@ -60,6 +60,16 @@
                             existingScript4.remove();
                         }
 
+                        const existingScript5 = document.querySelector('script[src="{{ asset('assets/js/activos.js') }}"]');
+                        if (existingScript5) {
+                            existingScript5.remove();
+                        }
+
+                        const existingScript6 = document.querySelector('script[src="{{ asset('assets/js/insumos.js') }}"]');
+                        if (existingScript6) {
+                            existingScript6.remove();
+                        }
+
                         // Load the script after content is inserted
                         const script = document.createElement('script');
                         switch (tablaSeleccionada) {
@@ -74,6 +84,12 @@
                                 break;
                             case 'areas':
                                 script.src = "{{ asset('assets/js/areas.js') }}?v={{ time() }}";
+                                break;
+                            case 'activos':
+                                script.src = "{{ asset('assets/js/activos.js') }}?v={{ time() }}";
+                                break;
+                            case 'insumos':
+                                script.src = "{{ asset('assets/js/insumos.js') }}?v={{ time() }}";
                                 break;
                             default:
                                 console.error('Tabla no encontrada');

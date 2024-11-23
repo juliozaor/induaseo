@@ -11,6 +11,8 @@ use App\Http\Controllers\TurnoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\SupervisorTurnoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ActivosController;
+use App\Http\Controllers\InsumosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,10 +53,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/maestras', [MaestrasController::class, 'index'])->name('admin.maestras.index');
     Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
     Route::get('/admin/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
+    Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
     // ...other routes...
 });
 
-Route::post('/admin/maestras/consultar', [MaestrasController::class, 'consultar'])->name('maestras.consultar');
+
 
 Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obtener.paises');
 Route::get('/ciudades', [MaestrasController::class, 'obtenerCiudades'])->name('obtener.ciudades');
@@ -108,6 +111,21 @@ Route::post('/tareas', [AreaController::class, 'guardarTarea'])->name('areas.tar
 Route::delete('/tareas/{id}', [AreaController::class, 'eliminarTarea'])->name('areas.tareas.destroy');
 
 Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
-Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
+//Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
 Route::post('/asignar-turnos/guardar', [SupervisorTurnoController::class, 'guardar'])->name('asignar.turnos.guardar');
 Route::post('/asignar-turnos/validar', [SupervisorTurnoController::class, 'validarAsignacion'])->name('asignar.turnos.validar');
+
+Route::post('/activos/guardar', [ActivosController::class, 'guardar'])->name('activos.guardar');
+Route::put('/activos/actualizar/{id}', [ActivosController::class, 'actualizar'])->name('activos.actualizar');
+Route::get('/activos', [ActivosController::class, 'obtenerActivo'])->name('activos.obtener');
+
+Route::post('/admin/maestras/consultar', [MaestrasController::class, 'consultar'])->name('maestras.consultar');
+
+Route::get('/clasificaciones', [MaestrasController::class, 'obtenerClasificaciones'])->name('obtener.clasificaciones');
+Route::get('/estados', [MaestrasController::class, 'obtenerEstados'])->name('obtener.estados');
+
+// Add routes for insumos
+Route::get('admin/maestras/insumos', [MaestrasController::class, 'clientes'])->name('maestras.insumos');
+Route::post('/insumos/guardar', [InsumosController::class, 'guardar'])->name('insumos.guardar');
+Route::put('/insumos/actualizar/{id}', [InsumosController::class, 'actualizar'])->name('insumos.actualizar');
+Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obtener');

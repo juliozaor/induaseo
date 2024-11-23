@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activos;
 use App\Models\Ciudades;
 use App\Models\Cliente;
 use App\Models\Frecuencia;
@@ -11,6 +12,9 @@ use App\Models\SectoresEconomico;
 use App\Models\Sede;
 use App\Models\Turno;
 use App\Models\Area;
+use App\Models\Clasificaciones;
+use App\Models\Estados;
+use App\Models\Insumos;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +23,7 @@ class MaestrasController extends Controller
 {
     public function index()
     {
-        $tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas']; // Agregar más tablas maestras aquí si es necesario
+        $tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas', 'activos', 'insumos']; 
         return view('admin.maestras.index', compact('tablasMaestras'));
     }
 
@@ -29,6 +33,7 @@ class MaestrasController extends Controller
             $tabla = $request->input('tabla');
 
             if ($tabla === 'clientes') {
+                $clientes = Cliente::with(['tipoDocumento', 'ciudad.pais', 'sectorEconomico', 'creador', 'actualizador'])->get();
                 $query = Cliente::with(['tipoDocumento', 'ciudad.pais', 'sectorEconomico', 'creador', 'actualizador']);
 
                 // Filtro de búsqueda
@@ -45,7 +50,6 @@ class MaestrasController extends Controller
 
                 // Obtener datos paginados
                 $clientes = $query->paginate($registrosPorPagina);
-
 
                 return response()->json($clientes);
             } elseif ($tabla === 'sedes') {
@@ -95,12 +99,46 @@ class MaestrasController extends Controller
                 // Obtener datos paginados
                 $areas = $query->paginate($registrosPorPagina);
                 return response()->json($areas);
+            } elseif ($tabla === 'activos') {
+                $query = Activos::with(['clasificacion', 'estado', 'creador', 'actualizador']);
+
+                // Filtro de búsqueda
+                if ($request->has('buscar')) {
+                    $buscar = $request->input('buscar');
+                    $query->where('nombre_elemento', 'like', "%$buscar%")
+                        ->orWhere('marca', 'like', "%$buscar%")
+                        ->orWhere('serie', 'like', "%$buscar%");
+                }
+
+                // Cantidad de registros por página
+                $registrosPorPagina = $request->input('registros_por_pagina', 10);
+
+                // Obtener datos paginados
+                $activos = $query->paginate($registrosPorPagina);
+                return response()->json($activos);
+            } elseif ($tabla === 'insumos') {
+                
+                $query = Insumos::with(['clasificacion', 'estado', 'creador', 'actualizador']);
+
+                // Filtro de búsqueda
+                if ($request->has('buscar')) {
+                    $buscar = $request->input('buscar');
+                    $query->where('nombre_elemento', 'like', "%$buscar%");
+                }
+
+                // Cantidad de registros por página
+                $registrosPorPagina = $request->input('registros_por_pagina', 10);
+
+                // Obtener datos paginados
+                $insumos = $query->paginate($registrosPorPagina);
+                
+                return response()->json($insumos);
             }
 
             return response()->json(['error' => 'Tabla no encontrada'], 404);
         } catch (Exception $e) {
             Log::error('Error en consultar: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al consultar los datos'], 500);
+            return response()->json(['error' => 'Error al consultar los datos :'. $e->getMessage()], 500);
         }
     }
 
@@ -115,6 +153,10 @@ class MaestrasController extends Controller
             return view('admin.maestras.turnos', compact('tabla'));
         } elseif ($tabla === 'areas') {
             return view('admin.maestras.areas', compact('tabla'));
+        } elseif ($tabla === 'activos') {
+            return view('admin.maestras.activos', compact('tabla'));
+        } elseif ($tabla === 'insumos') { // Add this block
+            return view('admin.maestras.insumos', compact('tabla'));
         }
         return response()->json(['error' => 'Tabla no encontrada'], 404);
     }
@@ -161,5 +203,17 @@ class MaestrasController extends Controller
         $frecuencias = Frecuencia::all();
 
         return response()->json($frecuencias);
+    }
+
+    public function obtenerClasificaciones(Request $request)
+    {
+        $clasificaciones = Clasificaciones::all();
+        return response()->json($clasificaciones);
+    }
+
+    public function obtenerEstados(Request $request)
+    {
+        $estados = Estados::all();
+        return response()->json($estados);
     }
 }
