@@ -10,14 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const turnoSelect = document.getElementById('turnoSelect');
     const guardarTurnoBtn = document.getElementById('guardarTurnoBtn');
     const nuevaAsignacionBtn = document.getElementById('nuevaAsignacionBtn');
-    const asignarTurnoModal = document.getElementById('asignarTurnoModal');
-    const tareasModal = document.getElementById('tareasModal');
     const supervisorNombre = document.getElementById('supervisorNombre');
     const sedeNombre = document.getElementById('sedeNombre');
     const tareasTableBody = document.getElementById('tareasTableBody');
     const nuevaTareaNombre = document.getElementById('nuevaTareaNombre');
     const nuevaTareaDescripcion = document.getElementById('nuevaTareaDescripcion');
-    const guardarTareaBtn = document.getElementById('guardarTareaBtn');
     const volverBtn = document.getElementById('volverBtn');
     const agregarTareaBtn = document.getElementById('agregarTareaBtn');
     let editMode = false;
@@ -47,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     consultarBtn.addEventListener('click', function() {
         const sedeId = sedeSelect.value;
+        
         fetch(`asignar-turnos/consultar?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {

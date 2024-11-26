@@ -11,6 +11,9 @@ use App\Http\Controllers\TurnoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\SupervisorTurnoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ActivosController;
+use App\Http\Controllers\GestionarActivosController;
+use App\Http\Controllers\InsumosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,11 +53,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/admin/maestras', [MaestrasController::class, 'index'])->name('admin.maestras.index');
     Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
+    Route::get('/gestionar-activos', [GestionarActivosController::class, 'index'])->name('gestionar.index');
     Route::get('/admin/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
+    Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
+    Route::get('/gestionar-activos/consultar', [GestionarActivosController::class, 'consultar'])->name('gestionar.activos.consultar');
     // ...other routes...
 });
-
-Route::post('/admin/maestras/consultar', [MaestrasController::class, 'consultar'])->name('maestras.consultar');
 
 Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obtener.paises');
 Route::get('/ciudades', [MaestrasController::class, 'obtenerCiudades'])->name('obtener.ciudades');
@@ -107,7 +111,31 @@ Route::get('/tareas/{areaId}', [AreaController::class, 'obtenerTareas'])->name('
 Route::post('/tareas', [AreaController::class, 'guardarTarea'])->name('areas.tareas.store');
 Route::delete('/tareas/{id}', [AreaController::class, 'eliminarTarea'])->name('areas.tareas.destroy');
 
-Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
-Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
+
 Route::post('/asignar-turnos/guardar', [SupervisorTurnoController::class, 'guardar'])->name('asignar.turnos.guardar');
 Route::post('/asignar-turnos/validar', [SupervisorTurnoController::class, 'validarAsignacion'])->name('asignar.turnos.validar');
+
+Route::post('/activos/guardar', [ActivosController::class, 'guardar'])->name('activos.guardar');
+Route::put('/activos/actualizar/{id}', [ActivosController::class, 'actualizar'])->name('activos.actualizar');
+Route::get('/activo', [ActivosController::class, 'obtenerActivo'])->name('activo.obtener');
+Route::get('/activos', [ActivosController::class, 'obtenerActivos'])->name('activos.obtener');
+
+Route::post('/gestionar-activos/guardar', [GestionarActivosController::class, 'guardar'])->name('gestionar.activos.guardar');
+Route::put('/gestionar-activos/actualizar/{id}', [GestionarActivosController::class, 'actualizar'])->name('gestionar.activos.actualizar');
+Route::get('/gestionar-activo/consultar', [GestionarActivosController::class, 'obtenerActivo'])->name('gestionar.activo.obtener');
+
+Route::post('/admin/maestras/consultar', [MaestrasController::class, 'consultar'])->name('maestras.consultar');
+
+Route::get('/clasificaciones', [MaestrasController::class, 'obtenerClasificaciones'])->name('obtener.clasificaciones');
+Route::get('/estados', [MaestrasController::class, 'obtenerEstados'])->name('obtener.estados');
+
+// Add routes for insumos
+Route::get('admin/maestras/insumos', [MaestrasController::class, 'clientes'])->name('maestras.insumos');
+Route::post('/insumos/guardar', [InsumosController::class, 'guardar'])->name('insumos.guardar');
+Route::put('/insumos/actualizar/{id}', [InsumosController::class, 'actualizar'])->name('insumos.actualizar');
+Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obtener');
+
+
+// Add routes for clientes and sedes
+Route::get('/get-clientes', [GestionarActivosController::class, 'getClientes']);
+Route::get('/get-sedes', [GestionarActivosController::class, 'getSedes']);

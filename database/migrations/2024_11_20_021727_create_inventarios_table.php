@@ -12,6 +12,11 @@ class CreateInventariosTable extends Migration
             $table->foreignId('sede_id')->constrained('sedes');
             $table->foreignId('insumo_id')->constrained('insumos');
             $table->integer('cantidad');
+            $table->foreignId('estado_id')->constrained('estados');
+            $table->boolean('estado');
+            $table->foreignId('creador_id')->nullable()->constrained('usuarios')->onDelete('set null');
+            $table->foreignId('actualizador_id')->nullable()->constrained('usuarios')->onDelete('set null');
+           
             $table->timestamps();
         });
     }

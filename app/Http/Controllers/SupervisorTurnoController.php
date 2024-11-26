@@ -30,6 +30,7 @@ class SupervisorTurnoController extends Controller
 
     public function guardar(Request $request)
     {
+        
         $validatedData = $request->validate([
             'supervisor_id' => 'required|exists:usuarios,id',
             'sede_id' => 'required|exists:sedes,id',

@@ -51,8 +51,8 @@ class MenuSeeder extends Seeder
                           </svg>'
             ],[
                 'name' => 'Gestión de activos',
-                'route' => 'dashboard',
-                'route_name' => 'dashboard',
+                'route' => 'gestionar-activos',
+                'route_name' => 'gestionar.index',
                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" width="23.963" height="23.245" viewBox="0 0 23.963 23.245">
                             <g id="Grupo_1495" data-name="Grupo 1495" transform="translate(-18.446 -121.755)">
                               <g id="Grupo_1495-2" data-name="Grupo 1495" transform="translate(27 124.983)">
