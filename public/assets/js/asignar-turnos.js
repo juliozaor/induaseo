@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const baseUrl = `${window.location.origin}/induaseo/public`; // Add this line
-
     const clienteSelect = document.getElementById('clienteSelect');
     const sedeSelect = document.getElementById('sedeSelect');
     const consultarBtn = document.getElementById('consultarBtn');
@@ -25,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     clienteSelect.addEventListener('change', function() {
         const clienteId = this.value;
-        fetch(`${baseUrl}/sedes?cliente_id=${clienteId}`)
+        fetch(`sedes?cliente_id=${clienteId}`)
             .then(response => response.json())
             .then(data => {
                 sedeSelect.innerHTML = '<option value="">Seleccione una sede</option>';
@@ -47,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     consultarBtn.addEventListener('click', function() {
         const sedeId = sedeSelect.value;
         
-        fetch(`${baseUrl}/asignar-turnos/consultar?sede_id=${sedeId}`)
+        fetch(`asignar-turnos/consultar?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {
                turnosTableBody.innerHTML = '';
@@ -70,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function cargarActividades(turnoId) {
-        fetch(`${baseUrl}/asignar-turnos/tareas/${turnoId}`)
+        fetch(`asignar-turnos/tareas/${turnoId}`)
             .then(response => response.json())
             .then(data => {
                 tareasTableBody.innerHTML = '';
@@ -111,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('fecha_inicio', fechaInicioInput.value);
         formData.append('fecha_fin', fechaFinInput.value);
 
-        const url = editMode ? `${baseUrl}/asignar-turnos/actualizar/${turnoId}` : `${baseUrl}/asignar-turnos/guardar`;
+        const url = editMode ? `asignar-turnos/actualizar/${turnoId}` : `asignar-turnos/guardar`;
         const method = editMode ? 'PUT' : 'POST';
 
         if (editMode) {
@@ -139,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 assignedTurnoId = turnoSelect.value;
 
                 // Open the modal for assigned tasks
-                fetch(`${baseUrl}/asignar-turnos/tareas/${assignedTurnoId}`)
+                fetch(`asignar-turnos/tareas/${assignedTurnoId}`)
                     .then(response => response.json())
                     .then(data => {
                         supervisorNombre.value = data.supervisor.nombres;
@@ -156,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
             validateAndSave();
         } else {
             // Validate if the supervisor already has the shift assigned
-            fetch(`${baseUrl}/asignar-turnos/validar`, {
+            fetch(`asignar-turnos/validar`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -189,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('nombre', nuevaTareaNombre.value);
         formData.append('descripcion', nuevaTareaDescripcion.value);
 
-        fetch(`${baseUrl}/actividades`, {
+        fetch(`actividades`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -222,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
             turnoId = event.target.getAttribute('data-id');
             editMode = true;
 
-            fetch(`${baseUrl}/asignar-turnos/${turnoId}`)
+            fetch(`asignar-turnos/${turnoId}`)
                 .then(response => response.json())
                 .then(turno => {
                     document.getElementById('supervisorSelect').value = turno.supervisor_id;
@@ -237,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (event.target.classList.contains('verTareasBtn')) {
             turnoId = event.target.getAttribute('data-id');
 
-            fetch(`${baseUrl}/asignar-turnos/tareas/${turnoId}`)
+            fetch(`asignar-turnos/tareas/${turnoId}`)
                 .then(response => response.json())
                 .then(data => {
                     supervisorNombre.value = data.supervisor.nombre;
@@ -265,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function cargarSupervisores() {
-        fetch(`${baseUrl}/supervisores`)
+        fetch(`supervisores`)
             .then(response => response.json())
             .then(data => {
                 supervisorSelect.innerHTML = '<option value="">Seleccione un supervisor</option>';
@@ -280,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function cargarTurnos() {
-        fetch(`${baseUrl}/turnos`)
+        fetch(`turnos`)
             .then(response => response.json())
             .then(data => {
                 turnoSelect.innerHTML = '<option value="">Seleccione un turno</option>';

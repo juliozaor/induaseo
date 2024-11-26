@@ -169,7 +169,7 @@
             modalTitle.textContent = "Editar activo";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`../activos?id=${activoId}`)
+            fetch(`../activo?id=${activoId}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Error al cargar los datos del activo.");

@@ -9,10 +9,11 @@ class Mantenimiento extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['activo_id', 'tipo_mantenimiento', 'fecha_programada', 'fecha_realizada', 'descripcion', 'estado'];
+    protected $table = 'mantenimientos';
+    protected $fillable = ['sede_id', 'descripcion', 'fecha'];
 
-    public function activo()
+    public function sede()
     {
-        return $this->belongsTo(Activo::class);
+        return $this->belongsTo(Sede::class);
     }
 }

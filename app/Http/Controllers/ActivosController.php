@@ -79,6 +79,14 @@ class ActivosController extends Controller
         return response()->json($activo);
     }
 
+    public function obtenerActivos(Request $request)
+    {
+        
+        $activo = Activos::all();
+        return response()->json($activo);
+    }
+
+
     public function consultar(Request $request)
     {
         $tabla = $request->input('tabla');
