@@ -38,5 +38,116 @@ body, .login-card, .requirements-list li {
     font: normal normal normal 14px/17px 'Neo Sans Std', Arial, sans-serif;
 }
 
+.card {
+    background: #F2F2F2 0% 0% no-repeat padding-box;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.card-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.large-image-container {
+    position: relative;
+    text-align: center;
+}
+
+.large-image {
+    width: 100%;
+    height: auto;
+}
+
+.centered-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.rectangle {
+    display: flex;
+    align-items: center;
+    height: 53px;
+    background: #F2F2F2;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.rectangle-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.rectangle-text {
+    font-size: 16px;
+    color: #343434;
+}
+
+.novedades-slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.novedad-card {
+    flex: 0 0 auto;
+    width: 262px;
+    background: #F2F2F2;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.novedad-image-container {
+    position: relative;
+    height: 150px;
+}
+
+.novedad-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.novedad-span {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.novedad-info {
+    padding: 10px;
+}
+
+.novedad-date {
+    display: block;
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.novedad-text {
+    font-size: 16px;
+    color: #333;
+}
+
 
 

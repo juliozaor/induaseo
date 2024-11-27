@@ -14,6 +14,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivosController;
 use App\Http\Controllers\GestionarActivosController;
 use App\Http\Controllers\InsumosController;
+use App\Http\Controllers\SeguimientoActividadesController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SupervisorController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,10 +60,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/asignar-turnos', [SupervisorTurnoController::class, 'index'])->name('asignar.turnos');
     Route::get('/gestionar-activos', [GestionarActivosController::class, 'index'])->name('gestionar.index');
     Route::get('/admin/usuarios', [UsuarioController::class, 'index'])->name('admin.usuarios.index');
+    Route::get('/seguimiento-actividades', [SeguimientoActividadesController::class, 'index'])->name('seguimiento.actividades.index');
     Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
     Route::get('/gestionar-activos/consultar', [GestionarActivosController::class, 'consultar'])->name('gestionar.activos.consultar');
     // ...other routes...
 });
+
+Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::get('/supervisor/dashboard', [SupervisorController::class, 'index'])->name('supervisor.dashboard');
+Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
 
 Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obtener.paises');
 Route::get('/ciudades', [MaestrasController::class, 'obtenerCiudades'])->name('obtener.ciudades');
@@ -139,3 +149,5 @@ Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obt
 // Add routes for clientes and sedes
 Route::get('/get-clientes', [GestionarActivosController::class, 'getClientes']);
 Route::get('/get-sedes', [GestionarActivosController::class, 'getSedes']);
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');

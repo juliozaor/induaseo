@@ -150,16 +150,6 @@
             userDropdownMenu.hide();
         }
     });
-
-    // Actualizar el título y el icono del menú seleccionado
-   /*  $('.menu a').on('click', function (e) {
-        e.preventDefault();
-        const selectedIcon = $(this).find('svg').clone();
-        const selectedTitle = $(this).find('span').text();
-        $('.menu-title .selected-menu-icon').replaceWith(selectedIcon.addClass('selected-menu-icon'));
-        $('#menuTitle').text(selectedTitle);
-    }); */
-
 });
 
 document.getElementById('hamburgerMenu').addEventListener('click', function () {

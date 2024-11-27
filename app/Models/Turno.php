@@ -9,7 +9,7 @@ class Turno extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'nombre', 'frecuencia_id', 'frecuencia_cantidad', 
+        'nombre', 'frecuencia_id', 'frecuencia_cantidad',
         'estado', 'creador_id', 'actualizador_id'
     ];
 

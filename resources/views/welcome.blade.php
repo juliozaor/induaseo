@@ -7,8 +7,8 @@
     <title>Sistema de Gestión</title>
 
     <!-- Enlace al archivo CSS en la carpeta assets -->
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/welcome.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/welcome.css') }}?v={{ time() }}">
 </head>
 <body>
  <!-- Contenedor principal -->

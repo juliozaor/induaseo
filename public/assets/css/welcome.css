@@ -71,7 +71,10 @@ body, html {
         gap: 10px;
     }
     .role-link {
-        font-size: 14px;
+        font-size: 12px;
+    }
+    .role-link span {
+        font-size: 18px;
     }
 
    
