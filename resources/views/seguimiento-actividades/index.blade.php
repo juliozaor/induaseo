@@ -1,7 +1,6 @@
 @extends('layouts.mobile')
 
 @section('content')
-<div class="container">
     <!-- Imagen grande con texto centrado -->
     <div class="large-image-container">
         <img src="{{ asset('assets/images/fondo1.png') }}" alt="Large Image" class="large-image">
@@ -29,7 +28,7 @@
                 <img src="{{ asset('assets/icons/location.svg') }}" alt="Ubicación" class="card-icon">
                 <span>{{$turno->sede->nombre}} <br> {{$turno->sede->direccion}}</span>
             </div>
-            <a href="#" class="btn btn-primary btn-iniciarturno">Iniciar turno</a>
+            <a href="{{ route('actividades.turno', ['id' => $turno->id]) }}" class="btn boton-secundario">Iniciar turno</a>
         </div>
     </div>
     @endforeach
@@ -49,5 +48,4 @@
         </div>
         @endforeach
     </div>
-</div>
 @endsection

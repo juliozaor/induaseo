@@ -65,10 +65,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gestionar-activos/consultar', [GestionarActivosController::class, 'consultar'])->name('gestionar.activos.consultar');
     // ...other routes...
 });
-
+/* 
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('/supervisor/dashboard', [SupervisorController::class, 'index'])->name('supervisor.dashboard');
-Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
+Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard'); */
 
 Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obtener.paises');
 Route::get('/ciudades', [MaestrasController::class, 'obtenerCiudades'])->name('obtener.ciudades');
@@ -150,4 +150,9 @@ Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obt
 Route::get('/get-clientes', [GestionarActivosController::class, 'getClientes']);
 Route::get('/get-sedes', [GestionarActivosController::class, 'getSedes']);
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::get('/actividades-turno', [SeguimientoActividadesController::class, 'obtenerActividades'])->name('actividades.turno');
+
+Route::post('/guardar-calificacion/{id}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
+
+/* Route::get('/home', [HomeController::class, 'index'])->name('home'); */

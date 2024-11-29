@@ -24,6 +24,7 @@ class UsuarioController extends Controller
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
 
         $usuarios = Usuario::query()
+            ->with('roles') // Include roles relationship
             ->when($buscar, function ($query, $buscar) {
                 return $query->where('nombres', 'like', "%{$buscar}%")
                     ->orWhere('apellidos', 'like', "%{$buscar}%")
@@ -31,6 +32,12 @@ class UsuarioController extends Controller
                     ->orWhere('email', 'like', "%{$buscar}%");
             })
             ->paginate($registrosPorPagina);
+
+        // Add role to each user
+        $usuarios->each(function ($usuario) {
+            $usuario->rol = $usuario->roles->first()->name; // Assuming a user has one role
+        });
+
         return response()->json($usuarios);
     }
 

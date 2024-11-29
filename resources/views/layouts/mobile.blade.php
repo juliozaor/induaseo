@@ -15,6 +15,8 @@
     <!-- CSS y fuentes -->
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('assets/css/mobile.css') }}?v={{ time() }}">
+   {{--  <link rel="stylesheet" href="{{ asset('assets/css/all.min.css') }}?v={{ time() }}"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div class="mobile-wrapper">
@@ -25,7 +27,6 @@
             </div>
             <div class="header-icons">
                 <img src="{{ asset('assets/images/alerta.png') }}" alt="Alertas" class="header-icon">
-               {{--  <img src="{{ asset('assets/images/user.png') }}" alt="Usuario" class="header-icon"> --}}
                 <div class="user-info">
                     <div class="user-icon-circle" id="userDropdownToggle">
                         <img src="{{ asset('assets/images/user.png') }}" alt="Usuario" class="user-icon">
@@ -69,7 +70,7 @@
                       
                     <span>Inicio</span>
                 </a>
-                <a href="{{ url('/activities') }}" class="footer-icon {{ request()->is('activities') ? 'active' : '' }}">
+                <a href="#" class="footer-icon {{ request()->is('actividades-turno') ? 'active' : '' }}">
                     <svg id="Grupo_23258" data-name="Grupo 23258" xmlns="http://www.w3.org/2000/svg" width="20.3" height="25.805" viewBox="0 0 20.3 25.805">
                         <path id="Trazado_17395" data-name="Trazado 17395" d="M133.509,1346.4a5.268,5.268,0,1,1,5.265,5.276A5.274,5.274,0,0,1,133.509,1346.4Zm5.274-3.886a3.891,3.891,0,1,0,3.88,3.886A3.9,3.9,0,0,0,138.783,1342.51Z" transform="translate(-128.644 -1331.736)" />
                         <path id="Trazado_17396" data-name="Trazado 17396" d="M196.6,1420.54a.816.816,0,0,1,.577.258c.224.221.447.443.667.669.074.076.124.086.206,0q.872-.885,1.753-1.76a3.178,3.178,0,0,1,.344-.321.664.664,0,0,1,.933.08.7.7,0,0,1-.037.954c-.565.574-1.137,1.141-1.706,1.711-.291.291-.58.585-.874.873a.68.68,0,0,1-.978.037c-.364-.335-.706-.694-1.057-1.044-.107-.107-.215-.212-.312-.328a.652.652,0,0,1-.093-.732A.7.7,0,0,1,196.6,1420.54Z" transform="translate(-188.474 -1406.574)" />
@@ -78,7 +79,7 @@
                       
                     <span>Actividades</span>
                 </a>
-                <a href="{{ url('/inventory') }}" class="footer-icon {{ request()->is('inventory') ? 'active' : '' }}">
+                <a href="#" class="footer-icon {{ request()->is('inventory') ? 'active' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="25.408" height="25.368" viewBox="0 0 25.408 25.368">
                         <g id="Grupo_23275" data-name="Grupo 23275" transform="translate(16.683 -330.966)">
                           <path id="Trazado_17466" data-name="Trazado 17466" d="M-15.345,343.956c0,1.949.006,3.9-.006,5.846a.476.476,0,0,0,.332.512q5.087,2.249,10.165,4.519a.635.635,0,0,0,.583-.067.678.678,0,0,1,.813.158.651.651,0,0,1,.051.775,1.6,1.6,0,0,1-1.63.511q-5.557-2.47-11.114-4.937a.825.825,0,0,1-.53-.839q0-6.8,0-13.591a.822.822,0,0,1,.534-.835q3.948-1.743,7.889-3.5c1.084-.482,2.171-.959,3.252-1.446a.947.947,0,0,1,.826.005q5.528,2.462,11.062,4.91a.855.855,0,0,1,.573.892c-.015,2-.007,4-.006,5.994a.794.794,0,0,1-.125.537.665.665,0,0,1-1.162-.2,1.343,1.343,0,0,1-.049-.47q0-2.315,0-4.629c0-.383,0-.383-.335-.234q-4.934,2.191-9.866,4.388a1.154,1.154,0,0,1-1.02,0q-4.115-1.842-8.238-3.667c-.569-.253-1.141-.5-1.7-.765-.244-.115-.3-.056-.3.2C-15.342,340-15.345,341.978-15.345,343.956ZM5.086,336.7a.725.725,0,0,0-.118-.1q-2.031-.9-4.062-1.808a.41.41,0,0,0-.366.029l-7.991,3.552c-.484.215-.966.435-1.442.649.019.105.081.119.134.142,1.318.586,2.638,1.169,3.954,1.759a.5.5,0,0,0,.45-.02q4.184-1.863,8.371-3.719C4.363,337.026,4.709,336.867,5.086,336.7Zm-6.045-2.678c-.069-.118-.175-.132-.26-.17-1-.448-2.009-.882-3-1.344a.848.848,0,0,0-.779.009q-4.506,2.017-9.02,4.016c-.077.034-.2.041-.205.142s.124.112.2.146c1.028.46,2.061.911,3.086,1.38a.674.674,0,0,0,.614-.007q3.613-1.618,7.233-3.218C-2.384,334.657-1.675,334.338-.959,334.018Z" transform="translate(0 0)" />
@@ -88,7 +89,7 @@
                       </svg>
                     <span>Inventario</span>
                 </a>
-                <a href="{{ url('/info') }}" class="footer-icon {{ request()->is('info') ? 'active' : '' }}">
+                <a href="#" class="footer-icon {{ request()->is('info') ? 'active' : '' }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24.295" height="24.301" viewBox="0 0 24.295 24.301">
                         <g id="Grupo_23266" data-name="Grupo 23266" transform="translate(1367.378 -425.607)">
                           <path id="Trazado_17452" data-name="Trazado 17452" d="M-1355.157,425.607a12.14,12.14,0,0,0-12.221,12.046,12.142,12.142,0,0,0,12.012,12.255,12.138,12.138,0,0,0,12.282-12.108A12.14,12.14,0,0,0-1355.157,425.607Zm-.156,22.782a10.662,10.662,0,0,1-10.546-10.715,10.663,10.663,0,0,1,10.712-10.549A10.664,10.664,0,0,1-1344.6,437.84,10.664,10.664,0,0,1-1355.313,448.389Z" />
@@ -124,6 +125,7 @@
         });
     });
     </script>
+    <script src="{{ asset('assets/js/mobile.js') }}?v={{ time() }}"></script>
 
     @stack('scripts')
 </body>

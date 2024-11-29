@@ -94,6 +94,7 @@
 }
 .card {
     padding: 0px;
+    margin: 10px;
 }
 .btn-iniciarturno{
     background: #EC6F35 0% 0% no-repeat padding-box;
@@ -114,10 +115,13 @@
     font: normal normal normal 10px/14px 'Neo Sans Std', Arial, sans-serif;
 
 }
+
 .titulo-novedades{
     font: normal normal bold 14px/20px 'Neo Sans Std', Arial, sans-serif;
     letter-spacing: 0px;
     color: #000000;
+    margin: 10px;
+
 }
 .novedad-image-container{
     background: #B7B7B7 0% 0% no-repeat padding-box;
@@ -155,4 +159,180 @@ border-radius: 8px 8px 0px 0px;
     border-radius: 5px;
     width: 200px;
     text-align: left;
+}
+
+.rectangle2 {
+    display: flex;
+    height: 53px;
+    background: #343434;
+    padding: 5px;
+    font: normal normal bold 14px / 16px 'Neo Sans Std', Arial, sans-serif;
+    flex-direction: column;
+}
+.nav-pills .nav-link {
+    border-radius: initial;
+    color: #fff;
+    background-color: #343434;
+}
+.nav-pills .nav-link.active {
+    background-color: #343434;
+    border-bottom: 5px solid #EC6F35;
+}
+.icono-actividades{
+    width: 12px;
+    height: 12px;
+}
+.rectangle2 li a{
+    padding: 13px 5px;
+}
+.contenedor-actividad{
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    background: #F2F2F2 0% 0% no-repeat padding-box;
+    border-radius: 8px;
+    padding: 0 20px;
+    font: normal normal bold 14px/20px 'Neo Sans Std', Arial, sans-serif;
+    letter-spacing: 0px;
+    color: #0D0D0D;
+    text-transform: uppercase;
+    margin: 10px;
+}
+.footer-actividades{
+    background: #343434 0% 0% no-repeat padding-box;
+    padding: 20px 10px;
+    color: #FFFFFF;
+}
+.titulo-actividades{
+    transform: translate(30%, -50%);
+
+}
+.footer-actividades textarea, a{
+margin: 10px 0;
+}
+.porcentaje-actividad{
+    width: 100%;
+    text-align: center;
+}
+.item-actividad{
+    color: #000000;
+}
+
+.evidencias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.evidencias span {
+    position: relative;
+    display: inline-block;
+}
+
+.evidencias img.thumb {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.evidencias button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+}
+
+.boton-secundario{
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    background: #EC6F35;
+    box-shadow: 0px 3px 10px #00000040;
+    font: normal normal normal 14px / 20px 'Neo Sans Std', Arial, sans-serif;
+}
+.modal-title{
+    font: normal normal bold 14px/20px 'Neo Sans Std', Arial, sans-serif;
+letter-spacing: 0px;
+color: #000000;
+text-transform: uppercase;
+}
+.modal-body p{
+    font: normal normal normal 14px/17px 'Neo Sans Std', Arial, sans-serif;
+    letter-spacing: 0px;
+    color: #707070;
+}
+.boton-secundario svg{
+    fill: white;
+}
+.boton-primario {
+    width: 100%;
+    padding: 10px 15px;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    background: #000000;
+    box-shadow: 0px 3px 10px #00000040;
+    font: normal normal normal 14px / 20px 'Neo Sans Std', Arial, sans-serif;
+}
+.flecha{
+    color: #EC6F35;
+}
+
+/* ...existing code... */
+
+.calificacion {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.calificacion .fa {
+    font-size: 24px;
+    cursor: pointer;
+    color: #FFD700; /* Gold color for filled stars */
+}
+
+.calificacion .fa-star-o {
+    color: #ddd; /* Light grey color for empty stars */
+}
+
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 10px;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    font-size: 24px;
+    color: transparent;
+    cursor: pointer;
+    border: 1px solid #FFD700; /* Gold color for the border */
+    border-radius: 50%;
+}
+
+.rating input:checked ~ label,
+.rating input:hover ~ label {
+    color: #FFD700; /* Gold color for filled stars */
+    background-color: #FFD700;
 }

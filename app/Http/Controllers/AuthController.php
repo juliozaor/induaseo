@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
+use App\Models\Usuario; // Ensure the Usuario model is imported
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Models\Role; // Import the Role model
 
 class AuthController extends Controller
 {
@@ -28,7 +29,16 @@ class AuthController extends Controller
     
         if (Auth::attempt(['numero_documento' => $request->usuario, 'password' => $request->password])) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard');
+
+            // Obtener el rol del usuario desde la relación roles
+            $roleIds = auth()->user()->roles->pluck('id')->first();
+            if ($roleIds == 2) {
+                return redirect()->intended('seguimiento-actividades');
+            } elseif ($roleIds == 3) {
+                return redirect()->intended('dashboard');
+            } else {
+                return redirect()->intended('dashboard');
+            }
         }
     
         return back()->withErrors([
