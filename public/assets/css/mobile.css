@@ -336,3 +336,17 @@ text-transform: uppercase;
     color: #FFD700; /* Gold color for filled stars */
     background-color: #FFD700;
 }
+
+.contenedor-actividad span img{
+    width: 46px;
+    border-radius: 8px;
+    height: 46px;
+}
+.contenedor-imagen-modal{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.contenedor-imagen-modal img{
+    width: 177px;
+}

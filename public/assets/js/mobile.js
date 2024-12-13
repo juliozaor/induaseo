@@ -42,3 +42,17 @@ function rateActivity(actividadId, rating) {
         }
     });
 }
+
+function setTurnoData(turnoId, sedeId) {
+    localStorage.setItem('turno_id', turnoId);
+    localStorage.setItem('sede_id', sedeId);
+}
+
+function getTurnoData() {
+    return {
+        turnoId: localStorage.getItem('turno_id'),
+        sedeId: localStorage.getItem('sede_id')
+    };
+}
+
+window.setTurnoData = setTurnoData;

@@ -19,6 +19,7 @@ class Activos extends Model
         'estado',
         'creador_id',
         'actualizador_id',
+        'imagen'
     ];
 
     public function clasificacion()

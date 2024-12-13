@@ -20,6 +20,7 @@ class CreateInsumosTable extends Migration
             $table->foreignId('actualizador_id')->nullable()->constrained('usuarios')->onDelete('set null');
             $table->string('proveedor');
             $table->string('telefono_proveedor');
+            $table->string('imagen');
             $table->timestamps();
         });
     }

@@ -88,7 +88,7 @@
                     @foreach ($actividadesFalse as $index => $actividad)
                     <a class="item-actividad" href="#" disabled>
                         <div class="contenedor-actividad">
-                            <span>{{ $index + 1 }}. {{ $actividad->nombre }}</span> <span class="flecha">></span>
+                            <span>{{ $index + 1 }}. {{ $actividad->nombre }}</span> <span class="flecha">{{$actividad->cantidad}} ></span>
                         </div>
                     </a>
                   
@@ -101,10 +101,15 @@
     </div>
 
     <div class="footer-actividades">
-        <span>Observaciones</span>
-        <textarea class="form-control is-invalid" id="validationTextarea" placeholder="Escribe en este espacio las observaciones generales..." ></textarea>
-        <div class="porcentaje-actividad"><span>Actividades finalizadas <span>0/20</span></span></div>
-        <a href="" class="btn boton-secundario">Finalizar turno</a>
+        <form action="{{ route('finalizarTurno') }}" method="POST">
+            @csrf
+            <span>Observaciones</span>
+            <textarea class="form-control is-invalid" id="validationTextarea" name="observaciones" placeholder="Escribe en este espacio las observaciones generales..." ></textarea>
+            <div class="porcentaje-actividad">
+                <span>Actividades finalizadas <span>{{ $actividadesFalse->count() }}/{{ $actividadesTrue->count() + $actividadesFalse->count() }}</span></span>
+            </div>
+            <button type="submit" class="btn boton-secundario">Finalizar turno</button>
+        </form>
     </div>
 
 @endsection

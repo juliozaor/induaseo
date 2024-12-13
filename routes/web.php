@@ -152,7 +152,10 @@ Route::get('/get-sedes', [GestionarActivosController::class, 'getSedes']);
 
 
 Route::get('/actividades-turno', [SeguimientoActividadesController::class, 'obtenerActividades'])->name('actividades.turno');
+Route::get('/inventario-turno', [SeguimientoActividadesController::class, 'obtenerInventarios'])->name('inventarios.turno');
 
 Route::post('/guardar-calificacion/{id}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
+
+Route::post('/finalizar-turno', [SeguimientoActividadesController::class, 'finalizarTurno'])->name('finalizarTurno');
 
 /* Route::get('/home', [HomeController::class, 'index'])->name('home'); */

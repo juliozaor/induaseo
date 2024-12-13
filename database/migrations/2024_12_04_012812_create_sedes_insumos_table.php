@@ -1,30 +1,33 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateActivosTable extends Migration
+return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
-        Schema::create('activos', function (Blueprint $table) {
+        Schema::create('sedes_insumos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre_elemento');
-            $table->string('marca');
-            $table->string('serie');
-            $table->foreignId('clasificacion_id')->constrained('clasificaciones');
+            $table->foreignId('sede_id')->constrained('sedes');
+            $table->foreignId('insumo_id')->constrained('insumos');
             $table->integer('cantidad');
-            $table->foreignId('estado_id')->constrained('estados');
             $table->boolean('estado');
             $table->foreignId('creador_id')->nullable()->constrained('usuarios')->onDelete('set null');
             $table->foreignId('actualizador_id')->nullable()->constrained('usuarios')->onDelete('set null');
-            $table->string('imagen');
             $table->timestamps();
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
-        Schema::dropIfExists('activos');
+        Schema::dropIfExists('sedes_insumos');
     }
-}
+};
