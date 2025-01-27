@@ -5,29 +5,31 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Activos extends Model
+class Inventario extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'nombre_elemento',
-        'marca',
-        'serie',
-        'clasificacion_id',
+        'sede_id',
+        'item_id',
         'cantidad',
         'estado_id',
         'estado',
         'creador_id',
         'actualizador_id',
-        'imagen'
     ];
 
-    public function clasificacion()
+    public function sede()
     {
-        return $this->belongsTo(Clasificaciones::class);
+        return $this->belongsTo(Sede::class, 'sede_id');
     }
 
-    public function estados()
+    public function item()
+    {
+        return $this->belongsTo(Insumos::class, 'insumo_id');
+    }
+
+    public function estado()
     {
         return $this->belongsTo(Estados::class, 'estado_id');
     }
@@ -40,5 +42,10 @@ class Activos extends Model
     public function actualizador()
     {
         return $this->belongsTo(Usuario::class, 'actualizador_id');
+    }
+
+    public function imagenes()
+    {
+        return $this->hasMany(ImagenInventario::class);
     }
 }

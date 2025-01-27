@@ -19,6 +19,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GestionarInventarioController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,9 +64,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/seguimiento-actividades', [SeguimientoActividadesController::class, 'index'])->name('seguimiento.actividades.index');
     Route::get('/asignar-turnos/consultar', [SupervisorTurnoController::class, 'consultar'])->name('asignar.turnos.consultar');
     Route::get('/gestionar-activos/consultar', [GestionarActivosController::class, 'consultar'])->name('gestionar.activos.consultar');
+    Route::get('/gestionar-activos/obtener-mantenimientos', [GestionarActivosController::class, 'obtenerMantenimientos'])->name('gestionar.activos.obtenerMantenimientos');
+    Route::get('/gestionar-inventario', [GestionarInventarioController::class, 'index'])->name('gestionar.inventario.index');
+    Route::get('/gestionar-inventario/consultar', [GestionarInventarioController::class, 'consultar'])->name('gestionar.inventario.consultar');
+    Route::post('/gestionar-inventario/guardar', [GestionarInventarioController::class, 'guardar'])->name('gestionar.inventario.guardar');
+    Route::put('/gestionar-inventario/actualizar/{id}', [GestionarInventarioController::class, 'actualizar'])->name('gestionar.inventario.actualizar');
+    Route::get('/gestionar-inventario/obtener', [GestionarInventarioController::class, 'obtenerInventario'])->name('gestionar.inventario.obtener');
+    Route::get('/sedes', [GestionarInventarioController::class, 'getSedes'])->name('sedes.obtener');
+    Route::get('/obtener-sede', [SedeController::class, 'obtenerSede'])->name('obtener.sede');
     // ...other routes...
 });
-/* 
+/*
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 Route::get('/supervisor/dashboard', [SupervisorController::class, 'index'])->name('supervisor.dashboard');
 Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard'); */
@@ -84,7 +93,6 @@ Route::put('/clientes/actualizar/{id}', [ClientesController::class, 'actualizarC
 
 Route::get('/maestras/sedes', [MaestrasController::class, 'clientes'])->name('maestras.sedes');
 Route::post('/sedes/guardar', [SedeController::class, 'guardar'])->name('sedes.guardar');
-Route::get('/sedes', [SupervisorTurnoController::class, 'getSedes'])->name('sedes.obtener');
 Route::put('/sedes/actualizar/{id}', [SedeController::class, 'actualizar'])->name('sedes.actualizar');
 
 Route::get('/maestras/turnos', [MaestrasController::class, 'clientes'])->name('maestras.turnos');
@@ -146,10 +154,13 @@ Route::put('/insumos/actualizar/{id}', [InsumosController::class, 'actualizar'])
 Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obtener');
 
 
+
 // Add routes for clientes and sedes
 Route::get('/get-clientes', [GestionarActivosController::class, 'getClientes']);
 Route::get('/get-sedes', [GestionarActivosController::class, 'getSedes']);
 
+// Add route for updating insumo status and observation
+Route::post('/actualizar-insumo', [SeguimientoActividadesController::class, 'actualizarInsumo'])->name('actualizar.insumo');
 
 Route::get('/actividades-turno', [SeguimientoActividadesController::class, 'obtenerActividades'])->name('actividades.turno');
 Route::get('/inventario-turno', [SeguimientoActividadesController::class, 'obtenerInventarios'])->name('inventarios.turno');
@@ -157,5 +168,11 @@ Route::get('/inventario-turno', [SeguimientoActividadesController::class, 'obten
 Route::post('/guardar-calificacion/{id}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
 
 Route::post('/finalizar-turno', [SeguimientoActividadesController::class, 'finalizarTurno'])->name('finalizarTurno');
+
+Route::get('/estados', [SeguimientoActividadesController::class, 'obtenerEstados'])->name('obtener.estados');
+
+Route::get('/obtener-observaciones/{id}', [SeguimientoActividadesController::class, 'obtenerObservaciones'])->name('obtener.observaciones');
+
+Route::get('/obtener-insumo/{id}', [SeguimientoActividadesController::class, 'obtenerInsumo'])->name('obtener.insumo');
 
 /* Route::get('/home', [HomeController::class, 'index'])->name('home'); */

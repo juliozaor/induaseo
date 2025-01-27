@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Activos;
 
 class NovedadDeActivo extends Model
 {
@@ -13,6 +14,6 @@ class NovedadDeActivo extends Model
 
     public function activo()
     {
-        return $this->belongsTo(Activo::class);
+        return $this->belongsTo(Activos::class);
     }
 }

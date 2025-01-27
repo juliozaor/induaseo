@@ -1,12 +1,15 @@
+// Maneja la selección de archivos para evidencias
 function handleFileSelect(event, actividadId) {
     const files = event.target.files;
     const evidenciasContainer = document.getElementById(`evidenciasContainer${actividadId}`);
-    
+
+    // Verifica si se excede el límite de 3 imágenes
     if (evidenciasContainer.children.length + files.length > 3) {
         alert('Solo puedes agregar un máximo de 3 imágenes.');
         return;
     }
 
+    // Procesa cada archivo seleccionado
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (!file.type.match('image.*')) {
@@ -25,11 +28,13 @@ function handleFileSelect(event, actividadId) {
     }
 }
 
+// Elimina una imagen de las evidencias
 function removeImage(button) {
     const span = button.parentNode;
     span.parentNode.removeChild(span);
 }
 
+// Califica una actividad con estrellas
 function rateActivity(actividadId, rating) {
     const stars = document.querySelectorAll(`#calificacion${actividadId} .fa`);
     stars.forEach((star, index) => {
@@ -43,11 +48,13 @@ function rateActivity(actividadId, rating) {
     });
 }
 
+// Guarda los datos del turno en el almacenamiento local
 function setTurnoData(turnoId, sedeId) {
     localStorage.setItem('turno_id', turnoId);
     localStorage.setItem('sede_id', sedeId);
 }
 
+// Obtiene los datos del turno del almacenamiento local
 function getTurnoData() {
     return {
         turnoId: localStorage.getItem('turno_id'),
@@ -55,4 +62,5 @@ function getTurnoData() {
     };
 }
 
+// Expone la función setTurnoData globalmente
 window.setTurnoData = setTurnoData;

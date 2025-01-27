@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     const clienteSelect = document.getElementById('clienteSelect');
     const sedeSelect = document.getElementById('sedeSelect');
@@ -14,15 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const codigoInput = document.getElementById('codigoInput');
     const cantidadInput = document.getElementById('cantidadInput');
     const activoSelect = document.getElementById('activoSelect');
-    const imagenesInput = document.getElementById('imagenesInput'); 
+    const imagenesInput = document.getElementById('imagenesInput');
     const imagenesPreview = document.getElementById('imagenesPreview');
-    const crearActivoModal = document.getElementById('crearActivoModal'); 
+    const crearActivoModal = document.getElementById('crearActivoModal');
+    const mantenimientosTableBody = document.getElementById('mantenimientosTableBody');
+    const busquedaMantenimientoInput = document.getElementById('busquedaMantenimientoInput');
+    const registrosMantenimientoPorPagina = document.getElementById('registrosMantenimientoPorPagina');
+    const estadoMantenimientoSelect = document.getElementById('estadoMantenimientoSelect');
+    const totalActivos = document.getElementById('totalActivos');
+    const totalMantenimientos = document.getElementById('totalMantenimientos');
 
     let activoId = null;
     let assignedActivoId = null;
     let editMode = false;
 
-    clienteSelect.addEventListener('change', function() {
+    clienteSelect.addEventListener('change', function () {
         const clienteId = this.value;
         fetch(`sedes?cliente_id=${clienteId}`)
             .then(response => response.json())
@@ -38,21 +44,21 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching sedes:', error));
     });
 
-    sedeSelect.addEventListener('change', function() {
+    sedeSelect.addEventListener('change', function () {
         const selectedOption = sedeSelect.options[sedeSelect.selectedIndex];
-       sedeInput.value = selectedOption.textContent;
+        sedeInput.value = selectedOption.textContent;
     });
 
-    consultarBtn.addEventListener('click', function() {
+    consultarBtn.addEventListener('click', function () {
         const sedeId = sedeSelect.value;
-        
+
         fetch(`gestionar-activos/consultar?sede_id=${sedeId}`)
             .then(response => response.json())
-            .then(data => {                
-               activosTableBody.innerHTML = '';
-               data.data.forEach(activo => {
-                   const row = document.createElement('tr');                    
-                   const estadoClase = activo.estado ? 'estado-activo' : 'estado-inactivo';
+            .then(data => {
+                activosTableBody.innerHTML = '';
+                data.data.forEach(activo => {
+                    const row = document.createElement('tr');
+                    const estadoClase = activo.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
                         <td>${activo.id}</td>
                         <td>${activo.activo.nombre_elemento}</td>
@@ -62,20 +68,23 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${activo.sede.cliente.nombre}</td>
                         <td><div class="${estadoClase}">${activo.estado ? 'Activo' : 'Inactivo'}</div></td>
                         <td>${activo.creador?.nombres || 'N/A'}</td>
-                    <td>${formatDate(activo.created_at)}</td>
-                    <td>${activo.actualizador?.nombres || 'N/A'}</td>
-                    <td>${formatDate(activo.updated_at)}</td>
-                    <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}"></td>
+                        <td>${formatDate(activo.created_at)}</td>
+                        <td>${activo.actualizador?.nombres || 'N/A'}</td>
+                        <td>${formatDate(activo.updated_at)}</td>
+                        <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}"></td>
                     `;
                     activosTableBody.appendChild(row);
                 });
+                totalActivos.textContent = `Total: ${data.data.length}`;
                 pillsTab.style.display = 'flex';
                 pillsTabContent.style.display = 'block';
             })
             .catch(error => console.error('Error fetching activos:', error));
+
+        consultarMantenimientos();
     });
 
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         if (event.target.classList.contains('icono-editar')) {
             activoId = event.target.getAttribute('data-id');
             if (!activoId) {
@@ -106,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     estadoSelect.value = activo.estado_id;
                     codigoInput.value = activo.activo.serie;
                     cantidadInput.value = activo.cantidad;
-                    
+
                     // ...populate other fields...
 
                     // Clear previous image previews
@@ -116,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     activo.imagenes.forEach(imagen => {
                         const imgContainer = document.createElement('div');
                         imgContainer.classList.add('img-container');
-                        const img = document.createElement('img');                      
+                        const img = document.createElement('img');
                         img.src = `${imagen.imagen}`; // Ensure the full URL is used
                         img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
                         img.style.width = '100px';
@@ -124,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const removeBtn = document.createElement('button');
                         removeBtn.textContent = 'X';
                         removeBtn.classList.add('remove-btn');
-                        removeBtn.addEventListener('click', function() {
+                        removeBtn.addEventListener('click', function () {
                             imgContainer.remove();
                             // Optionally, handle image removal from the server here
                         });
@@ -139,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    guardarActivoBtn.addEventListener('click', function() {
+    guardarActivoBtn.addEventListener('click', function () {
         const url = editMode ? `gestionar-activos/actualizar/${activoId}` : `gestionar-activos/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -157,12 +166,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         fetch(url, {
-                method: "POST", // Always use POST for FormData
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST", // Always use POST for FormData
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -213,14 +222,12 @@ document.addEventListener('DOMContentLoaded', function() {
         imagenesInput.value = ''; // Clear image input
     }
 
-  
-
-    cerarActivoBtn.addEventListener('click', function() {
+    cerarActivoBtn.addEventListener('click', function () {
         editMode = false;
         activoId = null;
         document.getElementById('crearActivoForm').reset();
-        sedeInput.value = sedeSelect.options[sedeSelect.selectedIndex].textContent; 
-        clienteInput.value = clienteSelect.options[clienteSelect.selectedIndex].textContent; 
+        sedeInput.value = sedeSelect.options[sedeSelect.selectedIndex].textContent;
+        clienteInput.value = clienteSelect.options[clienteSelect.selectedIndex].textContent;
         imagenesPreview.innerHTML = ''; // Clear image previews
         imagenesInput.value = ''; // Clear image input
         $(crearActivoModal).modal('show'); // Use jQuery to show the modal
@@ -247,22 +254,22 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error al cargar los activos:', error));
     }
 
-    activoSelect.addEventListener('change', function() {
-        
+    activoSelect.addEventListener('change', function () {
+
         const activoId = this.value;
         fetch(`activo?id=${activoId}`)
-        .then(response => response.json())
-        .then(data => {
-               codigoInput.value = data.serie;                
+            .then(response => response.json())
+            .then(data => {
+                codigoInput.value = data.serie;
             })
             .catch(error => console.error('Error fetching sedes:', error));
-            
+
     });
 
     function cargarEstados() {
         fetch(`estados`)
             .then(response => response.json())
-            .then(estados => {                
+            .then(estados => {
                 const estadoSelect = document.getElementById("estadoActivo");
                 estadoSelect.innerHTML = '<option value="">Seleccione</option>';
                 estados.forEach(estado => {
@@ -271,20 +278,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = estado.nombre;
                     estadoSelect.appendChild(option);
                 });
+
+                // Llenar el select de estados para el filtro de mantenimientos
+                estadoMantenimientoSelect.innerHTML = '<option value="">Todos los estados</option>';
+                estados.forEach(estado => {
+                    const option = document.createElement("option");
+                    option.value = estado.id;
+                    option.textContent = estado.nombre;
+                    estadoMantenimientoSelect.appendChild(option);
+                });
             })
             .catch(error => console.error("Error al cargar los estados:", error));
     }
 
     cargarActivos();
-    cargarEstados()
+    cargarEstados();
 
-    imagenesInput.addEventListener('change', function() {
-        
+    imagenesInput.addEventListener('change', function () {
+
         imagenesPreview.innerHTML = ''; // Clear previous previews
         const dt = new DataTransfer();
         for (const file of imagenesInput.files) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const imgContainer = document.createElement('div');
                 imgContainer.classList.add('img-container');
                 const img = document.createElement('img');
@@ -295,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const removeBtn = document.createElement('button');
                 removeBtn.textContent = 'X';
                 removeBtn.classList.add('remove-btn');
-                removeBtn.addEventListener('click', function() {
+                removeBtn.addEventListener('click', function () {
                     imgContainer.remove();
                     // Remove the file from the input
                     for (const fileItem of imagenesInput.files) {
@@ -314,5 +330,49 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         imagenesInput.files = dt.files; // Update input files
     });
+
+    estadoMantenimientoSelect.addEventListener('change', function () {
+        consultarMantenimientos();
+    });
+
+    function consultarMantenimientos() {
+        const sedeId = sedeSelect.value;
+        const estadoId = estadoMantenimientoSelect.value;
+
+        fetch(`gestionar-activos/obtener-mantenimientos?sede_id=${sedeId}&estado_id=${estadoId}`)
+            .then(response => response.json())
+            .then(data => { console.log(data)
+                if (!Array.isArray(data)) {
+                    throw new Error('Invalid response format');
+                }
+                mantenimientosTableBody.innerHTML = '';
+                data.forEach(mantenimiento => {
+                    const row = document.createElement('tr');
+                    const estadoClase = mantenimiento.estado ? 'estado-activo' : 'estado-inactivo';
+                    console.log(mantenimiento.sedes_activos)
+                    row.innerHTML = `
+                        <td>${mantenimiento.id}</td>
+                        <td>${formatDate(mantenimiento.ultimo_mtto)}</td>
+                        <td>${formatDate(mantenimiento.mtto_programado)}</td>
+                        <td>${mantenimiento.sedes_activos?.activo?.nombre_elemento || 'N/A'}</td>
+                        <td>${mantenimiento.sedes_activos?.cantidad || 'N/A'}</td>
+                        <td>${mantenimiento.estado?.nombre || 'N/A'}</td>
+                        <td><div class="${estadoClase}">${mantenimiento.estado ? 'Activo' : 'Inactivo'}</div></td>
+                        <td>${mantenimiento.sedes_activos?.sede?.nombre || 'N/A'}</td>
+                        <td>${mantenimiento.sedes_activos?.sede?.cliente?.nombre || 'N/A'}</td>
+                        <td>${mantenimiento.creador?.nombres || 'N/A'}</td>
+                        <td>${formatDate(mantenimiento.created_at)}</td>
+                        <td>${mantenimiento.actualizador?.nombres || 'N/A'}</td>
+                        <td>${formatDate(mantenimiento.updated_at)}</td>
+                        <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${mantenimiento.id}"></td>
+                    `;
+                    mantenimientosTableBody.appendChild(row);
+                });
+                totalMantenimientos.textContent = `Total: ${data.length}`;
+            })
+            .catch(error => console.error('Error fetching mantenimientos:', error));
+    }
+
+    document.getElementById('pills-mantenimiento-tab').addEventListener('click', consultarMantenimientos);
 
 });

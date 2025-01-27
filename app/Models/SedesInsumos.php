@@ -10,7 +10,7 @@ class SedesInsumos extends Model
     use HasFactory;
 
     protected $table = 'sedes_insumos';
-    protected $fillable = ['sede_id', 'insumo_id',  'cantidad','estado', 'creador_id', 'actualizador_id'];
+    protected $fillable = ['sede_id', 'insumo_id',  'cantidad','estado', 'creador_id', 'actualizador_id', 'observacion'];
 
     public function insumo()
     {

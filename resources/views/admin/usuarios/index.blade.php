@@ -6,21 +6,22 @@
     <button class="btn-consultar" id="openUserModalBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
             <g id="Grupo_22674" data-name="Grupo 22674" transform="translate(-19 -11.164)">
-                <line id="Línea_338" data-name="Línea 338" y1="15" transform="translate(27.5 12.164)"
+                <line id="Línea_338" data-name="Línea 338" y1="15" transform="translate(27.5 12.164)" fill="none"
+                    stroke="#fff" stroke-linecap="round" stroke-width="2" />
+                <line id="Línea_339" data-name="Línea 339" y1="15" transform="translate(35 19.664) rotate(90)"
                     fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2" />
-                <line id="Línea_339" data-name="Línea 339" y1="15"
-                    transform="translate(35 19.664) rotate(90)" fill="none" stroke="#fff" stroke-linecap="round"
-                    stroke-width="2" />
             </g>
         </svg>
-        Nuevo Usuario</button>
+        Nuevo Usuario
+    </button>
 </div>
 
 <!-- Listado de Usuarios -->
 <div class="listado-container">
     <h2 class="listado-titulo">Listado de Usuarios</h2>
     <!-- Línea divisoria -->
-    <div class="divider"></div>
+    <hr>
+    <!-- <div class="divider"></div> -->
 
     <div class="busqueda-container">
         <div class="input-container">
@@ -88,7 +89,8 @@
                     </div>
                     <div class="col-3">
                         <label for="numeroIdentificacion">Número de Identificación:</label>
-                        <input type="text" id="numeroIdentificacion" name="numeroIdentificacion" class="form-control" required>
+                        <input type="text" id="numeroIdentificacion" name="numeroIdentificacion" class="form-control"
+                            required>
                         <span class="error-message" id="errorNumeroIdentificacion"></span>
                     </div>
                 </div>

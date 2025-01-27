@@ -46,7 +46,7 @@
 /* Botón Nueva Asignación */
 .btn-nuevo {
     text-align: end;
-    /* padding: 2px; */
+    padding: 15px;
 }
 
 .btn-consultar {
@@ -63,7 +63,7 @@
     margin-right: 5px;
 }
 
-/* Contenedor Listado de Turnos */
+/* Contenedor Listado de Inventarios */
 .listado-container {
     background: #FFFFFF;
     box-shadow: 0px 3px 20px #00000029;
@@ -71,7 +71,7 @@
     border-radius: 6px;
 }
 
-/* Título Listado de Turnos */
+/* Título Listado de Inventarios */
 .listado-titulo {
     font: normal normal bold 14px/20px "Neo Sans Std", sans-serif;
     color: #0D0D0D;
@@ -91,23 +91,11 @@
     display: inline-block;
 }
 
-.input-container2 {
-    position: relative;
-    display: inline-block;
-}
-
 .busqueda-input {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border: 1px solid #B7B7B7;
     border-radius: 6px;
     padding-left: 30px; /* Espacio para el ícono */
-    width: 100%;
-}
-.busqueda-select {
-    background: #FFFFFF 0% 0% no-repeat padding-box;
-    border: 1px solid #B7B7B7;
-    border-radius: 6px;
-    padding: 3.5px; /* Espacio para el ícono */
     width: 100%;
 }
 
@@ -140,7 +128,7 @@
     color: #9B9B9B;
 }
 
-/* Tabla de Turnos */
+/* Tabla de Inventarios */
 .tabla-container {
     overflow-x: auto;
 }
@@ -222,7 +210,8 @@
 .modal-content {
     background: #FFFFFF;
     padding: 5px 20px;
-   /*  width: 80%!important; */
+    width: 90%; /* Aumentar el ancho del modal */
+    max-width: 1200px; /* Establecer un ancho máximo */
     border-radius: 10px!important;
     box-shadow: 0px 3px 20px #00000029;
 }
@@ -350,16 +339,8 @@ input:checked + .slider:before {
     max-height: 100px;
 }
 
-.nav-pills {
-    width: auto;
-    display: flex;
-    justify-content: space-between;
-    height: 64px; /* Reduce el alto */
-}
-
 .nav-pills .nav-link {
     width: 170px;
-    height: 48px;
     color: #343434!important;
     background-color: #E8E8E8!important;
     border: none;
@@ -370,15 +351,8 @@ input:checked + .slider:before {
 }
 .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
     color: #EC6F35!important;
-    border-bottom: 5px solid #EC6F35 !important;
+    border-bottom: 5px solid #EC6F35;
 }
-
-.nav-pills .nav-item.ml-auto.align-self-start {
-    margin-left: auto;
-    align-self: flex-start;
-    margin-top: 0;
-}
-
 .estado-activo {
     background: #D2F3D4 0% 0% no-repeat padding-box;
     border-radius: 20px;
@@ -426,4 +400,31 @@ input:checked + .slider:before {
     font-size: 12px;
     line-height: 20px;
     text-align: center;
+}
+
+/* CODIGO NUEVO */
+.selected-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.selected-options .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    color: #4b4e51;
+    border-radius: 5px;
+    border: 2px solid #d5dadf;
+    font-size: 14px;
+}
+
+.selected-options .btn-close {
+    margin-left: 5px;
+    font-size: 14px;
+    color: red;
+    background: none;
+    border: none;
+    cursor: pointer;
 }

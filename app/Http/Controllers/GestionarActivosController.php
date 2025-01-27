@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\SedesActivos;
 use App\Models\ImagenSedeActivo;
+use App\Models\Mantenimiento;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+
+use function Laravel\Prompts\error;
 
 class GestionarActivosController extends Controller
 {
@@ -20,14 +23,14 @@ class GestionarActivosController extends Controller
 
     public function consultar(Request $request)
     {
-        
+
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
         //$estado = $request->input('estado');
 
-        $query = SedesActivos::with(['sede.cliente', 'activo', 'estados', 'creador','actualizador']);
+        $query = SedesActivos::with(['sede.cliente', 'activo', 'estados', 'creador', 'actualizador']);
 
-       /*  if ($buscar) {
+        /*  if ($buscar) {
             $query->where('direccion', 'like', "%{$buscar}%")
                   ->orWhereHas('cliente', function($q) use ($buscar) {
                       $q->where('nombre', 'like', "%{$buscar}%");
@@ -37,7 +40,7 @@ class GestionarActivosController extends Controller
                   });
         } */
 
-       /*  if ($cliente) {
+        /*  if ($cliente) {
             $query->where('cliente_id', $cliente);
         }
 
@@ -88,7 +91,7 @@ class GestionarActivosController extends Controller
 
     public function actualizar(Request $request, $id)
     {
-        
+
         $validatedData = $request->validate([
             'activoSelect' => 'required|exists:activos,id',
             'cantidad' => 'required|integer|min:1',
@@ -101,12 +104,12 @@ class GestionarActivosController extends Controller
 
         $activo->update([
             'sede_id' => $request->sede_id,
-                'activo_id' => $request->activoSelect,
-                'numero_serie' => $request->codigoInput,
-                'cantidad' => $request->cantidad,
-                'estado_id' => $request->estadoActivo,
-                'estado' => $request->estado,
-                'actualizador_id' => Auth::id(),
+            'activo_id' => $request->activoSelect,
+            'numero_serie' => $request->codigoInput,
+            'cantidad' => $request->cantidad,
+            'estado_id' => $request->estadoActivo,
+            'estado' => $request->estado,
+            'actualizador_id' => Auth::id(),
         ]);
 
 
@@ -130,7 +133,28 @@ class GestionarActivosController extends Controller
     public function obtenerActivo(Request $request)
     {
         $id = $request->input('id');
-        $activo = SedesActivos::with('sede.cliente', 'activo', 'estados', 'creador','actualizador', 'imagenes')->findOrFail($id);
+        $activo = SedesActivos::with('sede.cliente', 'activo', 'estados', 'creador', 'actualizador', 'imagenes')->findOrFail($id);
         return response()->json($activo);
+    }
+
+    public function obtenerMantenimientos(Request $request)
+    {
+        try {
+            $sedeId = $request->input('sede_id');
+            $estadoId = $request->input('estado_id');
+
+            $mantenimientos = Mantenimiento::with(['estado', 'creador', 'actualizador', 'sedes_activos.activo', 'sedes_activos.sede.cliente'])
+                ->whereHas('sede', function ($query) use ($sedeId) {
+                    $query->where('sedes.id', $sedeId);
+                })
+                ->when($estadoId, function ($query, $estadoId) {
+                    return $query->where('estado_id', $estadoId);
+                })
+                ->get();
+
+            return response()->json($mantenimientos->toArray());
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error fetching mantenimientos: ' . $e->getMessage()], 500);
+        }
     }
 }

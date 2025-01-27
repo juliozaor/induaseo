@@ -11,7 +11,7 @@ class SedeController extends Controller
 {
     public function guardar(Request $request)
     {
-        
+
         try {
             $validatedData = $request->validate([
                 'nombre' => 'required|string|max:255',

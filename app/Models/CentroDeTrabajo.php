@@ -23,7 +23,7 @@ class CentroDeTrabajo extends Model
 
     public function activos()
     {
-        return $this->hasMany(Activo::class);
+        return $this->hasMany(Activos::class);
     }
 
     public function pedidosDeInsumos()
