@@ -9,9 +9,16 @@ use App\Models\ImagenesActividades;
 use App\Models\SedesActivos;
 use App\Models\SedesInsumos;
 use App\Models\Estados; // Importar el modelo Estados
+use App\Models\Mantenimiento; // Importar el modelo Mantenimientos
+use App\Models\Activos;// Importar el modelo Activo
+use App\Models\Insumos;// Importar el modelo Insumo
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Models\Usuario; // Importar el modelo Usuario
+use App\Models\Sede; // Importar el modelo Sede
+use App\Models\Cliente; // Importar el modelo Cliente
 
 class SeguimientoActividadesController extends Controller
 {
@@ -27,7 +34,7 @@ class SeguimientoActividadesController extends Controller
         // Obtiene todos los estados
         $estados = Estados::all();
 
-        // Retorna la vista con los insumos, activos y estados de las sedes
+        // Retorna la vista con los insumos, activos, estados y mantenimientos de las sedes
         return view('seguimiento-actividades.inventario', compact('sedesInsumos', 'sedesActivos', 'estados'));
     }
 
@@ -157,7 +164,19 @@ class SeguimientoActividadesController extends Controller
             ->where('sede_id', $sedeId)
             ->get();
         /* dd($sedesActivos); */
-        return view('seguimiento-actividades.inventario', compact('sedesActivos', 'sedesInsumos', 'sedeId'));
+        // Obtiene los mantenimientos con estado_id = 3
+        $mantenimientos = Mantenimiento::with('sedeActivo.activo')
+            ->where('estado_id', 3)
+            ->get();
+        /* dd($mantenimientos); */
+        // Obtiene todos los insumos
+        $insumos = Insumos::all();
+
+        // Obtiene todos los activos
+        $activos = Activos::all();
+        // dd($activos);
+        return view('seguimiento-actividades.inventario',
+        compact('sedesActivos', 'sedesInsumos', 'sedeId', 'mantenimientos', 'insumos', 'activos'));
     }
 
     public function finalizarTurno(Request $request)
@@ -199,7 +218,8 @@ class SeguimientoActividadesController extends Controller
         $sedesInsumo = SedesInsumos::with('insumo.estados')->findOrFail($id);
         return response()->json([
             'insumo' => [
-                'estado_id' => $sedesInsumo->insumo->estado_id
+                'estado_id' => $sedesInsumo->insumo->estado_id,
+                'observacion' => $sedesInsumo->observacion
             ]
         ]);
     }
@@ -212,5 +232,167 @@ class SeguimientoActividadesController extends Controller
         } else {
             return response()->json(['error' => 'Insumo no encontrado'], 404);
         }
+    }
+
+    public function actualizarActivo(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:sedes_activos,id',
+            'estado_id' => 'required|exists:estados,id',
+            'observacion' => 'nullable|string',
+        ]);
+
+        $activo = SedesActivos::find($request->id);
+        $activo->observacion = $request->observacion;
+        $activo->save();
+
+        $activoModel = $activo->activo;
+        $activoModel->estado_id = $request->estado_id;
+        $activoModel->save();
+
+        return response()->json(['message' => 'Activo actualizado correctamente']);
+    }
+
+    public function obtenerActivo($id)
+    {
+        $activo = SedesActivos::with('activo')->find($id);
+        if ($activo) {
+            return response()->json(['activo' => $activo]);
+        }
+
+        return response()->json(['message' => 'Activo no encontrado'], 404);
+    }
+
+    public function obtenerObservacionesActivo($id)
+    {
+        $activo = SedesActivos::find($id);
+        if ($activo) {
+            return response()->json(['observacion' => $activo->observacion]);
+        }
+
+        return response()->json(['message' => 'Activo no encontrado'], 404);
+    }
+
+    // Función para reportar un activo
+    public function reportarActivo(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:sedes_activos,id',
+            'estado_id' => 'required|exists:estados,id',
+            'observacion' => 'required|string',
+        ]);
+
+        $activo = SedesActivos::find($request->id);
+        if ($activo) {
+            // Actualizar el estado y la observación del activo
+            $activo->estado_id = $request->estado_id;
+            $activo->observacion = $request->observacion;
+            $activo->save();
+
+            // Crear un nuevo registro en la tabla de mantenimientos
+            Mantenimiento::create([
+                'estado_id' => $request->estado_id,
+                'sede_activo_id' => $activo->id,
+                'observaciones_reportadas' => $request->observacion,
+                'estado' => 1,
+                'creador_id' => Auth::id(),
+            ]);
+
+            return response()->json(['message' => 'Activo reportado y registrado en mantenimientos correctamente']);
+        }
+
+        return response()->json(['message' => 'Activo no encontrado'], 404);
+    }
+
+    // Función para manejar la solicitud de insumo/activo
+    public function solicitarInsumoActivo(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|integer',
+            'cantidad' => 'required|integer',
+            'observaciones' => 'nullable|string',
+            'tipo' => 'required|string|in:insumo,activo', // Validar el tipo de solicitud
+            'sedeId' => 'required|exists:sedes,id',
+        ]);
+        // dd($request->all());
+
+
+        $cantidad = $request->input('cantidad');
+        $observaciones = $request->input('observaciones');
+        $tipo = $request->input('tipo');
+        $usuario = Auth::user()->nombres;
+        $sedes = Sede::with('cliente')->find($request->input('sedeId'));
+        $sede = $sedes->nombre;
+        $cliente = $sedes->cliente->nombre;
+        // Llamar a la función para enviar el correo
+        if ($tipo === 'insumo') {
+            $nombre = Insumos::find($request->input('id'))->nombre_elemento;
+            //dd($cliente, $sede, $usuario, $observaciones, $nombre, $cantidad, $tipo);
+            $this->enviarSolicitudCorreoInsumo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente);
+        } else {
+            $nombre = Activos::find($request->input('id'))->nombre_elemento;
+            //dd($cliente, $sede, $usuario, $observaciones, $nombre, $cantidad, $tipo);
+            $this->enviarSolicitudCorreoActivo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente);
+        }
+
+        return response()->json(['message' => 'Solicitud enviada correctamente']);
+    }
+
+    // Función para enviar correo de solicitud de insumo a los administradores
+    public function enviarSolicitudCorreoInsumo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente)
+    {
+        // Obtener los correos de los usuarios con rol de Administrador
+        $administradores = Usuario::whereHas('roles', function($query) {
+            $query->where('name', 'Administrador');
+        })->pluck('email');
+
+        // Datos del correo
+        $data = [
+            'nombre' => $nombre,
+            'cantidad' => $cantidad,
+            'observaciones' => $observaciones,
+            'usuario' => $usuario,
+            'sede' => $sede,
+            'cliente' => $cliente,
+        ];
+
+        // Enviar el correo a cada administrador
+        foreach ($administradores as $email) {
+            Mail::send('emails.solicitud_insumo', $data, function($message) use ($email) {
+                $message->to($email)
+                        ->subject('Solicitud de Insumo');
+            });
+        }
+
+        return response()->json(['message' => 'Correo de solicitud de insumo enviado correctamente']);
+    }
+
+    // Función para enviar correo de solicitud de activo a los administradores
+    public function enviarSolicitudCorreoActivo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente)
+    {
+        // Obtener los correos de los usuarios con rol de Administrador
+        $administradores = Usuario::whereHas('roles', function($query) {
+            $query->where('name', 'Administrador');
+        })->pluck('email');
+
+        // Datos del correo
+        $data = [
+            'nombre' => $nombre,
+            'cantidad' => $cantidad,
+            'observaciones' => $observaciones,
+            'usuario' => $usuario,
+            'sede' => $sede,
+            'cliente' => $cliente,
+        ];
+
+        // Enviar el correo a cada administrador
+        foreach ($administradores as $email) {
+            Mail::send('emails.solicitud_activo', $data, function($message) use ($email) {
+                $message->to($email)
+                        ->subject('Solicitud de Activo');
+            });
+        }
+
+        return response()->json(['message' => 'Correo de solicitud de activo enviado correctamente']);
     }
 }

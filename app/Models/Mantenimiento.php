@@ -46,4 +46,9 @@ class Mantenimiento extends Model
     {
         return $this->hasOneThrough(Sede::class, SedesActivos::class, 'id', 'id', 'sede_activo_id', 'sede_id');
     }
+
+    public function sedeActivo()
+    {
+        return $this->belongsTo(SedesActivos::class, 'sede_activo_id');
+    }
 }

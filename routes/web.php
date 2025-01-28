@@ -72,6 +72,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gestionar-inventario/obtener', [GestionarInventarioController::class, 'obtenerInventario'])->name('gestionar.inventario.obtener');
     Route::get('/sedes', [GestionarInventarioController::class, 'getSedes'])->name('sedes.obtener');
     Route::get('/obtener-sede', [SedeController::class, 'obtenerSede'])->name('obtener.sede');
+    Route::get('/inventario', [SeguimientoActividadesController::class, 'inventario'])->name('inventario');
+    Route::post('/solicitar-insumo-activo', [SeguimientoActividadesController::class, 'solicitarInsumoActivo'])->name('solicitar.insumo.activo');
     // ...other routes...
 });
 /*
@@ -159,8 +161,11 @@ Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obt
 Route::get('/get-clientes', [GestionarActivosController::class, 'getClientes']);
 Route::get('/get-sedes', [GestionarActivosController::class, 'getSedes']);
 
-// Add route for updating insumo status and observation
+// Add route for updating insumo quantity and observation
 Route::post('/actualizar-insumo', [SeguimientoActividadesController::class, 'actualizarInsumo'])->name('actualizar.insumo');
+
+// Add route for updating activo quantity and observation
+Route::post('/actualizar-activo', [SeguimientoActividadesController::class, 'actualizarActivo'])->name('actualizar.activo');
 
 Route::get('/actividades-turno', [SeguimientoActividadesController::class, 'obtenerActividades'])->name('actividades.turno');
 Route::get('/inventario-turno', [SeguimientoActividadesController::class, 'obtenerInventarios'])->name('inventarios.turno');
@@ -174,5 +179,13 @@ Route::get('/estados', [SeguimientoActividadesController::class, 'obtenerEstados
 Route::get('/obtener-observaciones/{id}', [SeguimientoActividadesController::class, 'obtenerObservaciones'])->name('obtener.observaciones');
 
 Route::get('/obtener-insumo/{id}', [SeguimientoActividadesController::class, 'obtenerInsumo'])->name('obtener.insumo');
+
+Route::post('/actualizar/activo', [SeguimientoActividadesController::class, 'actualizarActivo'])->name('actualizar.activo');
+Route::get('/obtener/activo/{id}', [SeguimientoActividadesController::class, 'obtenerActivo'])->name('obtener.activo');
+Route::get('/obtener/observaciones/activo/{id}', [SeguimientoActividadesController::class, 'obtenerObservacionesActivo'])->name('obtener.observaciones.activo');
+
+Route::post('/reportar/activo', [SeguimientoActividadesController::class, 'reportarActivo'])->name('reportar.activo');
+
+Route::get('/mantenimientos', [SeguimientoActividadesController::class, 'obtenerMantenimientos'])->name('obtener.mantenimientos');
 
 /* Route::get('/home', [HomeController::class, 'index'])->name('home'); */
