@@ -119,7 +119,7 @@
                                             <img src="{{ $sedesActivo->activo->imagen }}"
                                                 alt="{{ $sedesActivo->activo->nombre_elemento }}" class="img-fluid">
                                         </div>
-                                        <p>Estado: {{ optional($sedesActivo->activo->estados)->nombre }}</p>
+                                        <p>Estado: {{ optional($sedesActivo->estados)->nombre }}</p>
                                         <p>Serie: {{ $sedesActivo->activo->serie }}</p>
                                         {{-- <p>Cantidad: {{ $sedesActivo->cantidad }}</p> --}}
                                         <div class="form-group">
@@ -147,53 +147,26 @@
         </div>
         {{-- Inv Salida --}}
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <div class="d-flex justify-content-end align-items-center" style="margin-right: 10px;">
+                <button type="button" class="btn btn-primary" id="solicitarBtn" onclick="solicitarItems({{ $sedeId }})">
+                    Solicitar
+                </button>
+            </div>
             <div class="contenedor-actividades">
                 @if ($insumos->isNotEmpty())
                     <h3 style="margin-left: 10px;">Insumos</h3>
                     @foreach ($insumos as $index => $insumo)
-                        <!-- Enlace para abrir el modal de insumo -->
-                        <a class="item-actividad" href="#" data-toggle="modal"
-                            data-target="#salidaModalInsumo{{ $insumo->id }}">
-                            <div class="contenedor-actividad">
-                                <span><img src="{{ $insumo->imagen }}"
-                                        alt="{{ $insumo->nombre_elemento }}"
-                                        class="imagen-insumo">{{ $insumo->nombre_elemento }}</span> <span
-                                    class="flecha">></span>
-                            </div>
-                        </a>
-                        <!-- Modal de insumo -->
-                        <div class="modal fade" id="salidaModalInsumo{{ $insumo->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="actividadModalLabel{{ $insumo->id }}" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="actividadModalLabel{{ $insumo->id }}">
-                                            {{ $insumo->nombre_elemento }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="contenedor-imagen-modal">
-                                            <img src="{{ $insumo->imagen }}"
-                                                alt="{{ $insumo->nombre_elemento }}" class="img-fluid">
-                                        </div>
-                                        <p>Estado: {{ optional($insumo->estados)->nombre }}</p>
-                                        <div class="form-group">
-                                            <label for="cantidadIns{{ $insumo->id }}">Cantidad</label>
-                                            <input type="number" class="form-control" id="cantidadIns{{ $insumo->id }}" min="0">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="observacionesSalidaIns{{ $insumo->id }}">Observaciones</label>
-                                            <textarea class="form-control" id="observacionesSalidaIns{{ $insumo->id }}" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="solicitarBtn{{ $insumo->id }}"
-                                            onclick="solicitarInsumo({{ $insumo->id }}, {{ $sedeId }})">
-                                            Solicitar
-                                        </button>
-                                    </div>
+                        <!-- Insumos -->
+                        <div class="item-actividad">
+                            <div class="contenedor-actividad d-flex justify-content-between align-items-center">
+                                <span>
+                                    <img src="{{ $insumo->imagen }}" alt="{{ $insumo->nombre_elemento }}" class="imagen-insumo">
+                                        {{ $insumo->nombre_elemento }}
+                                </span>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" id="CanInsumoSal{{ $insumo->id }}"
+                                    class="form-control" placeholder="Cantidad" min="0" style="width: 150px; margin-left: 10px; margin-right: 10px;">
+                                    <input type="checkbox" id="CheckInsumoSal{{ $insumo->id }}" style="margin-left: 10px;">
                                 </div>
                             </div>
                         </div>
@@ -203,47 +176,17 @@
                 @if ($activos->isNotEmpty())
                     <h3 style="margin-left: 10px;">Activos</h3>
                     @foreach ($activos as $index => $activo)
-                        <!-- Enlace para abrir el modal de activo -->
-                        <a class="item-actividad" href="#" data-toggle="modal"
-                            data-target="#salidaModalActivo{{ $activo->id }}">
-                            <div class="contenedor-actividad">
-                                <span><img src="{{ $activo->imagen }}"
-                                        alt="{{ $activo->nombre_elemento }}"
-                                        class="imagen-insumo">{{ $activo->nombre_elemento }}</span> <span
-                                    class="flecha">></span>
-                            </div>
-                        </a>
-                        <!-- Modal de activo -->
-                        <div class="modal fade" id="salidaModalActivo{{ $activo->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="actividadModalLabelAct{{ $activo->id }}" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="actividadModalLabelAct{{ $activo->id }}">
-                                            {{ $activo->nombre_elemento }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="contenedor-imagen-modal">
-                                            <img src="{{ $activo->imagen }}"
-                                                alt="{{ $activo->nombre_elemento }}" class="img-fluid">
-                                        </div>
-                                        <p>Estado: {{ optional($activo->estados)->nombre }}</p>
-                                        <div class="form-group">
-                                            <label for="cantidadAct{{ $activo->id }}">Cantidad</label>
-                                            <input type="number" class="form-control" id="cantidadAct{{ $activo->id }}" min="0">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="observacionesSalidaAct{{ $activo->id }}">Observaciones</label>
-                                            <textarea class="form-control" id="observacionesSalidaAct{{ $activo->id }}" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="solicitarBtn{{ $activo->id }}"
-                                            onclick="solicitarActivo({{ $activo->id }}, {{ $sedeId }})">Solicitar</button>
-                                    </div>
+                        <!-- Activos -->
+                        <div class="item-actividad">
+                            <div class="contenedor-actividad d-flex justify-content-between align-items-center">
+                                <span>
+                                    <img src="{{ $activo->imagen }}" alt="{{ $activo->nombre_elemento }}" class="imagen-insumo">
+                                    {{ $activo->nombre_elemento }}
+                                </span>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" id="CanActivoSal{{ $activo->id }}"
+                                    class="form-control" placeholder="Cantidad" min="0" style="width: 150px; margin-left: 10px; margin-right: 10px;">
+                                    <input type="checkbox" id="CheckActivoSal{{ $activo->id }}" style="margin-left: 10px;">
                                 </div>
                             </div>
                         </div>
@@ -585,5 +528,62 @@
             // Reiniciar valor del input de cantidad y textarea de observaciones
         });
 
+        function solicitarItems(sedeId) {
+            const items = [];
+            // Collect checked insumos
+            @foreach ($insumos as $insumo)
+                {
+                    const checkInsumo{{ $insumo->id }} = document.getElementById('CheckInsumoSal{{ $insumo->id }}');
+                    if (checkInsumo{{ $insumo->id }}.checked) {
+                        const cantidadInsumo{{ $insumo->id }} = document.getElementById('CanInsumoSal{{ $insumo->id }}').value;
+                        items.push({
+                            id: {{ $insumo->id }},
+                            nombre: '{{ $insumo->nombre_elemento }}',
+                            cantidad: cantidadInsumo{{ $insumo->id }},
+                            tipo: 'insumo'
+                        });
+                    }
+                }
+            @endforeach
+
+            // Collect checked activos
+            @foreach ($activos as $activo)
+                {
+                    const checkActivo{{ $activo->id }} = document.getElementById('CheckActivoSal{{ $activo->id }}');
+                    if (checkActivo{{ $activo->id }}.checked) {
+                        const cantidadActivo{{ $activo->id }} = document.getElementById('CanActivoSal{{ $activo->id }}').value;
+                        items.push({
+                            id: {{ $activo->id }},
+                            nombre: '{{ $activo->nombre_elemento }}',
+                            cantidad: cantidadActivo{{ $activo->id }},
+                            tipo: 'activo'
+                        });
+                    }
+                }
+            @endforeach
+
+            // Enviar los items al servidor
+            fetch(`{{ route('enviar.solicitud.items') }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ items: items, sedeId: {{ $sedeId }} })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al enviar la solicitud de items: ' + error.message);
+            });
+        }
     </script>
 @endpush

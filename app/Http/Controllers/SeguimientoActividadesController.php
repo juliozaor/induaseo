@@ -10,8 +10,8 @@ use App\Models\SedesActivos;
 use App\Models\SedesInsumos;
 use App\Models\Estados; // Importar el modelo Estados
 use App\Models\Mantenimiento; // Importar el modelo Mantenimientos
-use App\Models\Activos;// Importar el modelo Activo
-use App\Models\Insumos;// Importar el modelo Insumo
+use App\Models\Activos; // Importar el modelo Activo
+use App\Models\Insumos; // Importar el modelo Insumo
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -117,7 +117,7 @@ class SeguimientoActividadesController extends Controller
 
         $supervisorTurno = SupervisorTurno::with(['supervisor', 'sede', 'turno.actividades'])
             ->where('supervisor_id', $userId)
-            ->whereHas('turno', function($query) use ($turnoId) {
+            ->whereHas('turno', function ($query) use ($turnoId) {
                 $query->where('id', $turnoId);
             })
             ->first();
@@ -175,8 +175,10 @@ class SeguimientoActividadesController extends Controller
         // Obtiene todos los activos
         $activos = Activos::all();
         // dd($activos);
-        return view('seguimiento-actividades.inventario',
-        compact('sedesActivos', 'sedesInsumos', 'sedeId', 'mantenimientos', 'insumos', 'activos'));
+        return view(
+            'seguimiento-actividades.inventario',
+            compact('sedesActivos', 'sedesInsumos', 'sedeId', 'mantenimientos', 'insumos', 'activos')
+        );
     }
 
     public function finalizarTurno(Request $request)
@@ -243,6 +245,7 @@ class SeguimientoActividadesController extends Controller
         ]);
 
         $activo = SedesActivos::find($request->id);
+        $activo->estado_id = $request->estado_id;
         $activo->observacion = $request->observacion;
         $activo->save();
 
@@ -284,10 +287,15 @@ class SeguimientoActividadesController extends Controller
 
         $activo = SedesActivos::find($request->id);
         if ($activo) {
-            // Actualizar el estado y la observación del activo
+            // Actualizar el estado y la observación del activo en sedes_activos
             $activo->estado_id = $request->estado_id;
             $activo->observacion = $request->observacion;
             $activo->save();
+
+            // Actualizar el estado del activo en activos
+            $activoModel = $activo->activo;
+            $activoModel->estado_id = $request->estado_id;
+            $activoModel->save();
 
             // Crear un nuevo registro en la tabla de mantenimientos
             Mantenimiento::create([
@@ -342,7 +350,7 @@ class SeguimientoActividadesController extends Controller
     public function enviarSolicitudCorreoInsumo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente)
     {
         // Obtener los correos de los usuarios con rol de Administrador
-        $administradores = Usuario::whereHas('roles', function($query) {
+        $administradores = Usuario::whereHas('roles', function ($query) {
             $query->where('name', 'Administrador');
         })->pluck('email');
 
@@ -358,9 +366,9 @@ class SeguimientoActividadesController extends Controller
 
         // Enviar el correo a cada administrador
         foreach ($administradores as $email) {
-            Mail::send('emails.solicitud_insumo', $data, function($message) use ($email) {
+            Mail::send('emails.solicitud_insumo', $data, function ($message) use ($email) {
                 $message->to($email)
-                        ->subject('Solicitud de Insumo');
+                    ->subject('Solicitud de Insumo');
             });
         }
 
@@ -371,7 +379,7 @@ class SeguimientoActividadesController extends Controller
     public function enviarSolicitudCorreoActivo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente)
     {
         // Obtener los correos de los usuarios con rol de Administrador
-        $administradores = Usuario::whereHas('roles', function($query) {
+        $administradores = Usuario::whereHas('roles', function ($query) {
             $query->where('name', 'Administrador');
         })->pluck('email');
 
@@ -387,12 +395,49 @@ class SeguimientoActividadesController extends Controller
 
         // Enviar el correo a cada administrador
         foreach ($administradores as $email) {
-            Mail::send('emails.solicitud_activo', $data, function($message) use ($email) {
+            Mail::send('emails.solicitud_activo', $data, function ($message) use ($email) {
                 $message->to($email)
-                        ->subject('Solicitud de Activo');
+                    ->subject('Solicitud de Activo');
             });
         }
 
         return response()->json(['message' => 'Correo de solicitud de activo enviado correctamente']);
+    }
+
+    // Función para enviar la solicitud de items por correo
+    public function enviarSolicitudItems(Request $request)
+    {
+        // Validar los datos recibidos
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.id' => 'required|integer',
+            'items.*.nombre' => 'required|string',
+            'items.*.cantidad' => 'required|integer',
+            'items.*.tipo' => 'required|string|in:insumo,activo',
+        ]);
+
+        // Obtener los correos de los usuarios con rol de Administrador
+        $administradores = Usuario::whereHas('roles', function ($query) {
+            $query->where('name', 'Administrador');
+        })->pluck('email');
+        $sedes = Sede::with('cliente')->find($request->input('sedeId'));
+        $cliente = $sedes->cliente->nombre;
+        // Datos del correo
+        $data = [
+            'items' => $request->items,
+            'usuario' => Auth::user()->nombres,
+            'sede' => $sedes->nombre,
+            'cliente' => $sedes->cliente->nombre,
+        ];
+
+        // Enviar el correo a cada administrador
+        foreach ($administradores as $email) {
+            Mail::send('emails.solicitud', $data, function ($message) use ($email) {
+                $message->to($email)
+                    ->subject('Solicitud de Items');
+            });
+        }
+
+        return response()->json(['message' => 'Solicitud de items enviada correctamente']);
     }
 }
