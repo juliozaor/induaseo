@@ -20,6 +20,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GestionarInventarioController;
+use App\Http\Controllers\InformacionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,12 +33,12 @@ use App\Http\Controllers\GestionarInventarioController;
 |
 */
 
-Route::get('/welcome', function () {
-    return view('welcome');
-})->name('welcome')->middleware('guest');
+/* Route::get('/login', function () {
+    return view('login');
+})->name('login')->middleware('guest'); */
 
 Route::get('/', function () {
-    return redirect()->route('welcome');
+    return redirect()->route('login');
 });
 
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login')->middleware('guest');
@@ -52,7 +53,7 @@ Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('p
 // Ruta para logout
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect('/welcome'); // Redirige a la página de bienvenida o login después de salir
+    return redirect('/login'); // Redirige a la página de bienvenida o login después de salir
 })->name('logout');
 
 Route::middleware(['auth'])->group(function () {
@@ -74,6 +75,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/obtener-sede', [SedeController::class, 'obtenerSede'])->name('obtener.sede');
     Route::get('/inventario', [SeguimientoActividadesController::class, 'inventario'])->name('inventario');
     Route::post('/solicitar-insumo-activo', [SeguimientoActividadesController::class, 'solicitarInsumoActivo'])->name('solicitar.insumo.activo');
+    Route::get('/admin/informacion', [InformacionController::class, 'index'])->name('admin.informacion.index');
+    Route::post('/admin/informacion', [InformacionController::class, 'cargarInformacion'])->name('admin.informacion.cargar');
+    Route::post('/informacion/guardar', [InformacionController::class, 'guardar'])->name('informacion.guardar');
+    Route::get('/informacion', [InformacionController::class, 'obtenerInformacion'])->name('informacion.obtener');
+    Route::put('/informacion/actualizar/{id}', [InformacionController::class, 'actualizar'])->name('informacion.actualizar');
     // ...other routes...
 });
 /*
@@ -160,6 +166,9 @@ Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obt
 // Add routes for clientes and sedes
 Route::get('/get-clientes', [GestionarActivosController::class, 'getClientes']);
 Route::get('/get-sedes', [GestionarActivosController::class, 'getSedes']);
+
+Route::get('/tipos-multimedia', [InformacionController::class, 'getTiposMultimedia']);
+Route::get('/categorias', [InformacionController::class, 'Categorias']);
 
 // Add route for updating insumo quantity and observation
 Route::post('/actualizar-insumo', [SeguimientoActividadesController::class, 'actualizarInsumo'])->name('actualizar.insumo');
