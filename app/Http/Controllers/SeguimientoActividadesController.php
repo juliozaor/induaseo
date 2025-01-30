@@ -312,98 +312,6 @@ class SeguimientoActividadesController extends Controller
         return response()->json(['message' => 'Activo no encontrado'], 404);
     }
 
-    // Función para manejar la solicitud de insumo/activo
-    public function solicitarInsumoActivo(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|integer',
-            'cantidad' => 'required|integer',
-            'observaciones' => 'nullable|string',
-            'tipo' => 'required|string|in:insumo,activo', // Validar el tipo de solicitud
-            'sedeId' => 'required|exists:sedes,id',
-        ]);
-        // dd($request->all());
-
-
-        $cantidad = $request->input('cantidad');
-        $observaciones = $request->input('observaciones');
-        $tipo = $request->input('tipo');
-        $usuario = Auth::user()->nombres;
-        $sedes = Sede::with('cliente')->find($request->input('sedeId'));
-        $sede = $sedes->nombre;
-        $cliente = $sedes->cliente->nombre;
-        // Llamar a la función para enviar el correo
-        if ($tipo === 'insumo') {
-            $nombre = Insumos::find($request->input('id'))->nombre_elemento;
-            //dd($cliente, $sede, $usuario, $observaciones, $nombre, $cantidad, $tipo);
-            $this->enviarSolicitudCorreoInsumo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente);
-        } else {
-            $nombre = Activos::find($request->input('id'))->nombre_elemento;
-            //dd($cliente, $sede, $usuario, $observaciones, $nombre, $cantidad, $tipo);
-            $this->enviarSolicitudCorreoActivo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente);
-        }
-
-        return response()->json(['message' => 'Solicitud enviada correctamente']);
-    }
-
-    // Función para enviar correo de solicitud de insumo a los administradores
-    public function enviarSolicitudCorreoInsumo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente)
-    {
-        // Obtener los correos de los usuarios con rol de Administrador
-        $administradores = Usuario::whereHas('roles', function ($query) {
-            $query->where('name', 'Administrador');
-        })->pluck('email');
-
-        // Datos del correo
-        $data = [
-            'nombre' => $nombre,
-            'cantidad' => $cantidad,
-            'observaciones' => $observaciones,
-            'usuario' => $usuario,
-            'sede' => $sede,
-            'cliente' => $cliente,
-        ];
-
-        // Enviar el correo a cada administrador
-        foreach ($administradores as $email) {
-            Mail::send('emails.solicitud_insumo', $data, function ($message) use ($email) {
-                $message->to($email)
-                    ->subject('Solicitud de Insumo');
-            });
-        }
-
-        return response()->json(['message' => 'Correo de solicitud de insumo enviado correctamente']);
-    }
-
-    // Función para enviar correo de solicitud de activo a los administradores
-    public function enviarSolicitudCorreoActivo($nombre, $cantidad, $observaciones, $usuario, $sede, $cliente)
-    {
-        // Obtener los correos de los usuarios con rol de Administrador
-        $administradores = Usuario::whereHas('roles', function ($query) {
-            $query->where('name', 'Administrador');
-        })->pluck('email');
-
-        // Datos del correo
-        $data = [
-            'nombre' => $nombre,
-            'cantidad' => $cantidad,
-            'observaciones' => $observaciones,
-            'usuario' => $usuario,
-            'sede' => $sede,
-            'cliente' => $cliente,
-        ];
-
-        // Enviar el correo a cada administrador
-        foreach ($administradores as $email) {
-            Mail::send('emails.solicitud_activo', $data, function ($message) use ($email) {
-                $message->to($email)
-                    ->subject('Solicitud de Activo');
-            });
-        }
-
-        return response()->json(['message' => 'Correo de solicitud de activo enviado correctamente']);
-    }
-
     // Función para enviar la solicitud de items por correo
     public function enviarSolicitudItems(Request $request)
     {
@@ -439,5 +347,24 @@ class SeguimientoActividadesController extends Controller
         }
 
         return response()->json(['message' => 'Solicitud de items enviada correctamente']);
+    }
+
+    public function activoReportado($id)
+    {
+        $reportado = Mantenimiento::where('sede_activo_id', $id)->exists();
+        return response()->json(['reportado' => $reportado]);
+    }
+
+    public function obtenerDatosMantenimiento($id)
+    {
+        $mantenimiento = Mantenimiento::find($id);
+        if ($mantenimiento) {
+            return response()->json([
+                'observaciones_reportadas' => $mantenimiento->observaciones_reportadas,
+                'mtto_programado' => $mantenimiento->mtto_programado
+            ]);
+        }
+
+        return response()->json(['message' => 'Mantenimiento no encontrado'], 404);
     }
 }

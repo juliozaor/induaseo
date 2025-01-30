@@ -199,4 +199,6 @@ Route::get('/mantenimientos', [SeguimientoActividadesController::class, 'obtener
 
 Route::post('/enviar-solicitud-items', [SeguimientoActividadesController::class, 'enviarSolicitudItems'])->name('enviar.solicitud.items');
 
-/* Route::get('/home', [HomeController::class, 'index'])->name('home'); */
+Route::get('/activo-reportado/{id}', [SeguimientoActividadesController::class, 'activoReportado'])->name('activo.reportado');
+
+Route::get('/obtener-datos-mantenimiento/{id}', [SeguimientoActividadesController::class, 'obtenerDatosMantenimiento'])->name('obtener.datos.mantenimiento');

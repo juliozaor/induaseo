@@ -98,8 +98,7 @@
                                         alt="{{ $sedesActivo->activo->nombre_elemento }}"
                                         class="imagen-insumo">
                                         {{ $sedesActivo->activo->nombre_elemento }} - {{ $sedesActivo->activo->serie }}
-                                    </span> <span
-                                    class="flecha">></span>
+                                    </span> <span class="flecha">></span>
                             </div>
                         </a>
                         <!-- Modal de activo -->
@@ -136,7 +135,10 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-primary" id="guardarBtn{{ $sedesActivo->id }}" onclick="actualizarActivo({{ $sedesActivo->id }})">Guardar</button>
-                                        <button type="button" class="btn btn-danger" id="reportarBtn{{ $sedesActivo->id }}" style="display: none;" onclick="reportarActivo({{ $sedesActivo->id }})">Reportar</button>
+                                        <button type="button" class="btn btn-danger" id="reportarBtn{{ $sedesActivo->id }}" style="display: none;"
+                                            onclick="reportarActivo({{ $sedesActivo->id }})" disabled="true">
+                                            Reportar
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -200,17 +202,20 @@
                 @if ($mantenimientos->isNotEmpty())
                     @foreach ($mantenimientos as $mantenimiento)
                         <!-- Item de mantenimiento de activo -->
-                        <div class="item-actividad" href="#">
+                        <div class="item-actividad">
                             <div class="contenedor-actividad">
-                                <span><img src="{{ $mantenimiento->sedeActivo->activo->imagen }}"
-                                        alt="{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}"
-                                        class="imagen-insumo">{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}</span>
+                                <span>
+                                    <img src="{{ $mantenimiento->sedeActivo->activo->imagen }}"
+                                    alt="{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}"
+                                    class="imagen-insumo">
+                                    {{ $mantenimiento->sedeActivo->activo->nombre_elemento }}
+                                </span>
                                 <div class="iconos">
-                                    <span class="icono" data-toggle="modal" data-target="#mantenimientoModal{{ $mantenimiento->sedeActivo->id }}">
+                                    <span class="icono" data-toggle="modal" data-target="#mantenimientoModal{{ $mantenimiento->id }}">
                                         <img src="{{ asset('assets/icons/editar.png') }}" alt="Editar"
                                         style="width: 28px; height: 28px;">
                                     </span>
-                                    <span class="icono">
+                                    <span class="icono" data-toggle="modal" data-target="#finalModal{{ $mantenimiento->id }}">
                                         <img src="{{ asset('assets/icons/finalizar.png') }}" alt="Finalizar"
                                         style="width: 28px; height: 28px; margin-left: 15px;">
                                     </span>
@@ -218,12 +223,12 @@
                             </div>
                         </div>
                         <!-- Modal de mantenimiento de activo -->
-                        <div class="modal fade" id="mantenimientoModal{{ $mantenimiento->sedeActivo->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="actividadModalLabel{{ $mantenimiento->sedeActivo->id }}" aria-hidden="true">
+                        <div class="modal fade" id="mantenimientoModal{{ $mantenimiento->id }}" tabindex="-1" role="dialog"
+                            aria-labelledby="mantenimientoModalLabel{{ $mantenimiento->id }}" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="actividadModalLabel{{ $mantenimiento->sedeActivo->id }}">
+                                        <h5 class="modal-title" id="mantenimientoModalLabel{{ $mantenimiento->id }}">
                                             {{ $mantenimiento->sedeActivo->activo->nombre_elemento }}</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -234,23 +239,57 @@
                                             <img src="{{ $mantenimiento->sedeActivo->activo->imagen }}"
                                                 alt="{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}" class="img-fluid">
                                         </div>
-                                        <p>Tipo: {{ optional($mantenimiento->sedeActivo->activo->estados)->nombre }}</p>
-                                        <p>Cantidad: {{ $mantenimiento->sedeActivo->cantidad }}</p>
+                                        <p>Estado: {{ optional($mantenimiento->sedeActivo->estados)->nombre }}</p>
                                         <div class="form-group">
-                                            <label for="novedades{{ $mantenimiento->sedeActivo->id }}">Novedades</label>
-                                            <select class="form-control" id="novedades{{ $mantenimiento->sedeActivo->id }}"
-                                                onchange="toggleButton(this, {{ $mantenimiento->sedeActivo->id }})">
-                                                <!-- Opciones se llenarán dinámicamente -->
-                                            </select>
+                                            <label for="fecha{{ $mantenimiento->id }}">Fecha mantenimiento</label>
+                                            <input type="date" class="form-control" id="fecha{{ $mantenimiento->id }}">
                                         </div>
                                         <div class="form-group">
-                                            <label for="observaciones{{ $mantenimiento->sedeActivo->id }}">Observaciones</label>
-                                            <textarea class="form-control" id="observaciones{{ $mantenimiento->sedeActivo->id }}" rows="3"></textarea>
+                                            <label for="observacionesMant{{ $mantenimiento->id }}">Observaciones</label>
+                                            <textarea class="form-control" id="observacionesMant{{ $mantenimiento->id }}" rows="3"></textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="guardarBtn{{ $mantenimiento->sedeActivo->id }}">Guardar</button>
-                                        <button type="button" class="btn btn-danger" id="reportarBtn{{ $mantenimiento->sedeActivo->id }}" style="display: none;" onclick="reportarActivo({{ $mantenimiento->sedeActivo->id }})">Reportar</button>
+                                        <button type="button" class="btn btn-primary" id="programarBtn{{ $mantenimiento->id }}">
+                                            Programar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal de finalización de mantenimiento -->
+                        <div class="modal fade" id="finalModal{{ $mantenimiento->id }}" tabindex="-1" role="dialog"
+                            aria-labelledby="finalModalLabel{{ $mantenimiento->id }}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="finalModalLabel{{ $mantenimiento->id }}">
+                                            {{ $mantenimiento->sedeActivo->activo->nombre_elemento }}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="contenedor-imagen-modal">
+                                            <img src="{{ $mantenimiento->sedeActivo->activo->imagen }}"
+                                                alt="{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}" class="img-fluid">
+                                        </div>
+                                        {{-- <p>Estado: {{ optional($mantenimiento->sedeActivo->estados)->nombre }}</p> --}}
+                                        <div class="form-group">
+                                            <label for="novedades{{ $mantenimiento->id }}">Estado</label>
+                                            <select class="form-control" id="novedadesF{{ $mantenimiento->id }}">
+                                                <!-- Opciones se llenarán dinámicamente -->
+                                            </select>{{-- onchange="toggleButton(this, {{ $sedesInsumo->id }})" --}}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="observacionesMant{{ $mantenimiento->id }}">Observaciones</label>
+                                            <textarea class="form-control" id="observacionesMantF{{ $mantenimiento->id }}" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" id="finalizarBtn{{ $mantenimiento->id }}">
+                                            Finalizar
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -380,80 +419,6 @@
             });
         }
 
-        // Función para solicitar un insumo
-        function solicitarInsumo(id, sedeId) {
-            //const nombre = document.getElementById(`actividadModalLabel${id}`).innerText;
-            const cantidad = document.getElementById(`cantidadIns${id}`).value;
-            const observaciones = document.getElementById(`observacionesSalidaIns${id}`).value;
-
-            fetch(`{{ route('solicitar.insumo.activo') }}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    cantidad: cantidad,
-                    observaciones: observaciones,
-                    tipo: 'insumo',
-                    sedeId: sedeId
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                // Cerrar el modal después de solicitar
-                $(`#salidaModal${id}`).modal('hide');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al solicitar el insumo: ' + error.message);
-            });
-        }
-
-        // Función para solicitar un activo
-        function solicitarActivo(id, sedeId) {
-            //const nombre = document.getElementById(`actividadModalLabelAct${id}`).innerText;
-            const cantidad = document.getElementById(`cantidadAct${id}`).value;
-            const observaciones = document.getElementById(`observacionesSalidaAct${id}`).value;
-
-            fetch(`{{ route('solicitar.insumo.activo') }}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    cantidad: cantidad,
-                    observaciones: observaciones,
-                    tipo: 'activo',
-                    sedeId: sedeId
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                // Cerrar el modal después de solicitar
-                $(`#salidaModal${id}`).modal('hide');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al solicitar el activo: ' + error.message);
-            });
-        }
-
         // Reiniciar valores del select y campo de observación al cerrar el modal
         $('.modal').on('hidden.bs.modal', function () {
             $(this).find('select').val('').trigger('change');
@@ -463,7 +428,7 @@
         // Reiniciar valores del select y campo de observación al abrir el modal
         $('.modal').on('show.bs.modal', function () {
             const modal = $(this);
-            const id = modal.attr('id').replace('actividadModal', '').replace('salidaModal', '').replace('mantenimientoModal', '').replace('activoModal', '');
+            const id = modal.attr('id').replace('actividadModal', '').replace('activoModal', '');
             const select = modal.find('select');
             const textarea = modal.find('textarea');
             const cantidadInput = modal.find('input[type="number"]');
@@ -487,13 +452,17 @@
                     });
 
                     // Obtener el estado_id del insumo o activo y establecerlo como valor por defecto
-                    const isSalidaModal = modal.attr('id').includes('salidaModal');
+                    const isFinalModal = modal.attr('id').includes('finalModal');
+                    const isMantenimientoModal = modal.attr('id').includes('mantenimientoModal');
                     const isActivoModal = modal.attr('id').includes('activoModal');
-                    const fetchUrl = isActivoModal ? `{{ route('obtener.activo', '') }}/${id}` : `{{ route('obtener.insumo', '') }}/${id}`;
-                    if (isSalidaModal) {
-                        cantidadInput.val('');
-                        textarea.val('')
-                    } else {
+                    //const fetchUrl = isActivoModal ? `{{ route('obtener.activo', '') }}/${id}` : `{{ route('obtener.insumo', '') }}/${id}`;
+                    let fetchUrl = '';
+                    if(isActivoModal) {
+                        fetchUrl = `{{ route('obtener.activo', '') }}/${id}`;
+                    } else if(!isMantenimientoModal && !isActivoModal && !isFinalModal) {
+                        fetchUrl = `{{ route('obtener.insumo', '') }}/${id}`;
+                    }
+                    if (!isMantenimientoModal && !isFinalModal) {
                         fetch(fetchUrl)
                         .then(response => {
                             if (!response.ok) {
@@ -585,5 +554,52 @@
                 alert('Error al enviar la solicitud de items: ' + error.message);
             });
         }
+
+        // Función para verificar si el activo está reportado
+        function verificarActivoReportado(id) {
+            fetch(`{{ url('/activo-reportado') }}/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const reportarBtn = document.getElementById(`reportarBtn${id}`);
+                    if (data.reportado) {
+                        reportarBtn.disabled = true;
+                    } else {
+                        reportarBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Llamar a la función verificarActivoReportado al abrir el modal
+        $('.modal').on('show.bs.modal', function () {
+            const modal = $(this);
+            const id = modal.attr('id').replace('activoModal', '');
+            verificarActivoReportado(id);
+        });
+
+        // Llenar el campo de observaciones y fecha con los datos del mantenimiento
+        function llenarDatosMantenimiento(id) {
+            console.log(`ID: ${id}`);
+            fetch(`{{ url('/obtener-datos-mantenimiento') }}/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const observacionesTextarea = document.getElementById(`observacionesMant${id}`);
+                    const fechaInput = document.getElementById(`fecha${id}`);
+                    observacionesTextarea.value = data.observaciones_reportadas;
+                    fechaInput.value = data.mtto_programado;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Llamar a la función llenarDatosMantenimiento al abrir el modal
+        $('.modal').on('show.bs.modal', function () {
+            const modal = $(this);
+            const id = modal.attr('id').replace('mantenimientoModal', '');
+            llenarDatosMantenimiento(id);
+        });
     </script>
 @endpush
