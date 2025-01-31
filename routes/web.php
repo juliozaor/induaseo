@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActividadesEvidenciasController;
 use App\Http\Controllers\AreaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -80,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/informacion/guardar', [InformacionController::class, 'guardar'])->name('informacion.guardar');
     Route::get('/informacion', [InformacionController::class, 'obtenerInformacion'])->name('informacion.obtener');
     Route::put('/informacion/actualizar/{id}', [InformacionController::class, 'actualizar'])->name('informacion.actualizar');
+    Route::get('/actividades-evidencias', [ActividadesEvidenciasController::class, 'index'])->name('actividades.evidencias.index');
     // ...other routes...
 });
 /*
