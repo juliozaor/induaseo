@@ -27,7 +27,9 @@
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="pills-mantenimientos-tab " data-toggle="pill" data-target="#pills-mantenimientos" type="button"
                 role="tab" aria-controls="pills-mantenimientos" aria-selected="false"><img class="icono-actividades"
-                    src="{{ asset('assets/icons/lista.svg') }}" alt="Icono" class="rectangle-icon"> Mantenimientos</a>
+                    src="{{ asset('assets/icons/lista.svg') }}" alt="Icono" class="rectangle-icon">
+                    Mantenimientos
+            </a>
         </li>
     </ul>
     <div class="tab-content" id="pills-tabContent">
@@ -250,7 +252,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="programarBtn{{ $mantenimiento->id }}">
+                                        <button type="button" class="btn btn-primary" id="programarBtn{{ $mantenimiento->id }}" onclick="actualizarMantenimiento({{ $mantenimiento->id }})">
                                             Programar
                                         </button>
                                     </div>
@@ -273,23 +275,23 @@
                                         <div class="contenedor-imagen-modal">
                                             <img src="{{ $mantenimiento->sedeActivo->activo->imagen }}"
                                                 alt="{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}" class="img-fluid">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="novedades${mantenimiento.id}">Estado</label>
+                                                <select class="form-control" id="novedadesF${mantenimiento.id}">
+                                                    <!-- Opciones se llenarán dinámicamente -->
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="observacionesMant${mantenimiento.id}">Observaciones</label>
+                                                <textarea class="form-control" id="observacionesMantF${mantenimiento.id}" rows="3"></textarea>
+                                            </div>
                                         </div>
-                                        {{-- <p>Estado: {{ optional($mantenimiento->sedeActivo->estados)->nombre }}</p> --}}
-                                        <div class="form-group">
-                                            <label for="novedades{{ $mantenimiento->id }}">Estado</label>
-                                            <select class="form-control" id="novedadesF{{ $mantenimiento->id }}">
-                                                <!-- Opciones se llenarán dinámicamente -->
-                                            </select>{{-- onchange="toggleButton(this, {{ $sedesInsumo->id }})" --}}
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" id="finalizarBtn{{ $mantenimiento->id }}" onclick="finalizarMantenimiento({{ $mantenimiento->id }})">
+                                                Finalizar
+                                            </button>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="observacionesMant{{ $mantenimiento->id }}">Observaciones</label>
-                                            <textarea class="form-control" id="observacionesMantF{{ $mantenimiento->id }}" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="finalizarBtn{{ $mantenimiento->id }}">
-                                            Finalizar
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -560,6 +562,7 @@
             fetch(`{{ url('/activo-reportado') }}/${id}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     const reportarBtn = document.getElementById(`reportarBtn${id}`);
                     if (data.reportado) {
                         reportarBtn.disabled = true;
@@ -572,16 +575,40 @@
                 });
         }
 
+        function obtenerMantenimientos() {
+            const sedeId = {{ $sedeId }};
+            fetch(`{{ route('obtener.mantenimientos') }}?sede_id=${sedeId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(text) });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar los mantenimientos: ' + error.message);
+                });
+        }
+
+        // Llamar a obtenerMantenimientos cuando se hace clic en la pestaña "Mantenimientos"
+        //document.getElementById('pills-mantenimientos-tab').addEventListener('click', obtenerMantenimientos);
+
         // Llamar a la función verificarActivoReportado al abrir el modal
         $('.modal').on('show.bs.modal', function () {
             const modal = $(this);
             const id = modal.attr('id').replace('activoModal', '');
-            verificarActivoReportado(id);
+            console.log(`ID: ${id}`);
+            if (modal.attr('id').includes('activoModal')) {
+                verificarActivoReportado(id);
+            }
         });
 
         // Llenar el campo de observaciones y fecha con los datos del mantenimiento
         function llenarDatosMantenimiento(id) {
-            console.log(`ID: ${id}`);
+            // console.log(`ID: ${id}`);
             fetch(`{{ url('/obtener-datos-mantenimiento') }}/${id}`)
                 .then(response => response.json())
                 .then(data => {
@@ -599,7 +626,89 @@
         $('.modal').on('show.bs.modal', function () {
             const modal = $(this);
             const id = modal.attr('id').replace('mantenimientoModal', '');
-            llenarDatosMantenimiento(id);
+            if (modal.attr('id').includes('mantenimientoModal')) {
+                llenarDatosMantenimiento(id);
+            }
         });
+
+        // Function to update maintenance details
+        function actualizarMantenimiento(id) {
+            const fecha = document.getElementById(`fecha${id}`).value;
+            const observaciones = document.getElementById(`observacionesMant${id}`).value;
+
+            fetch(`{{ route('actualizar.mantenimiento') }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    id: id,
+                    mtto_programado: fecha,
+                    observaciones_reportadas: observaciones
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                // Close the modal after saving
+                $(`#mantenimientoModal${id}`).modal('hide');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al actualizar el mantenimiento: ' + error.message);
+            });
+        }
+
+        // Function to set the minimum date for the date input
+        function setMinDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.setAttribute('min', today);
+            });
+        }
+
+        // Call setMinDate on page load
+        document.addEventListener('DOMContentLoaded', setMinDate);
+
+        // Function to finalize maintenance
+        function finalizarMantenimiento(id) {
+            const estadoId = document.getElementById(`novedadesF${id}`).value;
+            const observaciones = document.getElementById(`observacionesMantF${id}`).value;
+
+            fetch(`{{ route('finalizar.mantenimiento') }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    id: id,
+                    estado_id: estadoId,
+                    observaciones: observaciones
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                // Close the modal after saving
+                $(`#finalModal${id}`).modal('hide');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al finalizar el mantenimiento: ' + error.message);
+            });
+            obtenerMantenimientos();
+        }
     </script>
 @endpush

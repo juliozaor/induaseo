@@ -181,6 +181,26 @@ class SeguimientoActividadesController extends Controller
         );
     }
 
+    public function obtenerMantenimientos(Request $request)
+    {
+        $sedeId = $request->input('sede_id');
+        $mantenimientos = Mantenimiento::with(['sedeActivo.activo', 'sedeActivo.estados'])
+            ->where('estado_id', 3)
+            ->when($sedeId, function ($query, $sedeId) {
+                return $query->whereHas('sedeActivo', function ($query) use ($sedeId) {
+                    $query->where('sede_id', $sedeId);
+                });
+            })
+            ->get();
+
+        // Verificar que las relaciones existan antes de devolver los datos
+        $mantenimientos = $mantenimientos->filter(function ($mantenimiento) {
+            return $mantenimiento->sedeActivo && $mantenimiento->sedeActivo->activo;
+        });
+
+        return response()->json($mantenimientos);
+    }
+
     public function finalizarTurno(Request $request)
     {
         $userId = Auth::id();
@@ -351,7 +371,9 @@ class SeguimientoActividadesController extends Controller
 
     public function activoReportado($id)
     {
-        $reportado = Mantenimiento::where('sede_activo_id', $id)->exists();
+        $reportado = SedesActivos::where('id', $id)
+            ->where('estado_id', 3)
+            ->exists();
         return response()->json(['reportado' => $reportado]);
     }
 
@@ -366,5 +388,53 @@ class SeguimientoActividadesController extends Controller
         }
 
         return response()->json(['message' => 'Mantenimiento no encontrado'], 404);
+    }
+
+    public function actualizarMantenimiento(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:mantenimientos,id',
+            'mtto_programado' => 'required|date_format:Y-m-d',
+            'observaciones_reportadas' => 'nullable|string',
+        ]);
+
+        $mantenimiento = Mantenimiento::find($request->id);
+        $mantenimiento->mtto_programado = $request->mtto_programado;
+        $mantenimiento->observaciones_reportadas = $request->observaciones_reportadas;
+        $mantenimiento->save();
+
+        // Update the observation in the sedes_activos table
+        $sedeActivo = SedesActivos::find($mantenimiento->sede_activo_id);
+        $sedeActivo->observacion = $request->observaciones_reportadas;
+        $sedeActivo->save();
+
+        return response()->json(['message' => 'Mantenimiento programado correctamente']);
+    }
+
+    public function finalizarMantenimiento(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:mantenimientos,id',
+            'estado_id' => 'required|exists:estados,id',
+            'observaciones' => 'nullable|string',
+        ]);
+
+        $mantenimiento = Mantenimiento::find($request->id);
+        $mantenimiento->estado_id = $request->estado_id;
+        $mantenimiento->observaciones_reportadas = $request->observaciones;
+        $mantenimiento->estado = 2; // Assuming 2 is the finalized state
+        $mantenimiento->ultimo_mtto = $mantenimiento->mtto_programado; // Save the date in ultimo_mtto
+        $mantenimiento->save();
+
+        $sedeActivo = SedesActivos::find($mantenimiento->sede_activo_id);
+        $sedeActivo->estado_id = $request->estado_id;
+        $sedeActivo->observacion = $request->observaciones;
+        $sedeActivo->save();
+
+        $activo = Activos::find($sedeActivo->activo_id);
+        $activo->estado_id = $request->estado_id;
+        $activo->save();
+
+        return response()->json(['message' => 'Mantenimiento finalizado correctamente']);
     }
 }
