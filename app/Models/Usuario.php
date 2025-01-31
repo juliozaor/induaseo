@@ -38,11 +38,7 @@ class Usuario extends Authenticatable
         return $this->belongsTo(TiposDocumento::class, 'tipo_documento_id');
     }
 
-    /* public function rol()
-    {
-        return $this->belongsTo(Roles::class, 'rol');
-    }
- */
+    
     public function clientes()
     {
         return $this->belongsToMany(Cliente::class, 'cliente_usuario');
