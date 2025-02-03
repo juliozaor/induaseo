@@ -22,6 +22,7 @@ use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GestionarInventarioController;
 use App\Http\Controllers\InformacionController;
+use App\Http\Controllers\InformacionNovedadesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,8 +85,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/actividades-evidencias', [ActividadesEvidenciasController::class, 'index'])->name('actividades.evidencias.index');
     Route::get('/actividades-evidencias/consultar', [ActividadesEvidenciasController::class, 'consultar'])->name('actividades.evidencias.consultar');
     Route::get('/actividades-evidencias/detalle/{id}', [ActividadesEvidenciasController::class, 'getTurnoDetalle'])->name('actividades.evidencias.detalle');
-
+    //Route::get('/informacion-novedades', [InformacionNovedadesController::class, 'index'])->name('informacion.novedades.index');
     // ...other routes...
+    Route::get('/novedades', [InformacionController::class, 'obtenerNovedades'])->name('novedades.obtener');
 });
 /*
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -183,6 +185,8 @@ Route::post('/actualizar-activo', [SeguimientoActividadesController::class, 'act
 
 Route::get('/actividades-turno', [SeguimientoActividadesController::class, 'obtenerActividades'])->name('actividades.turno');
 Route::get('/inventario-turno', [SeguimientoActividadesController::class, 'obtenerInventarios'])->name('inventarios.turno');
+Route::get('/informacion-novedades', [InformacionNovedadesController::class, 'index'])->name('informacion.novedades.index');
+Route::get('/informacion-novedades/buscar', [InformacionNovedadesController::class, 'buscar'])->name('informacion.novedades.buscar');
 
 Route::post('/guardar-calificacion/{id}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
 
@@ -213,3 +217,6 @@ Route::post('/actualizar-mantenimiento', [SeguimientoActividadesController::clas
 
 // Add route for finalizing maintenance
 Route::post('/finalizar-mantenimiento', [SeguimientoActividadesController::class, 'finalizarMantenimiento'])->name('finalizar.mantenimiento');
+
+// Agregar ruta para obtener novedades
+Route::get('/novedades/{sedeId}', [InformacionController::class, 'obtenerNovedadesPorSede'])->name('novedades.obtener.por.sede');

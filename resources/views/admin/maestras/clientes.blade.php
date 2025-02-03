@@ -25,7 +25,7 @@
 
 
         {{-- <button class="busqueda-icono">
-        
+
     </button> --}}
         <span class="registros-encontrados">Total: 0</span>
         <select class="registros-por-pagina" id="registrosPorPagina">
@@ -82,11 +82,11 @@
             <div class="form-group flex-grow-1 row">
             <div class="col-3">
                 <label for="tipoIdentificacion">Tipo de Identificación:</label>
-                <select id="tipoIdentificacion" name="tipoIdentificacion" class="form-control" required>
-                    <option value="">Seleccione</option>
-                    <option value="1">Cédula de ciudadanía</option>
+                <select id="tipoIdentificacion" name="tipoIdentificacion" class="form-control" required disabled>
+                    <option value="9">NIT</option>
+                    {{-- <option value="1">Cédula de ciudadanía</option>
                     <option value="2">Tarjeta de extranjería</option>
-                    <option value="3">Pasaporte</option>
+                    <option value="3">Pasaporte</option> --}}
                     <!-- Agrega más opciones según sea necesario -->
                 </select>
                 <span class="error-message" id="errorTipoIdentificacion"></span>
@@ -109,7 +109,7 @@
                 <label for="pais">País:</label>
                 <select id="pais" name="pais" class="form-control" required>
                     <option value="">Seleccione</option>
-                    
+
                 </select>
                 <span class="error-message" id="errorPais"></span>
             </div>
@@ -136,7 +136,7 @@
                 <label for="sectorEconomico">Sector Economico:</label>
                 <select id="sectorEconomico" name="sectorEconomico" class="form-control" required>
                     <option value="">Seleccione</option>
-                    
+
                 </select>
                 <span class="error-message" id="errorSectorEconomico"></span>
             </div>

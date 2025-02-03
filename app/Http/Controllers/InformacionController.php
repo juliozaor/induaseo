@@ -12,9 +12,9 @@ class InformacionController extends Controller
 {
     public function index()
     {
-        
+
         return view('admin.informacion.index');
-        
+
     }
 
     public function cargarInformacion(Request $request)
@@ -94,6 +94,19 @@ class InformacionController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
+    }
+
+    public function obtenerNovedades()
+    {
+        $novedades = Informacion::where('tipo_multimedia_id', 'tipoMultimedia')->get();
+        return response()->json($novedades);
+    }
+
+    public function obtenerNovedadesPorSede($sedeId)
+    {
+        $novedades = Informacion::where('sede_id', $sedeId)->get();
+
+        return response()->json($novedades);
     }
 
     public function getTiposMultimedia()

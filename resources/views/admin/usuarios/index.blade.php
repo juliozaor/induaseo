@@ -27,6 +27,13 @@
         <div class="input-container">
             <input type="text" class="busqueda-input" id="busquedaUsuarioInput" placeholder="Buscar...">
         </div>
+        <!-- Nuevo input select para filtrar por perfil -->
+        <div class="input-container2">
+            <select id="filtroPerfil" class="busqueda-select">
+                <option value="">Todos los Perfiles</option>
+                <!-- Opciones de roles se llenarán dinámicamente -->
+            </select>
+        </div>
         <span class="registros-encontrados">Total: 0</span>
         <select class="registros-por-pagina" id="registrosUsuarioPorPagina">
             <option value="5">5</option>
@@ -141,6 +148,11 @@
             </form>
         </div>
         <div class="modal-footer">
+            <label class="switch" style="display: none;">
+                <input type="checkbox" id="estadoToggle" checked>
+                <span class="slider round"></span>
+            </label>
+            <label for="estadoToggle" style="display: none;">Activo</label>
             <button id="userModalActionBtn" class="btn-consultar">Crear Usuario</button>
         </div>
     </div>

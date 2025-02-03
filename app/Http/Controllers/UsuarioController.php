@@ -22,6 +22,7 @@ class UsuarioController extends Controller
     {
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
+        $filtroPerfil = $request->input('filtro_perfil');
 
         $usuarios = Usuario::query()
             ->with('roles') // Include roles relationship
@@ -30,6 +31,11 @@ class UsuarioController extends Controller
                     ->orWhere('apellidos', 'like', "%{$buscar}%")
                     ->orWhere('numero_documento', 'like', "%{$buscar}%")
                     ->orWhere('email', 'like', "%{$buscar}%");
+            })
+            ->when($filtroPerfil, function ($query, $filtroPerfil) {
+                return $query->whereHas('roles', function ($q) use ($filtroPerfil) {
+                    $q->where('id', $filtroPerfil);
+                });
             })
             ->paginate($registrosPorPagina);
 
@@ -55,6 +61,7 @@ class UsuarioController extends Controller
                 'correo' => 'required|email|max:255|unique:usuarios,email',
                 'cargo' => 'nullable|string|max:255',
                 'cliente_id' => 'nullable|exists:clientes,id', // Validar cliente_id
+                //'estado' => 'required|boolean', // Validar estado
             ]);
             $password = Str::random(8); // Generar una contraseña temporal
             $usuario = Usuario::create([
@@ -66,7 +73,8 @@ class UsuarioController extends Controller
                 'telefono' => $request->telefono,
                 'email' => $request->correo,
                 'cargo' => $request->cargo,
-                'password' => Hash::make($password)
+                'password' => Hash::make($password),
+                'estado' => $request->estado, // Guardar estado
             ]);
 
             $usuario->roles()->attach($request->perfil);
@@ -109,6 +117,7 @@ class UsuarioController extends Controller
                 'correo' => 'required|email|max:255|unique:usuarios,email,' . $usuario->id,
                 'cargo' => 'nullable|string|max:255',
                 'cliente_id' => 'nullable|exists:clientes,id', // Validar cliente_id
+                'estado' => 'required|boolean', // Validar estado
             ]);
 
             $usuario->update([
@@ -120,6 +129,7 @@ class UsuarioController extends Controller
                 'telefono' => $request->telefono,
                 'email' => $request->correo,
                 'cargo' => $request->cargo,
+                'estado' => $request->estado, // Actualizar estado
             ]);
 
             // Actualizar rol del usuario

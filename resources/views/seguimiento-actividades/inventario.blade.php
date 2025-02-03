@@ -4,7 +4,7 @@
     <!-- Imagen grande con texto centrado -->
     <div class="large-image-container">
         <img src="{{ asset('assets/images/fondo1.png') }}" alt="Large Image" class="large-image">
-        <div class="titulo-super titulo-actividades">CONTROL DE INVENTARIO</div>
+        <div class="titulo-super titulo-actividades text-center">CONTROL DE INVENTARIO</div>
     </div>
 
     <!-- Rectángulo con icono y texto -->

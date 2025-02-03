@@ -26,7 +26,7 @@ class InsumosController extends Controller
                 'telefonoProveedorInsumo' => 'required|string|max:255',
             ]);
 
-            
+
 
             $insumo = new Insumos();
             $insumo->nombre_elemento = $request->input('nombreInsumo');
@@ -91,7 +91,7 @@ class InsumosController extends Controller
     {
         try {
             $id = $request->input('id');
-            $insumo = Insumos::with(['clasificacion', 'estado', 'creador', 'actualizador'])->findOrFail($id);
+            $insumo = Insumos::with(['clasificacion', 'estados', 'creador', 'actualizador'])->findOrFail($id);
             return response()->json($insumo);
         } catch (Exception $e) {
             Log::error('Error al obtener el insumo: ' . $e->getMessage());

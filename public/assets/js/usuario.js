@@ -8,12 +8,16 @@
     const paginacionContainer = document.createElement('div');
     paginacionContainer.classList.add('paginacion');
     document.querySelector(".tabla-paginacion").appendChild(paginacionContainer);
+    const estadoToggle = document.getElementById("estadoToggle");
+    const estadoToggleLabel = document.querySelector("label[for='estadoToggle']");
+    const estadoToggleContainer = document.querySelector(".switch"); // Contenedor del switch
     let editMode = false;
     let userId = null;
 
     // Abrir el modal
     openUserModalBtn.addEventListener("click", function() {
         userModal.style.display = "flex";
+        estadoToggle.checked = true; // Estado por defecto true
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -24,6 +28,22 @@
         }
     });
 
+    // Función para actualizar el label del estado
+    function actualizarEstadoLabel() {
+        if (estadoToggle.checked) {
+            estadoToggleLabel.textContent = "Activo";
+            estadoToggleLabel.classList.remove("estado-inactivo");
+            estadoToggleLabel.classList.add("estado-activo");
+        } else {
+            estadoToggleLabel.textContent = "Inactivo";
+            estadoToggleLabel.classList.remove("estado-activo");
+            estadoToggleLabel.classList.add("estado-inactivo");
+        }
+    }
+
+    // Añadir evento para cambiar el label cuando se cambia el estado del checkbox
+    estadoToggle.addEventListener("change", actualizarEstadoLabel);
+
     document.addEventListener("click", function(event) {
         if (event.target.classList.contains("icono-editar")) {
             userId = event.target.getAttribute("data-id");
@@ -33,6 +53,10 @@
             }
 
             editMode = true;
+
+            // Mostrar el checkbox de estado en modo edición
+            estadoToggleContainer.style.display = "inline-block";
+            estadoToggleLabel.style.display = "inline-block";
 
             // Aquí continúa el código de apertura del modal y carga de datos
             userModalTitle.textContent = "Editar usuario";
@@ -48,7 +72,7 @@
                 .then((usuario) => {
                     const fechaFormatoInput = usuario.fecha_nacimiento.split('T')[0];
                     console.log(usuario);
-                    
+
                     cargarRoles().then(() => {
                         document.getElementById("perfil").value = usuario.rol;
                         if (usuario.rol == '3') {
@@ -68,6 +92,8 @@
                     document.getElementById("telefono").value = usuario.telefono;
                     document.getElementById("correo").value = usuario.email;
                     document.getElementById("cargo").value = usuario.cargo;
+                    estadoToggle.checked = usuario.estado; // Set the checkbox value based on user status
+                    actualizarEstadoLabel(); // Actualizar el label del estado
 
                     userModal.style.display = "flex"; // Muestra el modal
                 })
@@ -91,6 +117,8 @@
         if (editMode) {
             formData.append("_method", "PUT");
         }
+
+        formData.append('estado', estadoToggle.checked ? 1 : 0); // Añadir estado al formData
 
         fetch(url, {
                 method: "POST", // Always use POST for FormData
@@ -149,6 +177,10 @@
         userModalActionBtn.textContent = "Crear Usuario";
         editMode = false;
         userId = null;
+
+        // Ocultar el checkbox de estado en modo creación
+        estadoToggleContainer.style.display = "none";
+        estadoToggleLabel.style.display = "none";
     }
 
     // Cargar roles
@@ -163,6 +195,23 @@
                     option.value = rol.id;
                     option.textContent = rol.name;
                     perfilSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error al cargar los roles:", error));
+    }
+
+    // Cargar roles en el select de filtro
+    function cargarRolesFiltro() {
+        return fetch(`../roles`)
+            .then(response => response.json())
+            .then(roles => {
+                const filtroPerfilSelect = document.getElementById("filtroPerfil");
+                filtroPerfilSelect.innerHTML = '<option value="">Todos los Perfiles</option>';
+                roles.forEach(rol => {
+                    const option = document.createElement("option");
+                    option.value = rol.id;
+                    option.textContent = rol.name;
+                    filtroPerfilSelect.appendChild(option);
                 });
             })
             .catch(error => console.error("Error al cargar los roles:", error));
@@ -188,10 +237,12 @@
     function cargarUsuarios(page = 1) {
         const buscar = document.getElementById("busquedaUsuarioInput").value;
         const registrosPorPagina = document.getElementById("registrosUsuarioPorPagina").value;
+        const filtroPerfil = document.getElementById("filtroPerfil").value;
 
         const formData = new FormData();
         formData.append('buscar', buscar);
         formData.append('registros_por_pagina', registrosPorPagina);
+        formData.append('filtro_perfil', filtroPerfil); // Añadir el filtro por perfil
 
         fetch(`../admin/usuarios?page=${page}`, {
                 method: 'POST',
@@ -283,18 +334,20 @@
 
 
     cargarRoles();
+    cargarRolesFiltro();
     cargarTiposDocumentos();
     cargarUsuarios(1);
 
     // Eventos
     document.getElementById("busquedaUsuarioInput").addEventListener("input", () => cargarUsuarios(1));
     document.getElementById("registrosUsuarioPorPagina").addEventListener("change", () => cargarUsuarios(1));
+    document.getElementById("filtroPerfil").addEventListener("change", () => cargarUsuarios(1));
 
     const perfilSelect = document.getElementById("perfil");
 
-    perfilSelect.addEventListener("change", function() {        
+    perfilSelect.addEventListener("change", function() {
         const clienteSelectContainer = document.getElementById("clienteSelectContainer");
-        
+
         if (this.value === '3') {
             clienteSelectContainer.style.display = "block";
             cargarClientes();

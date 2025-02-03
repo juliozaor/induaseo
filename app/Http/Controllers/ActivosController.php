@@ -75,13 +75,13 @@ class ActivosController extends Controller
     public function obtenerActivo(Request $request)
     {
         $id = $request->input('id');
-        $activo = Activos::with('clasificacion', 'estado')->findOrFail($id);
+        $activo = Activos::with('clasificacion', 'estados')->findOrFail($id);
         return response()->json($activo);
     }
 
     public function obtenerActivos(Request $request)
     {
-        
+
         $activo = Activos::all();
         return response()->json($activo);
     }
@@ -95,7 +95,7 @@ class ActivosController extends Controller
         $clasificacion = $request->input('clasificacion');
         $estado = $request->input('estado');
 
-        $query = Activos::with('clasificacion', 'estado');
+        $query = Activos::with('clasificacion', 'estados');
 
         if ($buscar) {
             $query->where('nombre_elemento', 'like', "%{$buscar}%")

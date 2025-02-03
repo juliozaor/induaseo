@@ -45,12 +45,23 @@
     position: relative;
     display: inline-block;
 }
+.input-container2 {
+    position: relative;
+    display: inline-block;
+}
 
 .busqueda-input {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border: 1px solid #B7B7B7;
     border-radius: 6px;
     padding-left: 30px; /* Espacio para el ícono */
+    width: 100%;
+}
+.busqueda-select {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #B7B7B7;
+    border-radius: 6px;
+    padding: 3.5px; /* Espacio para el ícono */
     width: 100%;
 }
 
@@ -167,7 +178,7 @@
     padding: 5px 20px;
     width: 80%!important;
     border-radius: 10px!important;
-    box-shadow: 0px 3px 20px #00000029;  
+    box-shadow: 0px 3px 20px #00000029;
 }
 
 .modal h2 {
@@ -278,4 +289,12 @@ input:checked + .slider:before {
 .icono-editar {
     width: 15px;
     cursor: pointer;
+}
+
+.estado-activo {
+    color: green;
+}
+
+.estado-inactivo {
+    color: red;
 }

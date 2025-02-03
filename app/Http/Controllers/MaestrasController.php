@@ -23,7 +23,7 @@ class MaestrasController extends Controller
 {
     public function index()
     {
-        $tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas', 'activos', 'insumos']; 
+        $tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas', 'activos', 'insumos'];
         return view('admin.maestras.index', compact('tablasMaestras'));
     }
 
@@ -100,7 +100,7 @@ class MaestrasController extends Controller
                 $areas = $query->paginate($registrosPorPagina);
                 return response()->json($areas);
             } elseif ($tabla === 'activos') {
-                $query = Activos::with(['clasificacion', 'estado', 'creador', 'actualizador']);
+                $query = Activos::with(['clasificacion', 'estados', 'creador', 'actualizador']);
 
                 // Filtro de búsqueda
                 if ($request->has('buscar')) {
@@ -117,8 +117,8 @@ class MaestrasController extends Controller
                 $activos = $query->paginate($registrosPorPagina);
                 return response()->json($activos);
             } elseif ($tabla === 'insumos') {
-                
-                $query = Insumos::with(['clasificacion', 'estado', 'creador', 'actualizador']);
+
+                $query = Insumos::with(['clasificacion', 'estados', 'creador', 'actualizador']);
 
                 // Filtro de búsqueda
                 if ($request->has('buscar')) {
@@ -131,7 +131,7 @@ class MaestrasController extends Controller
 
                 // Obtener datos paginados
                 $insumos = $query->paginate($registrosPorPagina);
-                
+
                 return response()->json($insumos);
             }
 
