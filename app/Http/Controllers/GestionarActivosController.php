@@ -157,4 +157,26 @@ class GestionarActivosController extends Controller
             return response()->json(['error' => 'Error fetching mantenimientos: ' . $e->getMessage()], 500);
         }
     }
+
+    public function obtenerDatosMantenimiento($id)
+    {
+        $mantenimiento = Mantenimiento::with(['estado', 'sedes_activos.activo', 'sedes_activos.sede.cliente'])
+            ->findOrFail($id);
+        return response()->json($mantenimiento);
+    }
+
+    public function actualizarMantenimiento(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'observaciones' => 'required|string',
+        ]);
+
+        $mantenimiento = Mantenimiento::findOrFail($id);
+        $mantenimiento->update([
+            'observaciones' => $request->observaciones,
+            'actualizador_id' => Auth::id(),
+        ]);
+
+        return response()->json(['message' => 'Mantenimiento actualizado exitosamente']);
+    }
 }

@@ -336,6 +336,12 @@ input:checked + .slider:before {
     width: 15px;
     cursor: pointer;
 }
+
+.icono-ver {
+    width: 15px;
+    cursor: pointer;
+}
+
 .select-container2 {
     align-items: flex-end;
 }

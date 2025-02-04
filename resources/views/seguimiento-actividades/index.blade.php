@@ -89,18 +89,22 @@
                         text.textContent = novedad.descripcion;
 
                         const icon = document.createElement('img');
-                        switch (novedad.tipo_multimedia.nombre) {
-                            case 'Documento':
-                                icon.src = `{{ asset('assets/icons/pdf-icon.png') }}`;
-                                break;
-                            case 'Video':
-                                icon.src = `{{ asset('assets/icons/video-icon.png') }}`;
-                                break;
-                            case 'Imagen':
-                                icon.src = `{{ asset('assets/icons/image-icon.png') }}`;
-                                break;
-                            default:
-                                icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
+                        if (novedad.tipo_multimedia && novedad.tipo_multimedia.nombre) {
+                            switch (novedad.tipo_multimedia.nombre) {
+                                case 'Documento':
+                                    icon.src = `{{ asset('assets/icons/pdf-icon.png') }}`;
+                                    break;
+                                case 'Video':
+                                    icon.src = `{{ asset('assets/icons/video-icon.png') }}`;
+                                    break;
+                                case 'Imagen':
+                                    icon.src = `{{ asset('assets/icons/image-icon.png') }}`;
+                                    break;
+                                default:
+                                    icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
+                            }
+                        } else {
+                            icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
                         }
                         icon.alt = 'Novedad';
                         icon.classList.add('novedad-icon');

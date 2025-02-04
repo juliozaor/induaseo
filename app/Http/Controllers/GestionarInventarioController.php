@@ -7,9 +7,12 @@ use App\Models\Cliente;
 use App\Models\Sede;
 use App\Models\Inventario;
 use App\Models\ImagenInventario;
+use App\Models\Insumo;
+use App\Models\Insumos;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use App\Models\Activos;
 
 class GestionarInventarioController extends Controller
 {
@@ -23,6 +26,7 @@ class GestionarInventarioController extends Controller
     // Método para consultar los inventarios con paginación
     public function consultar(Request $request)
     {
+        //dd($request->all());
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
 
@@ -168,5 +172,46 @@ class GestionarInventarioController extends Controller
         $clienteId = $request->input('cliente_id');
         $sedes = Sede::where('cliente_id', $clienteId)->get();
         return response()->json($sedes);
+    }
+
+    public function obtenerItem($codigo)
+    {
+        $itemInsumo = Insumos::where('codigo', $codigo)->first();
+        $itemActivo = Activos::findOrFail($codigo);
+
+        if ($itemInsumo) {
+            $item = $itemInsumo;
+        } elseif ($itemActivo) {
+            $item = $itemActivo;
+        } else {
+            return response()->json(['error' => 'Articulo no encontrado'], 404);
+        }
+
+        return response()->json([
+            'numero_serie' => $item instanceof Activos ? $item->serie : $item->codigo,
+            'cantidad_disponible' => $item->cantidad,
+        ]);
+    }
+
+    public function obtenerItems()
+    {
+        $insumos = Insumos::all();
+        $activos = Activos::all();
+        $itemsInsumos = $insumos->map(function ($item) {
+            return [
+            'id' => $item->codigo,
+            'nombre_elemento' => $item->nombre_elemento,
+            ];
+        });
+        $itemsActivos = $activos->map(function ($item) {
+            return [
+            'id' => $item->id,
+            'nombre_elemento' => $item->nombre_elemento,
+            ];
+        });
+        $items = $itemsInsumos->merge($itemsActivos);
+        //dd($items);
+
+        return response()->json($items);
     }
 }

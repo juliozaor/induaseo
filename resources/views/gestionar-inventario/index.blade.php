@@ -8,7 +8,7 @@
             <button class="nav-link active" id="pills-inventario-tab" data-toggle="pill" data-target="#pills-inventario" type="button" role="tab" aria-controls="pills-inventario" aria-selected="true">Inventario</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pills-mantenimiento-tab" data-toggle="pill" data-target="#pills-mantenimiento" type="button" role="tab" aria-controls="pills-mantenimiento" aria-selected="false">Mantenimiento</button>
+            <button class="nav-link" id="pills-mantenimiento-tab" data-toggle="pill" data-target="#pills-mantenimiento" type="button" role="tab" aria-controls="pills-mantenimiento" aria-selected="false">Solicitudes</button>
         </li>
     </ul>
 
@@ -122,7 +122,7 @@
                                         <span class="error-message" id="errorCodigoInput"></span>
                                     </div>
                                     <div class="col">
-                                        <label for="cantidadInput">Cantidad</label>
+                                        <label for="cantidadInput">Cantidad <span id="cantidadDisponible" class="text-muted"></span></label>
                                         <input type="number" id="cantidadInput" class="form-control" name="cantidad" min="1">
                                         <span class="error-message" id="errorCantidadInput"></span>
                                     </div>

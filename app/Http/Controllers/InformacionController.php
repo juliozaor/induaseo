@@ -7,12 +7,13 @@ use App\Models\Informacion;
 use App\Models\TipoMultimedias;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
+use App\Models\SupervisorTurno;
 
 class InformacionController extends Controller
 {
     public function index()
     {
-
         return view('admin.informacion.index');
 
     }
@@ -104,7 +105,9 @@ class InformacionController extends Controller
 
     public function obtenerNovedadesPorSede($sedeId)
     {
-        $novedades = Informacion::where('sede_id', $sedeId)->get();
+        $novedades = Informacion::where('sede_id', $sedeId)
+            ->with('tipoMultimedia') // Ensure the relationship is loaded
+            ->get();
 
         return response()->json($novedades);
     }
@@ -119,6 +122,15 @@ class InformacionController extends Controller
     {
         $categorias = Categorias::all();
         return response()->json($categorias);
+    }
+
+    public function informacion()
+    {
+        $userId = Auth::id();
+        $turnos = SupervisorTurno::with(['supervisor', 'sede', 'turno'])
+            ->where('supervisor_id', $userId)
+            ->get();
+        return view('seguimiento-actividades.informacion', compact('turnos'));
     }
 
 }

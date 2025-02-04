@@ -88,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
     //Route::get('/informacion-novedades', [InformacionNovedadesController::class, 'index'])->name('informacion.novedades.index');
     // ...other routes...
     Route::get('/novedades', [InformacionController::class, 'obtenerNovedades'])->name('novedades.obtener');
+    Route::get('/informacion', [SeguimientoActividadesController::class, 'informacion'])->name('informacion');
 });
 /*
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -186,7 +187,7 @@ Route::post('/actualizar-activo', [SeguimientoActividadesController::class, 'act
 Route::get('/actividades-turno', [SeguimientoActividadesController::class, 'obtenerActividades'])->name('actividades.turno');
 Route::get('/inventario-turno', [SeguimientoActividadesController::class, 'obtenerInventarios'])->name('inventarios.turno');
 Route::get('/informacion-novedades', [InformacionNovedadesController::class, 'index'])->name('informacion.novedades.index');
-Route::get('/informacion-novedades/buscar', [InformacionNovedadesController::class, 'buscar'])->name('informacion.novedades.buscar');
+Route::get('/informacion-novedades/buscar', [InformacionNovedadesController::class, 'buscarInformacion'])->name('informacion.novedades.buscar');
 
 Route::post('/guardar-calificacion/{id}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
 
@@ -194,7 +195,7 @@ Route::post('/finalizar-turno', [SeguimientoActividadesController::class, 'final
 
 Route::get('/estados', [SeguimientoActividadesController::class, 'obtenerEstados'])->name('obtener.estados');
 
-Route::get('/obtener-observaciones/{id}', [SeguimientoActividadesController::class, 'obtenerObservaciones'])->name('obtener.observaciones');
+Route::get('/obtener-observaciones/{id', [SeguimientoActividadesController::class, 'obtenerObservaciones'])->name('obtener.observaciones');
 
 Route::get('/obtener-insumo/{id}', [SeguimientoActividadesController::class, 'obtenerInsumo'])->name('obtener.insumo');
 
@@ -218,5 +219,18 @@ Route::post('/actualizar-mantenimiento', [SeguimientoActividadesController::clas
 // Add route for finalizing maintenance
 Route::post('/finalizar-mantenimiento', [SeguimientoActividadesController::class, 'finalizarMantenimiento'])->name('finalizar.mantenimiento');
 
+// Agregar ruta para obtener detalles de mantenimiento (para admin)
+Route::get('/obtener-detalles-mantenimiento/{id}', [GestionarActivosController::class, 'obtenerDatosMantenimiento'])->name('obtener.detalles.mantenimiento');
+Route::post('/actualizar-mantenimiento/{id}', [GestionarActivosController::class, 'actualizarMantenimiento'])->name('actualizar.mantenimiento');
+
 // Agregar ruta para obtener novedades
 Route::get('/novedades/{sedeId}', [InformacionController::class, 'obtenerNovedadesPorSede'])->name('novedades.obtener.por.sede');
+
+// Add route to fetch categories
+Route::get('/categorias', [InformacionNovedadesController::class, 'obtenerCategorias'])->name('categorias.obtener');
+
+// Add route to fetch items
+Route::get('/items', [GestionarInventarioController::class, 'obtenerItems'])->name('items.obtener');
+
+// Add route to fetch item
+Route::get('/item/{codigo}', [GestionarInventarioController::class, 'obtenerItem'])->name('item.obtener');

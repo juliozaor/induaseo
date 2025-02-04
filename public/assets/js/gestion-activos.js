@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const estadoMantenimientoSelect = document.getElementById('estadoMantenimientoSelect');
     const totalActivos = document.getElementById('totalActivos');
     const totalMantenimientos = document.getElementById('totalMantenimientos');
+    const mantenimientoModal = document.getElementById('mantenimientoModal');
+    const guardarMantenimientoBtn = document.getElementById('guardarMantenimientoBtn');
 
     let activoId = null;
     let assignedActivoId = null;
@@ -145,6 +147,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     $(crearActivoModal).modal('show');// Ensure jQuery is used to show the modal
                 })
                 .catch((error) => console.error("Error al cargar los datos del activo:", error));
+        } else if (event.target.classList.contains('icono-ver')) {
+            const mantenimientoId = event.target.getAttribute('data-id');
+            if (!mantenimientoId) {
+                console.error("Error: No se encontró el ID del mantenimiento en el botón.");
+                return;
+            }
+
+            fetch(`obtener-detalles-mantenimiento/${mantenimientoId}`)
+                .then(response => response.json())
+                .then(mantenimiento => {
+                    document.getElementById('nombreActivo').value = mantenimiento.sedes_activos.activo.nombre_elemento;
+                    document.getElementById('estadoElemento').value = mantenimiento.estado.nombre;
+                    document.getElementById('sedeMantenimiento').value = mantenimiento.sedes_activos.sede.nombre;
+                    document.getElementById('clienteMantenimiento').value = mantenimiento.sedes_activos.sede.cliente.nombre;
+                    document.getElementById('observaciones').value = mantenimiento.observaciones;
+                    document.getElementById('observacionesReportadas').value = mantenimiento.observaciones_reportadas;
+
+                    $(mantenimientoModal).modal('show'); // Use jQuery to show the modal
+                })
+                .catch(error => console.error("Error al cargar los datos del mantenimiento:", error));
         }
     });
 
@@ -202,7 +224,45 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
+    guardarMantenimientoBtn.addEventListener('click', function () {
+        console.log("Guardando mantenimiento...");
+        const formData = new FormData(document.getElementById('mantenimientoForm'));
+        const mantenimientoId = document.querySelector('.icono-ver[data-id]').getAttribute('data-id');
+
+        fetch(`actualizar-mantenimiento/${mantenimientoId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.errors) {
+                    showMantenimientoErrors(data.errors);
+                } else {
+                    showAlertModal(
+                        "ok.png", // Ruta del ícono de éxito
+                        data.message // Mensaje de éxito
+                    );
+                    $(mantenimientoModal).modal('hide'); // Use jQuery to hide the modal
+                    consultarMantenimientos(); // Reload the table
+                }
+            })
+            .catch(error => console.error("Error al guardar el mantenimiento:", error));
+    });
+
     function showActivoErrors(errors) {
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        for (const [key, messages] of Object.entries(errors)) {
+            const errorElement = document.getElementById(`error${capitalizeFirstLetter(key)}`);
+            if (errorElement) {
+                errorElement.textContent = messages.join(', ');
+            }
+        }
+    }
+
+    function showMantenimientoErrors(errors) {
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
         for (const [key, messages] of Object.entries(errors)) {
             const errorElement = document.getElementById(`error${capitalizeFirstLetter(key)}`);
@@ -364,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${formatDate(mantenimiento.created_at)}</td>
                         <td>${mantenimiento.actualizador?.nombres || 'N/A'}</td>
                         <td>${formatDate(mantenimiento.updated_at)}</td>
-                        <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${mantenimiento.id}"></td>
+                        <td><img src="assets/icons/editar.png" alt="Ver" class="icono-ver" data-id="${mantenimiento.id}"></td>
                     `;
                     mantenimientosTableBody.appendChild(row);
                 });

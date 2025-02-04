@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Elementos del DOM
     const clienteSelect = document.getElementById('clienteSelect');
     const sedeSelect = document.getElementById('sedeSelect');
-    const consultarBtn = document.getElementById('consultarBtn');
+    //const consultarBtn = document.getElementById('consultarBtn');
     const sedeInput = document.getElementById('sedeInput');
     const pillsTab = document.getElementById('pills-tab');
     const pillsTabContent = document.getElementById('pills-tabContent');
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const imagenesPreview = document.getElementById('imagenesPreview');
     const crearInventarioModal = document.getElementById('crearInventarioModal');
     const selectedOptionsContainer = document.getElementById('selectedOptions');
+    const cantidadDisponibleSpan = document.getElementById('cantidadDisponible');
 
     const btnQuitarSede = document.getElementById('btnQuitarSede')
 
@@ -119,9 +120,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Evento para consultar inventarios al hacer clic en el botón de consultar
-    consultarBtn.addEventListener('click', function () {
+    /* consultarBtn.addEventListener('click', function () {
         consultarInventarios();
-    });
+    }); */
 
     // Evento para editar un inventario al hacer clic en el icono de editar
     document.addEventListener('click', function (event) {
@@ -267,10 +268,11 @@ document.addEventListener('DOMContentLoaded', function () {
         editMode = false;
         inventarioId = null;
         document.getElementById('crearInventarioForm').reset();
-        sedeInput.value = sedeSelect.options[sedeSelect.selectedIndex].textContent;
-        clienteInput.value = clienteSelect.options[clienteSelect.selectedIndex].textContent;
-        imagenesPreview.innerHTML = ''; // Clear image previews
-        imagenesInput.value = ''; // Clear image input
+        clienteSelect.options[clienteSelect.selectedIndex].textContent;
+        sedeSelect.options[sedeSelect.selectedIndex].textContent;
+        //imagenesPreview.innerHTML = ''; // Clear image previews
+        //imagenesInput.value = ''; // Clear image input
+        cargarItems(); // Cargar los artículos al abrir el modal
         $(crearInventarioModal).modal('show'); // Use jQuery to show the modal
     });
 
@@ -289,28 +291,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 items.forEach(item => {
                     const option = document.createElement('option');
                     option.value = item.id;
-                    option.textContent = item.nombre;
+                    option.textContent = item.nombre_elemento;
                     itemSelect.appendChild(option);
                 });
             })
             .catch(error => console.error('Error al cargar los items:', error));
     }
 
-    // Evento para cargar el código del item seleccionado
+    // Evento para cargar el código del item seleccionado y la cantidad disponible
     itemSelect.addEventListener('change', function () {
-
         const itemId = this.value;
-        fetch(`item?id=${itemId}`)
-            .then(response => response.json())
+        fetch(`/item/${itemId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('La respuesta de la red no fue satisfactoria');
+                }
+                return response.json();
+            })
             .then(data => {
                 codigoInput.value = data.numero_serie;
+                cantidadDisponibleSpan.textContent = `Disponible: ${data.cantidad_disponible}`;
             })
             .catch(error => console.error('Error fetching items:', error));
-
     });
 
     // Función para cargar los estados
-    function cargarEstados() {
+    /* function cargarEstados() {
         fetch(`estados`)
             .then(response => response.json())
             .then(estados => {
@@ -324,14 +330,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             })
             .catch(error => console.error("Error al cargar los estados:", error));
-    }
+    } */
 
     // Cargar items y estados al cargar la página
-    cargarItems();
-    cargarEstados()
+    // cargarItems();
+    //cargarEstados()
 
     // Evento para previsualizar las imágenes seleccionadas
-    imagenesInput.addEventListener('change', function () {
+    /* imagenesInput.addEventListener('change', function () {
 
         imagenesPreview.innerHTML = ''; // Clear previous previews
         const dt = new DataTransfer();
@@ -366,6 +372,6 @@ document.addEventListener('DOMContentLoaded', function () {
             reader.readAsDataURL(file);
         }
         imagenesInput.files = dt.files; // Update input files
-    });
+    }); */
 
 });

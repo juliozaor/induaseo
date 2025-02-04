@@ -8,8 +8,13 @@
     </div>
 
     <!-- Input de búsqueda -->
-    <div class="search-container">
+    <div class="search-container rectangle2">
         <input type="text" id="searchInput" class="form-control" placeholder="Buscar información...">
+    </div>
+
+    <!-- Contenedor de categorías -->
+    <div class="categories-container" id="categoriesContainer">
+        <!-- Los botones de categorías se cargarán aquí mediante JavaScript -->
     </div>
 
     <!-- Contenedor de resultados de búsqueda -->
@@ -18,60 +23,159 @@
     </div>
 
     <!-- Contenedor de novedades -->
-    <span class="titulo-novedades">Novedades</span>
-    <div class="novedades-slider" id="novedades-slider">
-        <!-- Las novedades se cargarán aquí mediante JavaScript -->
+    <div class="novedades-container-wrapper">
+        <div class="novedades-container" id="novedades-container">
+            <!-- Las novedades se cargarán aquí mediante JavaScript -->
+        </div>
+    </div>
+
+    <!-- Modal for displaying files -->
+    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileModalLabel">Archivo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="fileFrame" src="" width="100%" height="500px" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
             const resultsContainer = document.getElementById('resultsContainer');
+            const categoriesContainer = document.getElementById('categoriesContainer');
+            const novedadesContainer = document.getElementById('novedades-container');
+            let selectedCategory = null;
+
+            // Add "Todos" category button
+            const todosButton = document.createElement('button');
+            todosButton.classList.add('category-button', 'selected');
+            todosButton.textContent = 'Todos';
+            todosButton.onclick = function() {
+                selectedCategory = null;
+                fetchNovedades();
+                document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('selected'));
+                todosButton.classList.add('selected');
+            };
+            categoriesContainer.appendChild(todosButton);
+
+            // Fetch and display categories
+            fetch(`{{ route('categorias.obtener') }}`)
+                .then(response => response.json())
+                .then(categories => {
+                    categories.forEach(category => {
+                        const button = document.createElement('button');
+                        button.classList.add('category-button');
+                        button.textContent = category.nombre;
+                        button.onclick = function() {
+                            selectedCategory = category.id;
+                            fetchNovedades();
+                            document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('selected'));
+                            button.classList.add('selected');
+                        };
+                        categoriesContainer.appendChild(button);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
 
             searchInput.addEventListener('input', function() {
-                const query = searchInput.value.trim();
-                if (query.length > 0) {
-                    fetch(`{{ route('informacion.novedades.buscar') }}?buscar=${query}`, {
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            resultsContainer.innerHTML = '';
-                            data.forEach(item => {
-                                const card = document.createElement('div');
-                                card.classList.add('result-card');
-
-                                const title = document.createElement('h6');
-                                title.classList.add('result-title');
-                                title.textContent = item.titulo;
-
-                                const description = document.createElement('p');
-                                description.classList.add('result-description');
-                                description.textContent = item.descripcion;
-
-                                card.appendChild(title);
-                                card.appendChild(description);
-                                resultsContainer.appendChild(card);
-                            });
-                        })
-                        .catch(error => console.error('Error:', error));
-                } else {
-                    resultsContainer.innerHTML = '';
-                }
+                fetchNovedades();
             });
 
-            // Fetch and display all novedades
-            fetch(`{{ url('/novedades') }}`, {
-                headers: {
-                    'Accept': 'application/json'
+            function fetchNovedades() {
+                const query = searchInput.value.trim();
+                const url = new URL(`{{ route('informacion.novedades.buscar') }}`);
+                if (query.length > 0) {
+                    url.searchParams.append('buscar', query);
                 }
-            })
+                if (selectedCategory) {
+                    url.searchParams.append('categoria', selectedCategory);
+                }
+
+                fetch(url, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    resultsContainer.innerHTML = '';
+                    novedadesContainer.innerHTML = '';
+                    data.forEach(item => {
+                        if (!selectedCategory || item.categoria_id === selectedCategory) {
+                            const card = document.createElement('div');
+                            card.classList.add('novedad-card');
+                            card.style.cursor = 'pointer';
+                            card.onclick = function() {
+                                const fileFrame = document.getElementById('fileFrame');
+                                fileFrame.src = `{{ asset('storage') }}/${item.url}`;
+                                const fileModalLabel = document.getElementById('fileModalLabel');
+                                fileModalLabel.textContent = item.url.split('/').pop(); // Mostrar el nombre del archivo
+                                const fileModal = new bootstrap.Modal(document.getElementById('fileModal'));
+                                fileModal.show();
+                            };
+
+                            const info = document.createElement('div');
+                            info.classList.add('novedad-info');
+
+                            const title = document.createElement('h6');
+                            title.classList.add('novedad-title');
+                            title.textContent = item.titulo;
+
+                            const date = document.createElement('span');
+                            date.classList.add('novedad-date');
+                            date.textContent = new Date(item.fecha).toLocaleDateString();
+
+                            const text = document.createElement('p');
+                            text.classList.add('novedad-text');
+                            text.textContent = item.descripcion;
+
+                            const icon = document.createElement('img');
+                            if (item.tipo_multimedia && item.tipo_multimedia.nombre) {
+                                switch (item.tipo_multimedia.nombre) {
+                                    case 'Documento':
+                                        icon.src = `{{ asset('assets/icons/pdf-icon.png') }}`;
+                                        break;
+                                    case 'Video':
+                                        icon.src = `{{ asset('assets/icons/video-icon.png') }}`;
+                                        break;
+                                    case 'Imagen':
+                                        icon.src = `{{ asset('assets/icons/image-icon.png') }}`;
+                                        break;
+                                    default:
+                                        icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
+                                }
+                            } else {
+                                icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
+                            }
+                            icon.alt = 'Novedad';
+                            icon.classList.add('novedad-icon');
+
+                            info.appendChild(title);
+                            info.appendChild(date);
+                            info.appendChild(text);
+
+                            card.appendChild(info);
+                            card.appendChild(icon);
+                            novedadesContainer.appendChild(card);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+            }
+
+            // Fetch and display all novedades
+            const sedeId = "{{ $turnos->first()->sede->id ?? '' }}"; // Obtener el primer sedeId disponible
+            console.log('SedeID: ', sedeId);
+            fetch(`{{ url('/novedades') }}/${sedeId}`)
                 .then(response => response.json())
                 .then(novedades => {
                     if (Array.isArray(novedades)) {
-                        const slider = document.getElementById('novedades-slider');
                         novedades.forEach(novedad => {
                             const card = document.createElement('div');
                             card.classList.add('novedad-card');
@@ -101,18 +205,22 @@
                             text.textContent = novedad.descripcion;
 
                             const icon = document.createElement('img');
-                            switch (novedad.tipo_multimedia.nombre) {
-                                case 'Documento':
-                                    icon.src = `{{ asset('assets/icons/pdf-icon.png') }}`;
-                                    break;
-                                case 'Video':
-                                    icon.src = `{{ asset('assets/icons/video-icon.png') }}`;
-                                    break;
-                                case 'Imagen':
-                                    icon.src = `{{ asset('assets/icons/image-icon.png') }}`;
-                                    break;
-                                default:
-                                    icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
+                            if (novedad.tipo_multimedia && novedad.tipo_multimedia.nombre) {
+                                switch (novedad.tipo_multimedia.nombre) {
+                                    case 'Documento':
+                                        icon.src = `{{ asset('assets/icons/pdf-icon.png') }}`;
+                                        break;
+                                    case 'Video':
+                                        icon.src = `{{ asset('assets/icons/video-icon.png') }}`;
+                                        break;
+                                    case 'Imagen':
+                                        icon.src = `{{ asset('assets/icons/image-icon.png') }}`;
+                                        break;
+                                    default:
+                                        icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
+                                }
+                            } else {
+                                icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
                             }
                             icon.alt = 'Novedad';
                             icon.classList.add('novedad-icon');
@@ -123,7 +231,7 @@
 
                             card.appendChild(info);
                             card.appendChild(icon);
-                            slider.appendChild(card);
+                            novedadesContainer.appendChild(card);
                         });
                     } else {
                         console.error('Error: La respuesta no es un array.');
@@ -133,59 +241,5 @@
         });
     </script>
 
-    <style>
-        .search-container {
-            padding: 10px;
-            text-align: center;
-        }
-
-        .results-container {
-            padding: 10px;
-        }
-
-        .result-card {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .result-title {
-            font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .result-description {
-            font-size: 0.875rem;
-        }
-
-        .novedad-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            max-width: 200px; /* Ajustar el ancho máximo de la tarjeta */
-            margin: 0 auto; /* Centrar la tarjeta horizontalmente */
-        }
-
-        .novedad-info {
-            flex: 1;
-        }
-
-        .novedad-title {
-            font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .novedad-icon {
-            width: 40px;
-            height: 40px;
-            margin-left: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/informacion-novedades.css') }}">
 @endsection

@@ -253,6 +253,60 @@
     </div>
 @endsection
 
+<!-- Modal para Mantenimientos -->
+<div class="modal fade" id="mantenimientoModal" tabindex="-1" role="dialog" aria-labelledby="mantenimientoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="contenedor-titulo">
+                    <span id="mantenimientoModalLabel" class="titulo-modal">Detalles del Mantenimiento</span>
+                    <span class="subtitulo-modal">- Todos los campos son obligatorios</span>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="mantenimientoForm">
+                    <div class="form-group flex-grow-1 row">
+                        <div class="col">
+                            <label for="nombreActivo">Nombre del Activo</label>
+                            <input type="text" id="nombreActivo" name="nombreActivo" class="form-control" readonly>
+                        </div>
+                        <div class="col">
+                            <label for="estadoElemento">Estado del Elemento</label>
+                            <input type="text" id="estadoElemento" name="estadoElemento" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group flex-grow-1 row">
+                        <div class="col">
+                            <label for="sedeMantenimiento">Sede</label>
+                            <input type="text" id="sedeMantenimiento" name="sedeMantenimiento" class="form-control" readonly>
+                        </div>
+                        <div class="col">
+                            <label for="clienteMantenimiento">Cliente</label>
+                            <input type="text" id="clienteMantenimiento" name="clienteMantenimiento" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="observaciones">Observaciones</label>
+                        <textarea id="observaciones" name="observaciones" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="observacionesReportadas">Observaciones Reportadas</label>
+                        <textarea id="observacionesReportadas" name="observacionesReportadas" class="form-control" readonly></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-consultar" id="guardarMantenimientoBtn">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
     <script src="{{ asset('assets/js/gestion-activos.js') }}?v={{ time() }}"></script>
     <script>

@@ -1,0 +1,96 @@
+.search-container {
+    padding: 10px;
+    text-align: center;
+}
+
+.results-container {
+    padding: 10px;
+}
+
+.result-card {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.result-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.result-description {
+    font-size: 0.875rem;
+}
+
+.novedades-container-wrapper {
+    max-height: 600px; /* Ajustar la altura según sea necesario */
+    overflow-y: auto;
+}
+
+.novedades-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.novedad-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 100%; /* Ajustar el ancho de la tarjeta */
+    max-width: 200px; /* Ajustar el ancho máximo de la tarjeta */
+}
+
+.novedad-info {
+    flex: 1;
+    text-align: center;
+}
+
+.novedad-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.novedad-icon {
+    width: 40px;
+    height: 40px;
+    margin-top: 10px;
+}
+
+.categories-container {
+    padding: 10px;
+    text-align: center;
+}
+
+.category-button {
+    padding: 5px 15px; /* Smaller padding */
+    margin: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    font-size: 0.875rem; /* Smaller font size */
+}
+
+.category-button.selected {
+    color: #EC6F35; /* Change text color */
+    border-color: #EC6F35; /* Change border color */
+    background-color: #f8f9fa; /* Keep background color the same */
+}
+
+.rectangle2 {
+    display: flex;
+    height: 53px;
+    background: #343434;
+    padding: 5px;
+    font: normal normal bold 14px / 16px 'Neo Sans Std', Arial, sans-serif;
+    flex-direction: column;
+}

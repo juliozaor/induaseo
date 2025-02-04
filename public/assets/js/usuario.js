@@ -18,6 +18,7 @@
     openUserModalBtn.addEventListener("click", function() {
         userModal.style.display = "flex";
         estadoToggle.checked = true; // Estado por defecto true
+        setMaxDate(); // Set the maximum date for fechaNacimiento
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -25,6 +26,7 @@
         if (e.target === userModal) {
             userModal.style.display = "none";
             resetUserForm();
+            resetErrorMessages(); // Reset error messages
         }
     });
 
@@ -34,10 +36,18 @@
             estadoToggleLabel.textContent = "Activo";
             estadoToggleLabel.classList.remove("estado-inactivo");
             estadoToggleLabel.classList.add("estado-activo");
+            estadoToggleLabel.style.background = "#D2F3D4";
+            estadoToggleLabel.style.borderRadius = "20px";
+            estadoToggleLabel.style.padding = "5px";
+            estadoToggleLabel.style.font = "normal normal normal 12px/15px 'Neo Sans Std', Arial, sans-serif";
         } else {
             estadoToggleLabel.textContent = "Inactivo";
             estadoToggleLabel.classList.remove("estado-activo");
             estadoToggleLabel.classList.add("estado-inactivo");
+            estadoToggleLabel.style.background = "#FFD59A";
+            estadoToggleLabel.style.borderRadius = "20px";
+            estadoToggleLabel.style.padding = "5px";
+            estadoToggleLabel.style.font = "normal normal normal 12px/15px 'Neo Sans Std', Arial, sans-serif";
         }
     }
 
@@ -94,7 +104,7 @@
                     document.getElementById("cargo").value = usuario.cargo;
                     estadoToggle.checked = usuario.estado; // Set the checkbox value based on user status
                     actualizarEstadoLabel(); // Actualizar el label del estado
-
+                    setMaxDate(); // Set the maximum date for fechaNacimiento
                     userModal.style.display = "flex"; // Muestra el modal
                 })
                 .catch((error) => console.error("Error al cargar los datos del usuario:", error));
@@ -105,6 +115,7 @@
     document.getElementById("closeUserModal").addEventListener("click", function() {
         userModal.style.display = "none";
         resetUserForm();
+        resetErrorMessages(); // Reset error messages
     });
 
     // Guardar cambios
@@ -181,6 +192,10 @@
         // Ocultar el checkbox de estado en modo creación
         estadoToggleContainer.style.display = "none";
         estadoToggleLabel.style.display = "none";
+    }
+
+    function resetErrorMessages() {
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
     }
 
     // Cargar roles
@@ -332,6 +347,10 @@
         return new Date(dateString).toLocaleDateString('es-ES', options);
     }
 
+    function setMaxDate() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("fechaNacimiento").setAttribute('max', today);
+    }
 
     cargarRoles();
     cargarRolesFiltro();
@@ -371,4 +390,13 @@
             })
             .catch(error => console.error("Error al cargar los clientes:", error));
     }
+
+    // Add input validation for numeroIdentificacion and telefono
+    document.getElementById("numeroIdentificacion").addEventListener("input", function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    document.getElementById("telefono").addEventListener("input", function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
 })();
