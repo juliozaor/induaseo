@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const consultarBtn = document.getElementById('consultarBtn');
     const turnosTableBody = document.getElementById('turnosTableBody');   
     const nuevaAsignacionBtn = document.getElementById('nuevaAsignacionBtn');
+    const registrosEncontrados = document.querySelector('.registros-encontrados');
 
     consultarBtn.addEventListener('click', function() {
         const sedeId = sedeSelect.value;
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 turnosTableBody.innerHTML = '';
+                let totalRegistros = 0;
                 data.forEach(turno => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -23,7 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
                     `;
                     turnosTableBody.appendChild(row);
+                    totalRegistros++;
                 });
+                registrosEncontrados.textContent = `Total: ${totalRegistros}`;
                 nuevaAsignacionBtn.style.display = 'inline-block';
             })
             .catch(error => console.error('Error fetching turnos:', error));

@@ -22,15 +22,14 @@
         <div class="input-container">
             <input type="text" class="busqueda-input" id="busquedaInput" placeholder="Buscar...">
         </div>
-        <select class="filtro form-control" id="filtroCliente" name="filtroCliente">
+        {{-- <select class="filtro form-control" id="filtroCliente" name="filtroCliente" >
             <option value="">Todos los clientes</option>
-            <!-- Opciones de clientes se llenarán dinámicamente -->
         </select>
         <select class="filtro form-control" id="filtroEstado">
             <option value="">Todos los estados</option>
             <option value="1">Activo</option>
             <option value="0">Inactivo</option>
-        </select>
+        </select> --}}
         <span class="registros-encontrados">Total: 0</span>
         <select class="registros-por-pagina" id="registrosPorPagina">
             <option value="5">5</option>

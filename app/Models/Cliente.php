@@ -26,12 +26,12 @@ class Cliente extends Model
 
     public function ciudad()
     {
-        return $this->belongsTo(ciudades::class);
+        return $this->belongsTo(Ciudades::class);
     }
 
     public function tipoDocumento()
     {
-        return $this->belongsTo(tiposDocumento::class, 'tipo_documento_id');
+        return $this->belongsTo(TiposDocumento::class, 'tipo_documento_id');
     }
 
     public function sectorEconomico()

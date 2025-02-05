@@ -23,6 +23,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\GestionarInventarioController;
 use App\Http\Controllers\InformacionController;
 use App\Http\Controllers\InformacionNovedadesController;
+use App\Http\Controllers\ReporteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +90,9 @@ Route::middleware(['auth'])->group(function () {
     // ...other routes...
     Route::get('/novedades', [InformacionController::class, 'obtenerNovedades'])->name('novedades.obtener');
     Route::get('/informacion', [SeguimientoActividadesController::class, 'informacion'])->name('informacion');
+
+    Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes/consultar', [ReporteController::class, 'consultar'])->name('reportes.consultar');
 });
 /*
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');

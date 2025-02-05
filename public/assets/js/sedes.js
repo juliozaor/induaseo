@@ -16,8 +16,11 @@
         const tablaSeleccionada = tablaMaestraSelect.value;
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
-        const cliente = filtroCliente.value;
-        const estado = filtroEstado.value;
+        /* const cliente = filtroCliente.value;
+        const estado = filtroEstado.value; */
+
+        const cliente = '';
+        const estado = '';
 
         if (!tablaSeleccionada) {
             return;
@@ -137,8 +140,8 @@
     consultarBtn.addEventListener("click", () => cargarDatos(1));
     registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
     busquedaInput.addEventListener("input", () => cargarDatos(1));
-    filtroCliente.addEventListener("change", () => cargarDatos(1));
-    filtroEstado.addEventListener("change", () => cargarDatos(1));
+   /*  filtroCliente.addEventListener("change", () => cargarDatos(1));
+    filtroEstado.addEventListener("change", () => cargarDatos(1)); */
 
     // Modal functionality
     const modal = document.getElementById("createSedeModal");

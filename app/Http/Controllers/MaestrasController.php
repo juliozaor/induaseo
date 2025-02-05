@@ -33,11 +33,10 @@ class MaestrasController extends Controller
             $tabla = $request->input('tabla');
 
             if ($tabla === 'clientes') {
-                $clientes = Cliente::with(['tipoDocumento', 'ciudad.pais', 'sectorEconomico', 'creador', 'actualizador'])->get();
                 $query = Cliente::with(['tipoDocumento', 'ciudad.pais', 'sectorEconomico', 'creador', 'actualizador']);
 
                 // Filtro de búsqueda
-                if ($request->has('buscar')) {
+                if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
                     $query->where('nombre', 'like', "%$buscar%")
                         ->orWhere('numero_documento', 'like', "%$buscar%")
@@ -56,12 +55,24 @@ class MaestrasController extends Controller
                 $query = Sede::with(['cliente', 'ciudad.pais', 'creador', 'actualizador', 'regional']);
 
                 // Filtro de búsqueda
-                if ($request->has('buscar')) {
+                if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
                     $query->where('direccion', 'like', "%$buscar%")
                         ->orWhereHas('cliente', fn($q) => $q->where('nombre', 'like', "%$buscar%"))
                         ->orWhereHas('ciudad', fn($q) => $q->where('nombre', 'like', "%$buscar%"));
                 }
+
+                /* // Filtro por cliente
+                if ($request->has('cliente') && $request->input('cliente') !== '') {
+                    $cliente_id = $request->input('cliente');
+                    $query->where('cliente_id', $cliente_id);
+                }
+
+                // Filtro por estado
+                if ($request->has('estado') && $request->input('estado') !== '') {
+                    $estado = $request->input('estado');
+                    $query->where('estado', $estado);
+                } */
 
                 // Cantidad de registros por página
                 $registrosPorPagina = $request->input('registros_por_pagina', 10);
@@ -73,7 +84,7 @@ class MaestrasController extends Controller
                 $query = Turno::with(['creador', 'actualizador']);
 
                 // Filtro de búsqueda
-                if ($request->has('buscar')) {
+                if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
                     $query->where('nombre', 'like', "%$buscar%");
                 }
@@ -88,7 +99,7 @@ class MaestrasController extends Controller
                 $query = Area::with(['cliente', 'sede', 'creador', 'actualizador']);
 
                 // Filtro de búsqueda
-                if ($request->has('buscar')) {
+                if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
                     $query->where('nombre', 'like', "%$buscar%");
                 }
@@ -103,7 +114,7 @@ class MaestrasController extends Controller
                 $query = Activos::with(['clasificacion', 'estados', 'creador', 'actualizador']);
 
                 // Filtro de búsqueda
-                if ($request->has('buscar')) {
+                if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
                     $query->where('nombre_elemento', 'like', "%$buscar%")
                         ->orWhere('marca', 'like', "%$buscar%")
@@ -121,7 +132,7 @@ class MaestrasController extends Controller
                 $query = Insumos::with(['clasificacion', 'estados', 'creador', 'actualizador']);
 
                 // Filtro de búsqueda
-                if ($request->has('buscar')) {
+                if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
                     $query->where('nombre_elemento', 'like', "%$buscar%");
                 }
@@ -137,8 +148,7 @@ class MaestrasController extends Controller
 
             return response()->json(['error' => 'Tabla no encontrada'], 404);
         } catch (Exception $e) {
-            Log::error('Error en consultar: ' . $e->getMessage());
-            return response()->json(['error' => 'Error al consultar los datos :'. $e->getMessage()], 500);
+            return response()->json(['error' => 'Error al consultar los datos: ' . $e->getMessage()], 500);
         }
     }
 
