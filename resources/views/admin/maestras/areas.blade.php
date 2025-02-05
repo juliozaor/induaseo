@@ -20,7 +20,26 @@
 
     <div class="busqueda-container">
         <div class="input-container">
-            <input type="text" class="busqueda-input" id="busquedaInput" placeholder="Buscar...">
+            <input type="text" class="busqueda-input" id="busquedaInput" placeholder="Buscar Área...">
+        </div>
+        <div class="input-container2">
+            <select id="clienteFiltro" class="busqueda-select">
+                <option value="">Todos los clientes</option>
+                {{-- Aquí se llenarán los clientes desde JavaScript --}}
+            </select>
+        </div>
+        <div class="input-container2">
+            <select id="sedeFiltro" class="busqueda-select">
+                <option value="">Todas las sedes</option>
+                {{-- Aquí se llenarán las sedes desde JavaScript --}}
+            </select>
+        </div>
+        <div class="input-container2">
+            <select id="estadoFiltro" class="busqueda-select">
+                <option value="">Todos los estados</option>
+                <option value="1">Activo</option>
+                <option value="2">Inactivo</option>
+            </select>
         </div>
         <span class="registros-encontrados">Total: 0</span>
         <select class="registros-por-pagina" id="registrosPorPagina">

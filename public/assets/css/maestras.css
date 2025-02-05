@@ -100,6 +100,14 @@
     width: 100%;
 }
 
+.busqueda-select {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #B7B7B7;
+    border-radius: 6px;
+    padding: 3.5px; /* Espacio para el ícono */
+    width: 100%;
+}
+
 .input-container::before {
     content: url('../icons/lupa.svg'); /* Cambia por la URL o código del ícono */
     position: absolute;

@@ -158,3 +158,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById("close").addEventListener("click", function() {
+        modal.style.display = "none";
+        resetForm();
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+    });
+</script>

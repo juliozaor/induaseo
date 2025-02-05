@@ -122,7 +122,7 @@
                                         <span class="error-message" id="errorCodigoInput"></span>
                                     </div>
                                     <div class="col">
-                                        <label for="cantidadInput">Cantidad <span id="cantidadDisponible" class="text-muted"></span></label>
+                                        <label for="cantidadInput">Cantidad <span id="cantidadDisponible" class="text-success"></span></label>
                                         <input type="number" id="cantidadInput" class="form-control" name="cantidad" min="1">
                                         <span class="error-message" id="errorCantidadInput"></span>
                                     </div>

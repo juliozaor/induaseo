@@ -378,7 +378,11 @@
 
 
     const numeroIdentificacionInput = document.getElementById("numeroIdentificacion");
+    const celular = document.getElementById("celular");
     numeroIdentificacionInput.addEventListener("input", function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    celular.addEventListener("input", function() {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 

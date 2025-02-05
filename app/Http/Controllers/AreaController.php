@@ -7,17 +7,36 @@ use App\Models\Tarea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use function PHPUnit\Framework\isNan;
+
 class AreaController extends Controller
 {
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
+        $clienteId = $request->input('cliente_id');
+        $sedeId = $request->input('sede_id');
+        $estado = $request->input('estado');
 
-        $query = Area::with([ 'sede.cliente', 'creador', 'actualizador']);
+        $query = Area::with(['sede.cliente', 'creador', 'actualizador']);
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
+        }
+
+        if ($clienteId) {
+            $query->whereHas('sede.cliente', function($q) use ($clienteId) {
+                $q->where('id', $clienteId);
+            });
+        }
+
+        if ($sedeId) {
+            $query->where('sede_id', $sedeId);
+        }
+
+        if ($estado) {
+            $query->where('estado', $estado == 1 ? 1 : 0);
         }
 
         $areas = $query->paginate($registrosPorPagina);
@@ -27,7 +46,7 @@ class AreaController extends Controller
 
     public function store(Request $request)
     {
-        
+
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'sede' => 'required|exists:sedes,id',

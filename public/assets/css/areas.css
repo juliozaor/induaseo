@@ -183,3 +183,20 @@ input:checked + .slider:before {
     background-color: #ccc;
     cursor: not-allowed;
 }
+
+.busqueda-select {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #B7B7B7;
+    border-radius: 6px;
+    padding: 3.5px; /* Espacio para el ícono */
+    width: 100%;
+}
+
+.input-container {
+    position: relative;
+    display: inline-block;
+}
+.input-container2 {
+    position: relative;
+    display: inline-block;
+}

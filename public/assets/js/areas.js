@@ -12,6 +12,9 @@
 
     const clienteSelect = document.getElementById("cliente");
     const sedeSelect = document.getElementById("sede");
+    const clienteFiltro = document.getElementById("clienteFiltro");
+    const sedeFiltro = document.getElementById("sedeFiltro");
+    const estadoFiltro = document.getElementById("estadoFiltro");
     /* const tareaSection = document.getElementById("tareaSection"); */
     const nuevaTareaInput = document.getElementById("nuevaTarea");
     const agregarTareaBtn = document.getElementById("agregarTareaBtn");
@@ -26,7 +29,7 @@
             .then(response => response.json())
             .then(clientes => {
                 clienteArr = clientes;
-                
+
                 clienteSelect.innerHTML = '<option value="">Seleccione</option>';
                 clientes.forEach(cliente => {
                     const option = document.createElement("option");
@@ -38,12 +41,27 @@
             .catch(error => console.error('Error al cargar clientes:', error));
     }
 
+    function cargarClientesFiltro() {
+        fetch(`../clientes-select`)
+            .then(response => response.json())
+            .then(clientes => {
+                clienteFiltro.innerHTML = '<option value="">Todos los clientes</option>';
+                clientes.forEach(cliente => {
+                    const option = document.createElement("option");
+                    option.value = cliente.id;
+                    option.textContent = cliente.nombre;
+                    clienteFiltro.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar clientes:', error));
+    }
+
     function cargarSedes(clienteId) {
         return fetch(`../sedes?cliente_id=${clienteId}`)
             .then(response => response.json())
             .then(sedes => {
                 sedeArr = sedes;
-                
+
                 sedeSelect.innerHTML = '<option value="">Seleccione</option>';
                 sedes.forEach(sede => {
                     const option = document.createElement("option");
@@ -55,12 +73,27 @@
             .catch(error => console.error('Error al cargar sedes:', error));
     }
 
+    function cargarSedesFiltro(clienteId) {
+        fetch(`../sedes?cliente_id=${clienteId}`)
+            .then(response => response.json())
+            .then(sedes => {
+                sedeFiltro.innerHTML = '<option value="">Todas las sedes</option>';
+                sedes.forEach(sede => {
+                    const option = document.createElement("option");
+                    option.value = sede.id;
+                    option.textContent = sede.nombre;
+                    sedeFiltro.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar sedes:', error));
+    }
+
     function cargarTareas(areaId) {
         fetch(`../tareas/${areaId}`)
             .then(response => response.json())
-            .then(data => {                
+            .then(data => {
                 tablaTareasBody.innerHTML = '';
-                if (data.length > 0) {                    
+                if (data.length > 0) {
                     data.forEach(tarea => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
@@ -68,7 +101,7 @@
                             <td>${tarea.nombre}</td>
                             <td>${tarea.descripcion}</td>
                             <td><button class="btn-eliminar" data-id="${tarea.id}">Eliminar</button></td>
-                        `;                        
+                        `;
                         tablaTareasBody.appendChild(row);
                     });
                 } else {
@@ -124,8 +157,11 @@
     function cargarDatos(page = 1) {
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
+        const clienteId = clienteFiltro.value;
+        const sedeId = sedeFiltro.value;
+        const estado = estadoFiltro.value;
 
-        fetch(`../areas?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
+        fetch(`../areas?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}&cliente_id=${clienteId}&sede_id=${sedeId}&estado=${estado}`, {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -216,11 +252,21 @@
 
     cargarDatos(1);
     cargarClientes();
+    cargarClientesFiltro();
+    cargarSedesFiltro();
 
     // Eventos
     consultarBtn.addEventListener("click", () => cargarDatos(1));
     registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
     busquedaInput.addEventListener("input", () => cargarDatos(1));
+    clienteFiltro.addEventListener("change", () => {
+        const clienteId = clienteFiltro.value;
+        sedeFiltro.innerHTML = '<option value="">Todas las sedes</option>'; // Reiniciar el valor del select sedeFiltro
+        cargarSedesFiltro(clienteId);
+        cargarDatos(1);
+    });
+    sedeFiltro.addEventListener("change", () => cargarDatos(1));
+    estadoFiltro.addEventListener("change", () => cargarDatos(1));
 
     // Modal functionality
     const modal = document.getElementById("createAreaModal");
@@ -264,7 +310,7 @@
                     }
                     return response.json();
                 })
-                .then((area) => {                    
+                .then((area) => {
                     document.getElementById("nombre").value = area.nombre;
                     document.getElementById("cliente").value = area.sede.cliente.id;
                     cargarSedes(area.sede.cliente.id).then(() => {
@@ -299,7 +345,7 @@
         for (let [key, value] of formData.entries()) {
             console.log(`${key}: ${value}`);
         }
-        
+
 
         fetch(url, {
                 method: 'POST',
@@ -316,7 +362,7 @@
                 }
                 return response.json();
             })
-            .then((data) => {                
+            .then((data) => {
                 if (data.errors) {
                     showErrors(data.errors);
                 } else {
@@ -342,13 +388,13 @@
         cargarSedes(clienteId);
     });
 
-    agregarTareaBtn.addEventListener("click", function() {
+    /* agregarTareaBtn.addEventListener("click", function() {
         const nombreTarea = nuevaTareaInput.value;
         const descripcionTarea = descripcionTareaInput.value;
         if (nombreTarea && descripcionTarea && areaId) {
             agregarTarea(areaId, nombreTarea, descripcionTarea);
         }
-    });
+    }); */
 
     document.addEventListener("click", function(event) {
         if (event.target.classList.contains("btn-eliminar")) {
@@ -404,7 +450,7 @@
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
 
-    const guardarFinalizarBtn = document.getElementById("guardarFinalizarBtn");
+    /* const guardarFinalizarBtn = document.getElementById("guardarFinalizarBtn");
 
     guardarFinalizarBtn.addEventListener("click", function() {
         modal.style.display = "none";
@@ -414,5 +460,5 @@
             "ok.png", // Ruta del ícono de éxito
             "Guardado con éxito" // Mensaje de éxito
         );
-    });
+    }); */
 })();

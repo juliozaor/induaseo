@@ -95,7 +95,7 @@ class ClientesController extends Controller
            /*  $cliente->update($validatedData); */
 
             $cliente->update([
-                'tipo_documento_id' => $request->tipoIdentificacion,
+                'tipo_documento_id' => 9/* $request->tipoIdentificacion */,
                 'numero_documento' => $request->numeroIdentificacion,
                 'nombre' => $request->nombre,
                 'pais_id' => $request->pais,

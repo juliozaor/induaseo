@@ -197,13 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(document.getElementById('crearInventarioForm'));
-        formData.append("estado", document.getElementById("estadoInventarioToggle").checked ? 1 : 0);
         formData.append('sede_id', sedeSelect.value);
-
-        // Append only the first image to formData
-        if (imagenesInput.files.length > 0) {
-            formData.append('imagenesInput', imagenesInput.files[0]);
-        }
 
         if (editMode) {
             formData.append("_method", "PUT");
@@ -255,6 +249,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 errorElement.textContent = messages.join(', ');
             }
         }
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
     // Función para resetear el formulario de inventario
@@ -314,8 +312,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(data => {
-                codigoInput.value = data.numero_serie;
-                cantidadDisponibleSpan.textContent = `Disponible: ${data.cantidad_disponible}`;
+                codigoInput.value = data.codigo;
+                cantidadDisponibleSpan.textContent = `Disponible: ${data.cantidad}`;
             })
             .catch(error => console.error('Error fetching items:', error));
     });
@@ -331,64 +329,4 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-
-    // Función para cargar los estados
-    /* function cargarEstados() {
-        fetch(`estados`)
-            .then(response => response.json())
-            .then(estados => {
-                const estadoSelect = document.getElementById("estadoInventario");
-                estadoSelect.innerHTML = '<option value="">Seleccione</option>';
-                estados.forEach(estado => {
-                    const option = document.createElement("option");
-                    option.value = estado.id;
-                    option.textContent = estado.nombre;
-                    estadoSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error("Error al cargar los estados:", error));
-    } */
-
-    // Cargar items y estados al cargar la página
-    // cargarItems();
-    //cargarEstados()
-
-    // Evento para previsualizar las imágenes seleccionadas
-    /* imagenesInput.addEventListener('change', function () {
-
-        imagenesPreview.innerHTML = ''; // Clear previous previews
-        const dt = new DataTransfer();
-        for (const file of imagenesInput.files) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imgContainer = document.createElement('div');
-                imgContainer.classList.add('img-container');
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
-                img.style.width = '100px';
-                img.style.height = '100px';
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = 'X';
-                removeBtn.classList.add('remove-btn');
-                removeBtn.addEventListener('click', function () {
-                    imgContainer.remove();
-                    // Remove the file from the input
-                    for (const fileItem of imagenesInput.files) {
-                        if (fileItem !== file) {
-                            dt.items.add(fileItem);
-                        }
-                    }
-                    imagenesInput.files = dt.files;
-                });
-                imgContainer.appendChild(img);
-                imgContainer.appendChild(removeBtn);
-                imagenesPreview.appendChild(imgContainer);
-                dt.items.add(file); // Add file to DataTransfer
-            };
-            reader.readAsDataURL(file);
-        }
-        imagenesInput.files = dt.files; // Update input files
-    }); */
-
 });
