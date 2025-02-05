@@ -93,6 +93,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
     Route::get('/reportes/consultar', [ReporteController::class, 'consultar'])->name('reportes.consultar');
+    Route::get('/reportes/activos', [ReporteController::class, 'activos'])->name('reportes.activos');
 });
 /*
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');

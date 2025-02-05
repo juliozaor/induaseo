@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\SupervisorTurno;
 use App\Models\Sede;
+use App\Models\SedesActivos;
 use App\Models\Usuario;
 
 class ReporteController extends Controller
@@ -39,6 +40,24 @@ class ReporteController extends Controller
         });
 
         return response()->json($turnos);
+    }
+    public function activos(Request $request)
+    {
+        $sede_id = $request->sede_id;
+
+        $query = SedesActivos::with(['activo', 'estados'])
+            ->where('sede_id', $sede_id);
+
+            $activos = $query->get()->map(function ($activo) {
+                return [
+                    'activo' => $activo->activo->nombre_elemento,
+                    'cantidad' => $activo->cantidad,
+                    'estado' => $activo->estados->nombre,
+                    'observacion' => $activo->observacion
+                ];
+            });
+
+        return response()->json($activos);
     }
 
     

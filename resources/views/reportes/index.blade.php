@@ -25,6 +25,11 @@
         </div>
     </div>
 
+    
+
+<div class="container-body mt-3">
+<div class="listado-container">
+    <h2 class="listado-titulo">Actividades</h2>
     <div class="filter-container">
         <div class="d-flex">
             <div class="inputfecha">
@@ -41,10 +46,6 @@
                 <button id="limpiarFiltroBtn" class="btn-consultar">Limpiar Filtro</button>
         </div>
     </div>
-
-<div class="container-body mt-3">
-<div class="listado-container">
-    <h2 class="listado-titulo">Actividades</h2>
     <div class="tabla-container">
         <table class="tabla" id="tablaActividades">
             <thead>
@@ -59,29 +60,28 @@
             </tbody>
         </table>
     </div>
-    <div class="actividades-paginacion"></div>
+    <div class="activos-paginacion"></div>
 </div>
 
-{{-- <div class="listado-container">
+<div class="listado-container">
     <h2 class="listado-titulo">Activos</h2>
     <div class="tabla-container">
-        <table class="tabla" id="tablaActividades">
+        <table class="tabla" id="tablaActivos">
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Total</th>
-                    <th>En buen estado</th>
-                    <th>Mal estado</th>
-                    <th>Mtto programados</th>
+                    <th>Activo</th>
+                    <th>Cantidad</th>
+                    <th>Estado</th>
+                    <th>Observación</th>
                 </tr>
             </thead>
-            <tbody id="actividadesTableBody">
+            <tbody id="activosTableBody">
                 <!-- Datos de turnos -->
             </tbody>
         </table>
     </div>
-    <div class="actividades-paginacion"></div>
-</div> --}}
+    <div class="activos-paginacion"></div>
+</div>
 
 </div>
 

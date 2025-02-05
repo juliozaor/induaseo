@@ -178,7 +178,7 @@
             modalTitle.textContent = "Editar sede";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`../sedes?id=${sedeId}`)
+            fetch(`../obtener-sede?id=${sedeId}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Error al cargar los datos de la sede.");

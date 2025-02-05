@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sedeSelect = document.getElementById('sedeSelect');
     const consultarBtn = document.getElementById('consultarBtn');
     const actividadesTableBody = document.getElementById('actividadesTableBody');
+    const activosTableBody = document.getElementById('activosTableBody');
     const aplicarFiltroBtn = document.getElementById('aplicarFiltroBtn');
     const limpiarFiltroBtn = document.getElementById('limpiarFiltroBtn');
     const fechaInicio = document.getElementById('fechaInicio');
@@ -44,6 +45,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 nuevaAsignacionBtn.style.display = 'inline-block';
             })
             .catch(error => console.error('Error fetching actividades:', error));
+
+
+        fetch(`reportes/activos?sede_id=${sedeId}`)
+            .then(response => response.json())
+            .then(data => {
+                activosTableBody.innerHTML = '';
+                data.forEach(activo => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${activo.activo}</td>
+                        <td>${activo.cantidad}</td>
+                        <td>${activo.estado}</td>
+                        <td>${activo.observacion}</td>
+                    `;
+                    activosTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching activos:', error));
+
+
+
     });
 
 
