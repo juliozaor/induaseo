@@ -12,9 +12,9 @@
         Nuevo</button>
 </div>
 
-<!-- Listado de Áreas -->
+<!-- Listado de Regionales -->
 <div class="listado-container">
-    <h2 class="listado-titulo">Listado de áreas</h2>
+    <h2 class="listado-titulo">Listado de regionales</h2>
     <!-- Línea divisoria -->
     <div class="divider"></div>
 
@@ -33,17 +33,13 @@
 
     <!-- Tabla de datos -->
     <div class="tabla-container">
-        <table class="tabla" id="tablaAreas">
+        <table class="tabla" id="tablaRegionales">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre Área</th>
-                    <th>Cliente</th>
-                    <th>Sede</th>
+                    <th>Nombre Regional</th>
                     <th>Estado</th>
                     <th>Fecha Actualización</th>
-                    <th>Actualizado por</th>
-                    <th>Creado por</th>
                     <th>Fecha de Creación</th>
                     <th>Acciones</th>
                 </tr>
@@ -54,11 +50,11 @@
     <div class="tabla-paginacion"></div>
 </div>
 
-<div id="createAreaModal" class="modal">
+<div id="createRegionalModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <div class="contenedor-titulo">
-                <span id="modalTitle" class="titulo-modal">Crear nueva área</span>
+                <span id="modalTitle" class="titulo-modal">Crear nueva regional</span>
                 <span class="subtitulo-modal">- Todos los campos son obligatorios</span>
             </div>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
@@ -66,18 +62,8 @@
             </button>
         </div>
         <div class="modal-body">
-            <form id="areaForm">
+            <form id="regionalForm">
                 <div class="form-group flex-grow-1 row">
-                    <div class="col-6">
-                        <label for="cliente">Cliente:</label>
-                        <select id="cliente" name="cliente" class="form-control" required></select>
-                        <span class="error-message" id="errorCliente"></span>
-                    </div>
-                    <div class="col-6">
-                        <label for="sede">Sede:</label>
-                        <select id="sede" name="sede" class="form-control" required></select>
-                        <span class="error-message" id="errorSede"></span>
-                    </div>
                     <div class="col-12">
                         <label for="nombre">Nombre:</label>
                         <input type="text" id="nombre" name="nombre" class="form-control" required>
@@ -92,33 +78,7 @@
                 <span class="slider round"></span>
             </label>
             <label for="estadoToggle">Activo</label>
-            <button id="modalActionBtn" class="btn-consultar">Crear Área</button>
+            <button id="modalActionBtn" class="btn-consultar">Crear Regional</button>
         </div>
-       {{--  <div id="tareaSection" style="display: none;">
-            <div class="form-group">
-                <label for="nuevaTarea">Nueva Tarea:</label>
-                <div class="select-container2">
-                    <input type="text" id="nuevaTarea" class="form-control" placeholder="Nombre de la tarea">
-                    <input type="text" id="descripcionTarea" class="form-control" placeholder="Descripción de la tarea">
-                    <button id="agregarTareaBtn" class="btn-actividad" style="min-width: 130px;">Agregar Tarea</button>
-                </div>
-            </div>
-            <div class="tabla-container" style="max-height: 100px">
-                <table class="tabla" id="tablaTareas">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-            <div style="text-align: right; margin-top: 10px">
-                <button id="guardarFinalizarBtn" class="btn-consultar">Guardar y finalizar</button>
-            </div>
-        </div> --}}
     </div>
 </div>

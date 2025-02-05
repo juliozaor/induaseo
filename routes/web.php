@@ -24,6 +24,7 @@ use App\Http\Controllers\GestionarInventarioController;
 use App\Http\Controllers\InformacionController;
 use App\Http\Controllers\InformacionNovedadesController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\RegionalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +95,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
     Route::get('/reportes/consultar', [ReporteController::class, 'consultar'])->name('reportes.consultar');
     Route::get('/reportes/activos', [ReporteController::class, 'activos'])->name('reportes.activos');
+    Route::get('/admin/maestras/regionales', [MaestrasController::class, 'clientes'])->name('maestras.regionales');
+    Route::get('/regionales', [RegionalesController::class, 'index'])->name('regionales.index');
+    Route::post('/regionales/guardar', [RegionalesController::class, 'store'])->name('regionales.store');
+    Route::get('/regional', [RegionalesController::class, 'show'])->name('regionales.show');
+    Route::post('/regionales/actualizar/{id}', [RegionalesController::class, 'update'])->name('regionales.update');
+    Route::delete('/regionales/{id}', [RegionalesController::class, 'destroy'])->name('regionales.destroy');
 });
 /*
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -144,7 +151,7 @@ Route::get('/asignar-turnos/tareas/{id}', [SupervisorTurnoController::class, 'ge
 Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
 Route::post('/areas/guardar', [AreaController::class, 'store'])->name('areas.store');
 Route::get('/area', [AreaController::class, 'show'])->name('areas.show');
-Route::put('/areas/actualizar/{id}', [AreaController::class, 'update'])->name('areas.update');
+Route::post('/areas/actualizar/{id}', [AreaController::class, 'update'])->name('areas.update');
 Route::delete('/areas/{id}', [AreaController::class, 'destroy'])->name('areas.destroy');
 Route::get('/tareas/{areaId}', [AreaController::class, 'obtenerTareas'])->name('areas.tareas');
 Route::post('/tareas', [AreaController::class, 'guardarTarea'])->name('areas.tareas.store');
