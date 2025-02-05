@@ -23,7 +23,7 @@ class MaestrasController extends Controller
 {
     public function index()
     {
-        $tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas', 'activos', 'insumos'];
+        $tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas', 'activos', 'insumos', 'regionales'];
         return view('admin.maestras.index', compact('tablasMaestras'));
     }
 
@@ -144,6 +144,21 @@ class MaestrasController extends Controller
                 $insumos = $query->paginate($registrosPorPagina);
 
                 return response()->json($insumos);
+            } elseif ($tabla === 'regionales') {
+                $query = Regionales::query();
+
+                // Filtro de búsqueda
+                if ($request->has('buscar') && $request->input('buscar') !== '') {
+                    $buscar = $request->input('buscar');
+                    $query->where('nombre', 'like', "%$buscar%");
+                }
+
+                // Cantidad de registros por página
+                $registrosPorPagina = $request->input('registros_por_pagina', 10);
+
+                // Obtener datos paginados
+                $regionales = $query->paginate($registrosPorPagina);
+                return response()->json($regionales);
             }
 
             return response()->json(['error' => 'Tabla no encontrada'], 404);
@@ -167,6 +182,8 @@ class MaestrasController extends Controller
             return view('admin.maestras.activos', compact('tabla'));
         } elseif ($tabla === 'insumos') { // Add this block
             return view('admin.maestras.insumos', compact('tabla'));
+        } elseif ($tabla === 'regionales') {
+            return view('admin.maestras.regionales', compact('tabla'));
         }
         return response()->json(['error' => 'Tabla no encontrada'], 404);
     }

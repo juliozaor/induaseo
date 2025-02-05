@@ -70,6 +70,11 @@
                             existingScript6.remove();
                         }
 
+                        const existingScript7 = document.querySelector('script[src="{{ asset('assets/js/regionales.js') }}"]');
+                        if (existingScript7) {
+                            existingScript7.remove();
+                        }
+
                         // Load the script after content is inserted
                         const script = document.createElement('script');
                         switch (tablaSeleccionada) {
@@ -90,6 +95,9 @@
                                 break;
                             case 'insumos':
                                 script.src = "{{ asset('assets/js/insumos.js') }}?v={{ time() }}";
+                                break;
+                            case 'regionales':
+                                script.src = "{{ asset('assets/js/regionales.js') }}?v={{ time() }}";
                                 break;
                             default:
                                 console.error('Tabla no encontrada');

@@ -1,7 +1,7 @@
 (function() {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
-    const tablaAreasBody = document.querySelector("#tablaAreas tbody");
+    const tablaRegionalesBody = document.querySelector("#tablaRegionales tbody");
     const paginacionContainer = document.createElement('div');
     paginacionContainer.classList.add('paginacion');
     document.querySelector(".tabla-paginacion").appendChild(paginacionContainer);
@@ -10,122 +10,11 @@
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
     const openModalBtn = document.getElementById("openModalBtn");
 
-    const clienteSelect = document.getElementById("cliente");
-    const sedeSelect = document.getElementById("sede");
-    /* const tareaSection = document.getElementById("tareaSection"); */
-    const nuevaTareaInput = document.getElementById("nuevaTarea");
-    const agregarTareaBtn = document.getElementById("agregarTareaBtn");
-    const tablaTareasBody = document.querySelector("#tablaTareas tbody");
-    const descripcionTareaInput = document.getElementById("descripcionTarea");
-
-    let clienteArr = [];
-    let sedeArr = [];
-
-    function cargarClientes() {
-        fetch(`../clientes-select`)
-            .then(response => response.json())
-            .then(clientes => {
-                clienteArr = clientes;
-                
-                clienteSelect.innerHTML = '<option value="">Seleccione</option>';
-                clientes.forEach(cliente => {
-                    const option = document.createElement("option");
-                    option.value = cliente.id;
-                    option.textContent = cliente.nombre;
-                    clienteSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error al cargar clientes:', error));
-    }
-
-    function cargarSedes(clienteId) {
-        return fetch(`../sedes?cliente_id=${clienteId}`)
-            .then(response => response.json())
-            .then(sedes => {
-                sedeArr = sedes;
-                
-                sedeSelect.innerHTML = '<option value="">Seleccione</option>';
-                sedes.forEach(sede => {
-                    const option = document.createElement("option");
-                    option.value = sede.id;
-                    option.textContent = sede.nombre;
-                    sedeSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error al cargar sedes:', error));
-    }
-
-    function cargarTareas(areaId) {
-        fetch(`../tareas/${areaId}`)
-            .then(response => response.json())
-            .then(data => {                
-                tablaTareasBody.innerHTML = '';
-                if (data.length > 0) {                    
-                    data.forEach(tarea => {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${tarea.id}</td>
-                            <td>${tarea.nombre}</td>
-                            <td>${tarea.descripcion}</td>
-                            <td><button class="btn-eliminar" data-id="${tarea.id}">Eliminar</button></td>
-                        `;                        
-                        tablaTareasBody.appendChild(row);
-                    });
-                } else {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td colspan="4">No se encontraron tareas.</td>
-                    `;
-                    tablaTareasBody.appendChild(row);
-                }
-            })
-            .catch(error => {
-                console.error('Error al cargar tareas:', error);
-                tablaTareasBody.innerHTML = `
-                    <tr>
-                        <td colspan="4">No se encontraron tareas.</td>
-                    </tr>
-                `;
-            });
-    }
-
-    function agregarTarea(areaId, nombreTarea, descripcionTarea) {
-        fetch(`../tareas`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ area_id: areaId, nombre: nombreTarea, descripcion: descripcionTarea })
-        })
-        .then(response => response.json())
-        .then(data => {
-            cargarTareas(areaId);
-            nuevaTareaInput.value = '';
-            descripcionTareaInput.value = '';
-        })
-        .catch(error => console.error('Error al agregar tarea:', error));
-    }
-
-    function eliminarTarea(id) {
-        fetch(`../tareas/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            cargarTareas(areaId);
-        })
-        .catch(error => console.error('Error al eliminar tarea:', error));
-    }
-
     function cargarDatos(page = 1) {
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
 
-        fetch(`../areas?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
+        fetch(`../regionales?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -137,26 +26,22 @@
             })
             .then(data => {
                 // Limpiar la tabla y la paginación
-                tablaAreasBody.innerHTML = '';
+                tablaRegionalesBody.innerHTML = '';
                 paginacionContainer.innerHTML = '';
 
                 // Llenar la tabla con los datos
-                data.data.forEach(area => {
+                data.forEach(regional => {
                     const row = document.createElement("tr");
-                    const estadoClase = area.estado ? 'estado-activo' : 'estado-inactivo';
+                    const estadoClase = regional.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
-                    <td>${area.id}</td>
-                    <td>${area.nombre}</td>
-                    <td>${area.sede.cliente.nombre}</td>
-                    <td>${area.sede.nombre}</td>
-                    <td><div class="${estadoClase}">${area.estado ? 'Activo' : 'Inactivo'}</div></td>
-                    <td>${formatDate(area.updated_at)}</td>
-                    <td>${area.actualizador?.nombres || 'N/A'}</td>
-                    <td>${area.creador?.nombres || 'N/A'}</td>
-                    <td>${formatDate(area.created_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${area.id}"></td>
+                    <td>${regional.id}</td>
+                    <td>${regional.nombre}</td>
+                    <td><div class="${estadoClase}">${regional.estado ? 'Activo' : 'Inactivo'}</div></td>
+                    <td>${formatDate(regional.updated_at)}</td>
+                    <td>${formatDate(regional.created_at)}</td>
+                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${regional.id}"></td>
                 `;
-                    tablaAreasBody.appendChild(row);
+                    tablaRegionalesBody.appendChild(row);
                 });
 
                 // Mostrar total de registros
@@ -215,7 +100,6 @@
     }
 
     cargarDatos(1);
-    cargarClientes();
 
     // Eventos
     consultarBtn.addEventListener("click", () => cargarDatos(1));
@@ -223,12 +107,12 @@
     busquedaInput.addEventListener("input", () => cargarDatos(1));
 
     // Modal functionality
-    const modal = document.getElementById("createAreaModal");
+    const modal = document.getElementById("createRegionalModal");
     const modalTitle = document.getElementById("modalTitle");
     const modalActionBtn = document.getElementById("modalActionBtn");
-    const areaForm = document.getElementById("areaForm");
+    const regionalForm = document.getElementById("regionalForm");
     let editMode = false;
-    let areaId = null;
+    let regionalId = null;
 
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
@@ -245,40 +129,34 @@
 
     document.addEventListener("click", function(event) {
         if (event.target.classList.contains("icono-editar")) {
-            areaId = event.target.getAttribute("data-id");
-            if (!areaId) {
-                console.error("Error: No se encontró el ID del área en el botón.");
+            regionalId = event.target.getAttribute("data-id");
+            if (!regionalId) {
+                console.error("Error: No se encontró el ID de la regional en el botón.");
                 return;
             }
 
             editMode = true;
 
             // Aquí continúa el código de apertura del modal y carga de datos
-            modalTitle.textContent = "Editar área";
+            modalTitle.textContent = "Editar regional";
             modalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`../area?id=${areaId}`)
+            fetch(`../regional?id=${regionalId}`)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error("Error al cargar los datos del área.");
+                        throw new Error("Error al cargar los datos de la regional.");
                     }
                     return response.json();
                 })
-                .then((area) => {                    
-                    document.getElementById("nombre").value = area.nombre;
-                    document.getElementById("cliente").value = area.sede.cliente.id;
-                    cargarSedes(area.sede.cliente.id).then(() => {
-                        document.getElementById("sede").value = area.sede_id;
-                    });
-                    document.getElementById("estadoToggle").checked = area.estado === 1;
-                    document.querySelector("label[for='estadoToggle']").textContent = area.estado ? "Activo" : "Inactivo";
+                .then((regional) => {                    
+                    document.getElementById("nombre").value = regional.nombre;
+                    document.getElementById("estadoToggle").checked = regional.estado === 1;
+                    document.querySelector("label[for='estadoToggle']").textContent = regional.estado ? "Activo" : "Inactivo";
 
-                   /*  tareaSection.style.display = "block";
-                    cargarTareas(area.id); */
                     modal.style.display = "flex";
 
                 })
-                .catch((error) => console.error("Error al cargar los datos del área:", error));
+                .catch((error) => console.error("Error al cargar los datos de la regional:", error));
         }
     });
 
@@ -290,10 +168,10 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
-        const url = editMode ? `../areas/actualizar/${areaId}` : `../areas/guardar`;
+        const url = editMode ? `../regionales/actualizar/${regionalId}` : `../regionales/guardar`;
         const method = editMode ? "PUT" : "POST";
 
-        const formData = new FormData(areaForm);
+        const formData = new FormData(regionalForm);
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
 
         for (let [key, value] of formData.entries()) {
@@ -332,31 +210,9 @@
                 if (error.errors) {
                     showErrors(error.errors);
                 } else {
-                    console.error("Error al guardar el área:", error);
+                    console.error("Error al guardar la regional:", error);
                 }
             });
-    });
-
-    clienteSelect.addEventListener("change", function() {
-        const clienteId = parseInt(clienteSelect.value);
-        cargarSedes(clienteId);
-    });
-
-    agregarTareaBtn.addEventListener("click", function() {
-        const nombreTarea = nuevaTareaInput.value;
-        const descripcionTarea = descripcionTareaInput.value;
-        if (nombreTarea && descripcionTarea && areaId) {
-            agregarTarea(areaId, nombreTarea, descripcionTarea);
-        }
-    });
-
-    document.addEventListener("click", function(event) {
-        if (event.target.classList.contains("btn-eliminar")) {
-            const tareaId = event.target.getAttribute("data-id");
-            if (tareaId) {
-                eliminarTarea(tareaId);
-            }
-        }
     });
 
     function showErrors(errors) {
@@ -374,11 +230,11 @@
     }
 
     function resetForm() {
-        areaForm.reset();
-        modalTitle.textContent = "Crear nueva área";
-        modalActionBtn.textContent = "Crear Área";
+        regionalForm.reset();
+        modalTitle.textContent = "Crear nueva regional";
+        modalActionBtn.textContent = "Crear Regional";
         editMode = false;
-        areaId = null;
+        regionalId = null;
     }
 
     // Actualizar estado del toggle
@@ -403,16 +259,4 @@
 
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
-
-    const guardarFinalizarBtn = document.getElementById("guardarFinalizarBtn");
-
-    guardarFinalizarBtn.addEventListener("click", function() {
-        modal.style.display = "none";
-        cargarDatos(1);
-        resetForm();
-        showAlertModal(
-            "ok.png", // Ruta del ícono de éxito
-            "Guardado con éxito" // Mensaje de éxito
-        );
-    });
 })();

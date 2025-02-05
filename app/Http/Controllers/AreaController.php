@@ -60,12 +60,17 @@ class AreaController extends Controller
         ]);
 
         $area = Area::findOrFail($id);
-        $area->update([
-            'nombre' => $validated['nombre'],
-            'sede_id' => $validated['sede'],
-            'estado' => $validated['estado'],
-            'actualizador_id' => Auth::id(),
-        ]);
+        try {
+            //code...
+            $area->update([
+                'nombre' => $validated['nombre'],
+                'sede_id' => $validated['sede'],
+                'estado' => $validated['estado'],
+                'actualizador_id' => Auth::id(),
+            ]);
+        } catch (\Throwable $th) {
+           return response()->json(['message' => 'Error al actualizar el área', 'error' => $th->getMessage()], 500);
+        }
 
         return response()->json(['message' => 'Área actualizada correctamente', 'area' => $area]);
     }
