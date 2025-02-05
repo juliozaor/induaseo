@@ -174,44 +174,28 @@ class GestionarInventarioController extends Controller
         return response()->json($sedes);
     }
 
-    public function obtenerItem($codigo)
+    public function obtenerItem($id)
     {
-        $itemInsumo = Insumos::where('codigo', $codigo)->first();
-        $itemActivo = Activos::findOrFail($codigo);
+        //dd($id);
+        $itemInsumo = Insumos::findOrFail($id);
 
-        if ($itemInsumo) {
-            $item = $itemInsumo;
-        } elseif ($itemActivo) {
-            $item = $itemActivo;
-        } else {
+        if (!$itemInsumo) {
             return response()->json(['error' => 'Articulo no encontrado'], 404);
         }
 
-        return response()->json([
-            'numero_serie' => $item instanceof Activos ? $item->serie : $item->codigo,
-            'cantidad_disponible' => $item->cantidad,
-        ]);
+        return response()->json($itemInsumo);
     }
 
     public function obtenerItems()
     {
         $insumos = Insumos::all();
-        $activos = Activos::all();
         $itemsInsumos = $insumos->map(function ($item) {
             return [
-            'id' => $item->codigo,
-            'nombre_elemento' => $item->nombre_elemento,
+                'id' => $item->id,
+                'nombre_elemento' => $item->nombre_elemento,
             ];
         });
-        $itemsActivos = $activos->map(function ($item) {
-            return [
-            'id' => $item->id,
-            'nombre_elemento' => $item->nombre_elemento,
-            ];
-        });
-        $items = $itemsInsumos->merge($itemsActivos);
-        //dd($items);
 
-        return response()->json($items);
+        return response()->json($itemsInsumos);
     }
 }

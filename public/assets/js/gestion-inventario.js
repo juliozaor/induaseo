@@ -59,6 +59,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Evento para cargar las sedes al seleccionar un cliente
     clienteSelect.addEventListener('change', function () {
         const clienteId = this.value;
+
+        // Reset selectedOptions and clear the selectedOptionsContainer
+        selectedOptions = [];
+        selectedOptionsContainer.innerHTML = '';
+
         fetch(`sedes?cliente_id=${clienteId}`)
             .then(response => response.json())
             .then(data => {
@@ -301,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Evento para cargar el código del item seleccionado y la cantidad disponible
     itemSelect.addEventListener('change', function () {
         const itemId = this.value;
-        fetch(`/item/${itemId}`)
+        fetch(`obtener-item/${itemId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('La respuesta de la red no fue satisfactoria');
@@ -313,6 +318,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 cantidadDisponibleSpan.textContent = `Disponible: ${data.cantidad_disponible}`;
             })
             .catch(error => console.error('Error fetching items:', error));
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const itemSelect = document.getElementById('itemSelect');
+        const codigoInput = document.getElementById('codigoInput');
+
+        itemSelect.addEventListener('change', function () {
+            const selectedOption = itemSelect.options[itemSelect.selectedIndex];
+            if (selectedOption) {
+                codigoInput.value = selectedOption.value;
+            }
+        });
     });
 
     // Función para cargar los estados

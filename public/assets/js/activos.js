@@ -47,13 +47,13 @@
                 paginacionContainer.innerHTML = '';
 
                 // Llenar la tabla con los datos
-                data.data.forEach(activo => {                    
+                data.data.forEach(activo => {
                     const row = document.createElement("tr");
                     const estadoClase = activo.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
                     <td>${activo.id}</td>
-                    <td>${activo.nombre_elemento}</td> 
-                    <td>${activo.estado.nombre}</td>
+                    <td>${activo.nombre_elemento}</td>
+                    <td>${activo.estados.nombre}</td>
                     <td>${activo.clasificacion.nombre}</td>
                     <td>${activo.cantidad}</td>
                     <td>${activo.serie}</td>
@@ -144,7 +144,7 @@
 
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
-        modal.style.display = "flex";        
+        modal.style.display = "flex";
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -176,7 +176,7 @@
                     }
                     return response.json();
                 })
-                .then((activo) => {   
+                .then((activo) => {
                     document.getElementById("nombreElemento").value = activo.nombre_elemento;
                     document.getElementById("marca").value = activo.marca;
                     document.getElementById("serie").value = activo.serie;
@@ -264,7 +264,7 @@
     function cargarClasificaciones() {
         fetch(`../clasificaciones`)
             .then(response => response.json())
-            .then(clasificaciones => {                
+            .then(clasificaciones => {
                 const clasificacionSelect = document.getElementById("clasificacion");
                 clasificacionSelect.innerHTML = '<option value="">Seleccione</option>';
                 clasificaciones.forEach(clasificacion => {
@@ -280,7 +280,7 @@
     function cargarEstados() {
         fetch(`../estados`)
             .then(response => response.json())
-            .then(estados => {                
+            .then(estados => {
                 const estadoSelect = document.getElementById("estadoActivo");
                 estadoSelect.innerHTML = '<option value="">Seleccione</option>';
                 estados.forEach(estado => {

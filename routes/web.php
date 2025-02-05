@@ -244,5 +244,5 @@ Route::get('/categorias', [InformacionNovedadesController::class, 'obtenerCatego
 // Add route to fetch items
 Route::get('/items', [GestionarInventarioController::class, 'obtenerItems'])->name('items.obtener');
 
-// Add route to fetch item
-Route::get('/item/{codigo}', [GestionarInventarioController::class, 'obtenerItem'])->name('item.obtener');
+// Add route to fetch item details
+Route::get('/obtener-item/{id}', [GestionarInventarioController::class, 'obtenerItem'])->name('item.obtener');

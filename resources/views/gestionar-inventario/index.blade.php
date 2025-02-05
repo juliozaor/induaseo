@@ -7,9 +7,9 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="pills-inventario-tab" data-toggle="pill" data-target="#pills-inventario" type="button" role="tab" aria-controls="pills-inventario" aria-selected="true">Inventario</button>
         </li>
-        <li class="nav-item" role="presentation">
+        <!--<li class="nav-item" role="presentation">
             <button class="nav-link" id="pills-mantenimiento-tab" data-toggle="pill" data-target="#pills-mantenimiento" type="button" role="tab" aria-controls="pills-mantenimiento" aria-selected="false">Solicitudes</button>
-        </li>
+        </li>-->
     </ul>
 
     <!-- Contenido de las pestañas -->
