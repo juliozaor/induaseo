@@ -119,7 +119,7 @@
                     </div>
                     <div class="col-3">
                         <label for="telefono">Teléfono:</label>
-                        <input type="text" id="telefono" name="telefono" class="form-control" required>
+                        <input type="text" id="telefono" name="telefono" class="form-control" maxlength="10" required>
                         <span class="error-message" id="errorTelefono"></span>
                     </div>
                     <div class="col-3">

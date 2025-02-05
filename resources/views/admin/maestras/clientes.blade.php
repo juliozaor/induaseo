@@ -4,9 +4,8 @@
             <g id="Grupo_22674" data-name="Grupo 22674" transform="translate(-19 -11.164)">
                 <line id="Línea_338" data-name="Línea 338" y1="15" transform="translate(27.5 12.164)"
                     fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2" />
-                <line id="Línea_339" data-name="Línea 339" y1="15"
-                    transform="translate(35 19.664) rotate(90)" fill="none" stroke="#fff" stroke-linecap="round"
-                    stroke-width="2" />
+                <line id="Línea_339" data-name="Línea 339" y1="15" transform="translate(35 19.664) rotate(90)"
+                    fill="none" stroke="#fff" stroke-linecap="round" stroke-width="2" />
             </g>
         </svg>
         Nuevo</button>
@@ -67,95 +66,95 @@
 </div>
 
 <div id="createClientModal" class="modal">
-<div class="modal-content">
-    <div class="modal-header">
-        <div class="contenedor-titulo">
-            <span id="modalTitle" class="titulo-modal">Crear nuevo cliente</span>
-            <span class="subtitulo-modal">- Todos los campos son obligatorios</span>
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="contenedor-titulo">
+                <span id="modalTitle" class="titulo-modal">Crear nuevo cliente</span>
+                <span class="subtitulo-modal">- Todos los campos son obligatorios</span>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <form id="clientForm">
-            <div class="form-group flex-grow-1 row">
-            <div class="col-3">
-                <label for="tipoIdentificacion">Tipo de Identificación:</label>
-                <select id="tipoIdentificacion" name="tipoIdentificacion" class="form-control" required disabled>
-                    <option value="9">NIT</option>
-                    {{-- <option value="1">Cédula de ciudadanía</option>
+        <div class="modal-body">
+            <form id="clientForm">
+                <div class="form-group flex-grow-1 row">
+                    <div class="col-3">
+                        <label for="tipoIdentificacion">Tipo de Identificación:</label>
+                        <select id="tipoIdentificacion" name="tipoIdentificacion" class="form-control" required
+                            disabled>
+                            <option value="9">NIT</option>
+                            {{-- <option value="1">Cédula de ciudadanía</option>
                     <option value="2">Tarjeta de extranjería</option>
                     <option value="3">Pasaporte</option> --}}
-                    <!-- Agrega más opciones según sea necesario -->
-                </select>
-                {{-- <span class="error-message" id="errorTipoIdentificacion"></span> --}}
-            </div>
-            <div class="col-3">
-                <label for="numeroIdentificacion">Número de Identificación:</label>
-                <input type="text" id="numeroIdentificacion" name="numeroIdentificacion" class="form-control"
-                    required>
-                <span class="error-message" id="errorNumeroIdentificacion"></span>
-            </div>
-            <div class="col-6">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" class="form-control" required>
-                <span class="error-message" id="errorNombre"></span>
-            </div>
-        </div>
+                            <!-- Agrega más opciones según sea necesario -->
+                        </select>
+                        {{-- <span class="error-message" id="errorTipoIdentificacion"></span> --}}
+                    </div>
+                    <div class="col-3">
+                        <label for="numeroIdentificacion">Número de Identificación:</label>
+                        <input type="text" id="numeroIdentificacion" name="numeroIdentificacion" class="form-control"
+                            maxlength="10" required>
+                        <span class="error-message" id="errorNumeroIdentificacion"></span>
+                    </div>
+                    <div class="col-6">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" required>
+                        <span class="error-message" id="errorNombre"></span>
+                    </div>
+                </div>
 
-        <div class="form-group flex-grow-1 row">
-            <div class="col-3">
-                <label for="pais">País:</label>
-                <select id="pais" name="pais" class="form-control" required>
-                    <option value="">Seleccione</option>
+                <div class="form-group flex-grow-1 row">
+                    <div class="col-3">
+                        <label for="pais">País:</label>
+                        <select id="pais" name="pais" class="form-control" required>
+                            <option value="">Seleccione</option>
 
-                </select>
-                <span class="error-message" id="errorPais"></span>
-            </div>
-            <div class="col-3">
-                <label for="ciudad">Ciudad:</label>
-                <select id="ciudad" name="ciudad" class="form-control" required>
-                    <option value="">Seleccione</option>
-                </select>
-                <span class="error-message" id="errorCiudad"></span>
-            </div>
-            <div class="col-6">
-                <label for="direccion">Dirección:</label>
-                <input type="text" id="direccion" name="direccion" class="form-control">
-                <span class="error-message" id="errorDireccion"></span>
-            </div>
-        </div>
-        <div class="form-group flex-grow-1 row">
-            <div class="col-3">
-                <label for="celular">Celular:</label>
-                <input type="text" id="celular" name="celular" class="form-control">
-                <span class="error-message" id="errorCelular"></span>
-            </div>
-            <div class="col-3">
-                <label for="sectorEconomico">Sector Economico:</label>
-                <select id="sectorEconomico" name="sectorEconomico" class="form-control" required>
-                    <option value="">Seleccione</option>
+                        </select>
+                        <span class="error-message" id="errorPais"></span>
+                    </div>
+                    <div class="col-3">
+                        <label for="ciudad">Ciudad:</label>
+                        <select id="ciudad" name="ciudad" class="form-control" required>
+                            <option value="">Seleccione</option>
+                        </select>
+                        <span class="error-message" id="errorCiudad"></span>
+                    </div>
+                    <div class="col-6">
+                        <label for="direccion">Dirección:</label>
+                        <input type="text" id="direccion" name="direccion" class="form-control">
+                        <span class="error-message" id="errorDireccion"></span>
+                    </div>
+                </div>
+                <div class="form-group flex-grow-1 row">
+                    <div class="col-3">
+                        <label for="celular">Celular:</label>
+                        <input type="text" id="celular" name="celular" class="form-control">
+                        <span class="error-message" id="errorCelular"></span>
+                    </div>
+                    <div class="col-3">
+                        <label for="sectorEconomico">Sector Economico:</label>
+                        <select id="sectorEconomico" name="sectorEconomico" class="form-control" required>
+                            <option value="">Seleccione</option>
 
-                </select>
-                <span class="error-message" id="errorSectorEconomico"></span>
-            </div>
-            <div class="col-6">
-                <label for="correo">Correo:</label>
-                <input type="email" id="correo" name="correo" class="form-control">
-                <span class="error-message" id="errorCorreo"></span>
-            </div>
+                        </select>
+                        <span class="error-message" id="errorSectorEconomico"></span>
+                    </div>
+                    <div class="col-6">
+                        <label for="correo">Correo:</label>
+                        <input type="email" id="correo" name="correo" class="form-control">
+                        <span class="error-message" id="errorCorreo"></span>
+                    </div>
+                </div>
+            </form>
         </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <label class="switch">
-            <input type="checkbox" id="estadoToggle" checked>
-            <span class="slider round"></span>
-        </label>
-        <label for="estadoToggle">Activo</label>
-        <button id="modalActionBtn" class="btn-consultar">Crear Cliente</button>
+        <div class="modal-footer">
+            <label class="switch">
+                <input type="checkbox" id="estadoToggle" checked>
+                <span class="slider round"></span>
+            </label>
+            <label for="estadoToggle">Activo</label>
+            <button id="modalActionBtn" class="btn-consultar">Crear Cliente</button>
+        </div>
     </div>
 </div>
-</div>
-

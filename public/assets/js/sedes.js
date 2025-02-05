@@ -51,7 +51,7 @@
                 paginacionContainer.innerHTML = '';
 
                 // Llenar la tabla con los datos
-                data.data.forEach(sede => {                    
+                data.data.forEach(sede => {
                     const row = document.createElement("tr");
                     const estadoClase = sede.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
@@ -153,7 +153,7 @@
 
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
-        modal.style.display = "flex";        
+        modal.style.display = "flex";
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -185,7 +185,7 @@
                     }
                     return response.json();
                 })
-                .then((sede) => {     
+                .then((sede) => {
 
                     document.getElementById("nombre").value = sede.nombre;
                     document.getElementById("cliente").value = sede.cliente_id;
@@ -300,7 +300,7 @@
                 });
                 }
             })
-            
+
             .catch(error => console.error("Error al cargar los clientes:", error));
     }
 
@@ -338,10 +338,10 @@
     }
 
     function cargarRegionales() {
-        
+
         fetch(`../regionales`)
             .then(response => response.json())
-            .then(regionales => {                
+            .then(regionales => {
                 const regionalSelect = document.getElementById("regional");
                 regionalSelect.innerHTML = '<option value="">Seleccione</option>';
                 regionales.forEach(regional => {
@@ -395,4 +395,9 @@
 
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
+
+    const telefono = document.getElementById("telefono");
+    telefono.addEventListener("input", function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
 })();

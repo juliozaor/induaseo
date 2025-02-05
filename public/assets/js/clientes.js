@@ -375,4 +375,23 @@
 
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
+
+
+    const numeroIdentificacionInput = document.getElementById("numeroIdentificacion");
+    numeroIdentificacionInput.addEventListener("input", function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    document.getElementById('correo').addEventListener('input', function() {
+        const emailInput = this;
+        const emailValue = emailInput.value;
+        const errorCorreo = document.getElementById('errorCorreo');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(emailValue)) {
+            errorCorreo.textContent = 'Formato de correo electrónico no válido';
+        } else {
+            errorCorreo.textContent = '';
+        }
+    });
 })();
