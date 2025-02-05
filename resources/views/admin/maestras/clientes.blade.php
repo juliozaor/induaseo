@@ -89,7 +89,7 @@
                     <option value="3">Pasaporte</option> --}}
                     <!-- Agrega más opciones según sea necesario -->
                 </select>
-                <span class="error-message" id="errorTipoIdentificacion"></span>
+                {{-- <span class="error-message" id="errorTipoIdentificacion"></span> --}}
             </div>
             <div class="col-3">
                 <label for="numeroIdentificacion">Número de Identificación:</label>

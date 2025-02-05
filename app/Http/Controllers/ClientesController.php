@@ -28,7 +28,7 @@ class ClientesController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'tipoIdentificacion' => 'required|exists:tipos_documentos,id',
+                /* 'tipoIdentificacion' => 'required|exists:tipos_documentos,id', */
                 'numeroIdentificacion' => 'required|string|unique:clientes,numero_documento',
                 'nombre' => 'required|string|max:255',
                 'pais' => 'required|exists:paises,id',
@@ -39,9 +39,9 @@ class ClientesController extends Controller
                 'estado' => 'required|boolean',
                 'sectorEconomico' => 'required|exists:sectores_economicos,id',
             ]);
-            
+
             Cliente::create([
-                'tipo_documento_id' => $request->tipoIdentificacion,
+                'tipo_documento_id' => 9,/* $request->tipoIdentificacion, */
                 'numero_documento' => $request->numeroIdentificacion,
                 'nombre' => $request->nombre,
                 'pais_id' => $request->pais,
@@ -60,7 +60,7 @@ class ClientesController extends Controller
         }
     }
 
-    
+
 
     public function obtenerCliente(Request $request)
     {
@@ -76,7 +76,7 @@ class ClientesController extends Controller
 
         try {
             $validatedData = $request->validate([
-                'tipoIdentificacion' => 'required|exists:tipos_documentos,id',
+                /* 'tipoIdentificacion' => 'required|exists:tipos_documentos,id', */
                 'numeroIdentificacion' => 'required|string|unique:clientes,numero_documento,' . $cliente->id,
                 'nombre' => 'required|string|max:255',
                 'pais' => 'required|exists:paises,id',
@@ -88,7 +88,7 @@ class ClientesController extends Controller
                 'sectorEconomico' => 'required|exists:sectores_economicos,id',
             ]);
 
-            
+
 
            /*  $validatedData['actualizador_id'] = Auth::id(); */
 

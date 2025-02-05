@@ -392,6 +392,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     estadoMantenimientoSelect.addEventListener('change', function () {
+        console.log("Consultando mantenimientos...");
         consultarMantenimientos();
     });
 

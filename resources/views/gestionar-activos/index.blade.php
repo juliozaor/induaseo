@@ -208,6 +208,7 @@
                         <input type="text" class="busqueda-input" id="busquedaMantenimientoInput" placeholder="Buscar...">
                     </div>
                     <div class="input-container2">
+                        <label for="estadoMantenimientoSelect">Estados</label>
                         <select id="estadoMantenimientoSelect" class="busqueda-select">
                             <option value="">Todos los estados</option>
                             <!-- Opciones de estados se llenarán dinámicamente -->

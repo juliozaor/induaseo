@@ -144,8 +144,8 @@ class GestionarActivosController extends Controller
             $estadoId = $request->input('estado_id');
 
             $mantenimientos = Mantenimiento::with(['estado', 'creador', 'actualizador', 'sedes_activos.activo', 'sedes_activos.sede.cliente'])
-                ->whereHas('sede', function ($query) use ($sedeId) {
-                    $query->where('sedes.id', $sedeId);
+                ->whereHas('sedes_activos', function ($query) use ($sedeId) {
+                    $query->where('sede_id', $sedeId);
                 })
                 ->when($estadoId, function ($query, $estadoId) {
                     return $query->where('estado_id', $estadoId);

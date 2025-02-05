@@ -1,4 +1,3 @@
-<!-- filepath: /c:/laragon/www/induaseo/resources/views/admin/usuarios/index.blade.php -->
 @extends('layouts.dashboard')
 <link rel="stylesheet" href="{{ asset('assets/css/usuario.css') }}?v={{ time() }}">
 @section('content')
@@ -161,4 +160,18 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/usuario.js') }}?v={{ time() }}"></script>
+<script>
+    document.getElementById('correo').addEventListener('input', function() {
+        const emailInput = this;
+        const emailValue = emailInput.value;
+        const errorCorreo = document.getElementById('errorCorreo');
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(emailValue)) {
+            errorCorreo.textContent = 'Formato de correo electrónico no válido';
+        } else {
+            errorCorreo.textContent = '';
+        }
+    });
+</script>
 @endpush

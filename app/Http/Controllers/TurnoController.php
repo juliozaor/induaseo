@@ -13,7 +13,7 @@ class TurnoController extends Controller
 {
     public function guardar(Request $request)
     {
-        
+        // dd($request->all());
         try {
             $validatedData = $request->validate([
                 'nombre' => 'required|string|max:255',
@@ -29,6 +29,8 @@ class TurnoController extends Controller
                 'estado' => $request->estado,
                 'creador_id' => Auth::id(),
             ]);
+
+            //dd($turno);
 
             return response()->json(['message' => 'Turno creado con éxito', 'turno' => $turno]);
         } catch (ValidationException $e) {
@@ -87,7 +89,7 @@ class TurnoController extends Controller
 
     public function obtenerActividades($turnoId)
     {
-        
+
         try {
             $actividades = Actividades::where('turno_id', $turnoId)->get();
             return response()->json($actividades);
@@ -111,14 +113,14 @@ class TurnoController extends Controller
                 'nombre' => 'required|string|max:255',
                 'descripcion' => 'nullable|string|max:255',
             ]);
-            
+
             $actividad = Actividades::create([
                 'turno_id' => $request->turno_id,
                 'nombre' => $request->nombre,
                 'descripcion' => $request->descripcion,
             ]);
-            
-            
+
+
             return response()->json(['message' => 'Actividad creada con éxito', 'actividad' => $actividad]);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);

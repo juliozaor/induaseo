@@ -137,7 +137,7 @@
     let editMode = false;
     let clientId = null;
 
-    
+
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
         modal.style.display = "flex";
@@ -222,6 +222,7 @@
                         throw data;
                     });
                 }
+                console.log(response);
                 return response.json();
             })
             .then((data) => {
@@ -229,7 +230,7 @@
                     showErrors(data.errors);
                 } else {
                     showAlertModal(
-                        
+
                         "ok.png", // Ruta del ícono de éxito
                         data.message // Mensaje de éxito
                     );
@@ -322,7 +323,7 @@
 
     // Llamar a las funciones para cargar los datos al abrir el modal
     /* openModalBtn.addEventListener("click", function() {
-        
+
     }); */
 
     // Cargar ciudades
