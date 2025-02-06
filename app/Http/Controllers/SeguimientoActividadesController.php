@@ -94,6 +94,7 @@ class SeguimientoActividadesController extends Controller
         $turnos = SupervisorTurno::with(['supervisor', 'sede', 'turno'])
             ->where('supervisor_id', $userId)
             ->get();
+            //dd($turnos);
         return view('seguimiento-actividades.index', compact('turnos'));
     }
 
@@ -114,16 +115,17 @@ class SeguimientoActividadesController extends Controller
                 localStorage.setItem('sede_id', '$sedeId');
             }
         </script>";
-
+        //dd($turnoId, $sedeId);
         $supervisorTurno = SupervisorTurno::with(['supervisor', 'sede', 'turno.actividades'])
             ->where('supervisor_id', $userId)
             ->whereHas('turno', function ($query) use ($turnoId) {
                 $query->where('id', $turnoId);
             })
             ->first();
+            //dd($supervisorTurno);
 
-        $actividadesTrue = $supervisorTurno->turno->actividades->where('estado', true)->values();
-        $actividadesFalse = $supervisorTurno->turno->actividades->where('estado', false)->values();
+        $actividadesTrue = $supervisorTurno->turno->actividades->where('estado', true)->values() ?? [];
+        $actividadesFalse = $supervisorTurno->turno->actividades->where('estado', false)->values() ?? [];
 
         return view('seguimiento-actividades.actividades', compact('supervisorTurno', 'actividadesTrue', 'actividadesFalse', 'sedeId', 'turnoId'));
     }
@@ -151,7 +153,6 @@ class SeguimientoActividadesController extends Controller
     public function obtenerInventarios(Request $request)
     {
         $sedeId = $request->input('sede_id') ?? "<script>document.write(localStorage.getItem('sede_id'))</script>";
-
         if (!$sedeId) {
             return redirect()->route('seguimiento.actividades.index');
         }
@@ -159,7 +160,7 @@ class SeguimientoActividadesController extends Controller
         $sedesInsumos = SedesInsumos::with(['insumo.estados', 'sede'])
             ->where('sede_id', $sedeId)
             ->get();
-        /* dd($sedesInsumos); */
+        // dd($sedeId,$sedesInsumos);
         $sedesActivos = SedesActivos::with(['activo.estados', 'sede'])
             ->where('sede_id', $sedeId)
             ->get();
@@ -184,10 +185,10 @@ class SeguimientoActividadesController extends Controller
     public function obtenerMantenimientos(Request $request)
     {
         $sedeId = $request->input('sede_id');
-        $mantenimientos = Mantenimiento::with(['sedeActivo.activo', 'sedeActivo.estados'])
-            ->where('estado_id', 3)
+        $mantenimientos = Mantenimiento::with(['sedes_activos.activo', 'sedes_activos.estados'])
+            ->where('estado_id', 2)
             ->when($sedeId, function ($query, $sedeId) {
-                return $query->whereHas('sedeActivo', function ($query) use ($sedeId) {
+                return $query->whereHas('sedes_activos', function ($query) use ($sedeId) {
                     $query->where('sede_id', $sedeId);
                 });
             })
@@ -196,7 +197,7 @@ class SeguimientoActividadesController extends Controller
         // Verificar que las relaciones existan antes de devolver los datos
         $mantenimientos = $mantenimientos->filter(function ($mantenimiento) {
             return $mantenimiento->sedeActivo && $mantenimiento->sedeActivo->activo;
-        });
+        })->values(); // Ensure the collection is re-indexed
 
         return response()->json($mantenimientos);
     }

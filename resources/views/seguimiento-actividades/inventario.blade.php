@@ -25,10 +25,12 @@
         </li>
         <!-- Pestaña de Mantenimientos -->
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="pills-mantenimientos-tab " data-toggle="pill" data-target="#pills-mantenimientos" type="button"
-                role="tab" aria-controls="pills-mantenimientos" aria-selected="false"><img class="icono-actividades"
-                    src="{{ asset('assets/icons/lista.svg') }}" alt="Icono" class="rectangle-icon">
-                    Mantenimientos
+            <a class="nav-link" id="pills-mantenimientos-tab " data-toggle="pill" data-target="#pills-mantenimientos"
+                type="button" role="tab" aria-controls="pills-mantenimientos" aria-selected="false"
+                onclick="obtenerMantenimientos()">
+                <img class="icono-actividades" src="{{ asset('assets/icons/lista.svg') }}"
+                    alt="Icono"class="rectangle-icon">
+                Mantenimientos
             </a>
         </li>
     </ul>
@@ -80,8 +82,11 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="guardarBtnInicial" onclick="actualizarInsumo({{ $sedesInsumo->id }})">Guardar</button>
-                                        <button type="button" class="btn btn-danger" id="reportarBtn{{ $sedesInsumo->id }}" style="display: none;">Reportar</button>
+                                        <button type="button" class="btn btn-primary" id="guardarBtnInicial"
+                                            onclick="actualizarInsumo({{ $sedesInsumo->id }})">Guardar</button>
+                                        <button type="button" class="btn btn-danger"
+                                            id="reportarBtn{{ $sedesInsumo->id }}"
+                                            style="display: none;">Reportar</button>
                                     </div>
                                 </div>
                             </div>
@@ -97,10 +102,9 @@
                             data-target="#activoModal{{ $sedesActivo->id }}">
                             <div class="contenedor-actividad">
                                 <span><img src="{{ $sedesActivo->activo->imagen }}"
-                                        alt="{{ $sedesActivo->activo->nombre_elemento }}"
-                                        class="imagen-insumo">
-                                        {{ $sedesActivo->activo->nombre_elemento }} - {{ $sedesActivo->activo->serie }}
-                                    </span> <span class="flecha">></span>
+                                        alt="{{ $sedesActivo->activo->nombre_elemento }}" class="imagen-insumo">
+                                    {{ $sedesActivo->activo->nombre_elemento }} - {{ $sedesActivo->activo->serie }}
+                                </span> <span class="flecha">></span>
                             </div>
                         </a>
                         <!-- Modal de activo -->
@@ -136,8 +140,11 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="guardarBtn{{ $sedesActivo->id }}" onclick="actualizarActivo({{ $sedesActivo->id }})">Guardar</button>
-                                        <button type="button" class="btn btn-danger" id="reportarBtn{{ $sedesActivo->id }}" style="display: none;"
+                                        <button type="button" class="btn btn-primary"
+                                            id="guardarBtn{{ $sedesActivo->id }}"
+                                            onclick="actualizarActivo({{ $sedesActivo->id }})">Guardar</button>
+                                        <button type="button" class="btn btn-danger"
+                                            id="reportarBtn{{ $sedesActivo->id }}" style="display: none;"
                                             onclick="reportarActivo({{ $sedesActivo->id }})" disabled="true">
                                             Reportar
                                         </button>
@@ -152,7 +159,8 @@
         {{-- Inv Salida --}}
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
             <div class="d-flex justify-content-end align-items-center" style="margin-right: 10px;">
-                <button type="button" class="btn btn-primary" id="solicitarBtn" onclick="solicitarItems({{ $sedeId }})">
+                <button type="button" class="btn btn-primary" id="solicitarBtn"
+                    onclick="solicitarItems({{ $sedeId }})">
                     Solicitar
                 </button>
             </div>
@@ -164,13 +172,16 @@
                         <div class="item-actividad">
                             <div class="contenedor-actividad d-flex justify-content-between align-items-center">
                                 <span>
-                                    <img src="{{ $insumo->imagen }}" alt="{{ $insumo->nombre_elemento }}" class="imagen-insumo">
-                                        {{ $insumo->nombre_elemento }}
+                                    <img src="{{ $insumo->imagen }}" alt="{{ $insumo->nombre_elemento }}"
+                                        class="imagen-insumo">
+                                    {{ $insumo->nombre_elemento }}
                                 </span>
                                 <div class="d-flex align-items-center">
-                                    <input type="number" id="CanInsumoSal{{ $insumo->id }}"
-                                    class="form-control" placeholder="Cantidad" min="0" style="width: 150px; margin-left: 10px; margin-right: 10px;">
-                                    <input type="checkbox" id="CheckInsumoSal{{ $insumo->id }}" style="margin-left: 10px;">
+                                    <input type="number" id="CanInsumoSal{{ $insumo->id }}" class="form-control"
+                                        placeholder="Cantidad" min="0"
+                                        style="width: 150px; margin-left: 10px; margin-right: 10px;">
+                                    <input type="checkbox" id="CheckInsumoSal{{ $insumo->id }}"
+                                        style="margin-left: 10px;">
                                 </div>
                             </div>
                         </div>
@@ -184,13 +195,16 @@
                         <div class="item-actividad">
                             <div class="contenedor-actividad d-flex justify-content-between align-items-center">
                                 <span>
-                                    <img src="{{ $activo->imagen }}" alt="{{ $activo->nombre_elemento }}" class="imagen-insumo">
+                                    <img src="{{ $activo->imagen }}" alt="{{ $activo->nombre_elemento }}"
+                                        class="imagen-insumo">
                                     {{ $activo->nombre_elemento }}
                                 </span>
                                 <div class="d-flex align-items-center">
-                                    <input type="number" id="CanActivoSal{{ $activo->id }}"
-                                    class="form-control" placeholder="Cantidad" min="0" style="width: 150px; margin-left: 10px; margin-right: 10px;">
-                                    <input type="checkbox" id="CheckActivoSal{{ $activo->id }}" style="margin-left: 10px;">
+                                    <input type="number" id="CanActivoSal{{ $activo->id }}" class="form-control"
+                                        placeholder="Cantidad" min="0"
+                                        style="width: 150px; margin-left: 10px; margin-right: 10px;">
+                                    <input type="checkbox" id="CheckActivoSal{{ $activo->id }}"
+                                        style="margin-left: 10px;">
                                 </div>
                             </div>
                         </div>
@@ -201,116 +215,50 @@
         {{-- Mantenimientos --}}
         <div class="tab-pane fade" id="pills-mantenimientos" role="tabpanel" aria-labelledby="pills-mantenimientos-tab">
             <div class="contenedor-actividades">
-                @if ($mantenimientos->isNotEmpty())
-                    @foreach ($mantenimientos as $mantenimiento)
-                        <!-- Item de mantenimiento de activo -->
-                        <div class="item-actividad">
-                            <div class="contenedor-actividad">
-                                <span>
-                                    <img src="{{ $mantenimiento->sedeActivo->activo->imagen }}"
-                                    alt="{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}"
-                                    class="imagen-insumo">
-                                    {{ $mantenimiento->sedeActivo->activo->nombre_elemento }}
-                                </span>
-                                <div class="iconos">
-                                    <span class="icono" data-toggle="modal" data-target="#mantenimientoModal{{ $mantenimiento->id }}">
-                                        <img src="{{ asset('assets/icons/editar.png') }}" alt="Editar"
-                                        style="width: 28px; height: 28px;">
-                                    </span>
-                                    <span class="icono" data-toggle="modal" data-target="#finalModal{{ $mantenimiento->id }}">
-                                        <img src="{{ asset('assets/icons/finalizar.png') }}" alt="Finalizar"
-                                        style="width: 28px; height: 28px; margin-left: 15px;">
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Modal de mantenimiento de activo -->
-                        <div class="modal fade" id="mantenimientoModal{{ $mantenimiento->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="mantenimientoModalLabel{{ $mantenimiento->id }}" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="mantenimientoModalLabel{{ $mantenimiento->id }}">
-                                            {{ $mantenimiento->sedeActivo->activo->nombre_elemento }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="contenedor-imagen-modal">
-                                            <img src="{{ $mantenimiento->sedeActivo->activo->imagen }}"
-                                                alt="{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}" class="img-fluid">
-                                        </div>
-                                        <p>Estado: {{ optional($mantenimiento->sedeActivo->estados)->nombre }}</p>
-                                        <div class="form-group">
-                                            <label for="fecha{{ $mantenimiento->id }}">Fecha mantenimiento</label>
-                                            <input type="date" class="form-control" id="fecha{{ $mantenimiento->id }}">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="observacionesMant{{ $mantenimiento->id }}">Observaciones</label>
-                                            <textarea class="form-control" id="observacionesMant{{ $mantenimiento->id }}" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="programarBtn{{ $mantenimiento->id }}" onclick="actualizarMantenimiento({{ $mantenimiento->id }})">
-                                            Programar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Modal de finalización de mantenimiento -->
-                        <div class="modal fade" id="finalModal{{ $mantenimiento->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="finalModalLabel{{ $mantenimiento->id }}" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="finalModalLabel{{ $mantenimiento->id }}">
-                                            {{ $mantenimiento->sedeActivo->activo->nombre_elemento }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="contenedor-imagen-modal">
-                                            <img src="{{ $mantenimiento->sedeActivo->activo->imagen }}"
-                                                alt="{{ $mantenimiento->sedeActivo->activo->nombre_elemento }}" class="img-fluid">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="novedades${mantenimiento.id}">Estado</label>
-                                                <select class="form-control" id="novedadesF${mantenimiento.id}">
-                                                    <!-- Opciones se llenarán dinámicamente -->
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="observacionesMant${mantenimiento.id}">Observaciones</label>
-                                                <textarea class="form-control" id="observacionesMantF${mantenimiento.id}" rows="3"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-primary" id="finalizarBtn{{ $mantenimiento->id }}" onclick="finalizarMantenimiento({{ $mantenimiento->id }})">
-                                                Finalizar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
+                <div id="mantenimientos">
+
+                </div>
+
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            //cargarInventario();
+            setMinDate();
+        });
+        function cargarInventario() {
+            fetch(`inventario-turno`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text)
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al cargar el inventario: ' + error.message);
+            });
+        }
         function toggleButton(selectElement, id) {
             //console.log(`Valor del select: ${selectElement.value}`);
             const guardarBtn = document.getElementById(`guardarBtn${id}`);
             const reportarBtn = document.getElementById(`reportarBtn${id}`);
-            if (selectElement.value == '3') {
+            if (selectElement.value == '2') {
                 guardarBtn.style.display = 'none';
                 reportarBtn.style.display = 'block';
             } else {
@@ -325,32 +273,34 @@
             const observacion = document.getElementById(`observaciones${id}`).value;
 
             fetch(`{{ route('actualizar.insumo') }}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    estado_id: estadoId,
-                    observacion: observacion
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        estado_id: estadoId,
+                        observacion: observacion
+                    })
                 })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                // Cerrar el modal después de guardar
-                $(`#actividadModal${id}`).modal('hide');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al actualizar el insumo: ' + error.message);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    // Cerrar el modal después de guardar
+                    $(`#actividadModal${id}`).modal('hide');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al actualizar el insumo: ' + error.message);
+                });
         }
 
         // Función para actualizar el activo
@@ -359,32 +309,34 @@
             const observacion = document.getElementById(`observaciones${id}`).value;
 
             fetch(`{{ route('actualizar.activo') }}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    estado_id: estadoId,
-                    observacion: observacion
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        estado_id: estadoId,
+                        observacion: observacion
+                    })
                 })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                // Cerrar el modal después de guardar
-                $(`#activoModal${id}`).modal('hide');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al actualizar el activo: ' + error.message);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    // Cerrar el modal después de guardar
+                    $(`#activoModal${id}`).modal('hide');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al actualizar el activo: ' + error.message);
+                });
         }
 
         // Función para reportar el activo
@@ -393,42 +345,44 @@
             const observacion = document.getElementById(`observaciones${id}`).value;
 
             fetch(`{{ route('reportar.activo') }}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    estado_id: estadoId,
-                    observacion: observacion
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        estado_id: estadoId,
+                        observacion: observacion
+                    })
                 })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                // Cerrar el modal después de reportar
-                $(`#activoModal${id}`).modal('hide');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al reportar el activo: ' + error.message);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    // Cerrar el modal después de reportar
+                    $(`#activoModal${id}`).modal('hide');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al reportar el activo: ' + error.message);
+                });
         }
 
         // Reiniciar valores del select y campo de observación al cerrar el modal
-        $('.modal').on('hidden.bs.modal', function () {
+        $('.modal').on('hidden.bs.modal', function() {
             $(this).find('select').val('').trigger('change');
             $(this).find('textarea').val('');
         });
 
         // Reiniciar valores del select y campo de observación al abrir el modal
-        $('.modal').on('show.bs.modal', function () {
+        $('.modal').on('show.bs.modal', function() {
             const modal = $(this);
             const id = modal.attr('id').replace('actividadModal', '').replace('activoModal', '');
             const select = modal.find('select');
@@ -439,7 +393,9 @@
             fetch(`{{ route('obtener.estados') }}`)
                 .then(response => {
                     if (!response.ok) {
-                        return response.text().then(text => { throw new Error(text) });
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
                     }
                     return response.json();
                 })
@@ -459,32 +415,34 @@
                     const isActivoModal = modal.attr('id').includes('activoModal');
                     //const fetchUrl = isActivoModal ? `{{ route('obtener.activo', '') }}/${id}` : `{{ route('obtener.insumo', '') }}/${id}`;
                     let fetchUrl = '';
-                    if(isActivoModal) {
+                    if (isActivoModal) {
                         fetchUrl = `{{ route('obtener.activo', '') }}/${id}`;
-                    } else if(!isMantenimientoModal && !isActivoModal && !isFinalModal) {
+                    } else if (!isMantenimientoModal && !isActivoModal && !isFinalModal) {
                         fetchUrl = `{{ route('obtener.insumo', '') }}/${id}`;
                     }
                     if (!isMantenimientoModal && !isFinalModal) {
                         fetch(fetchUrl)
-                        .then(response => {
-                            if (!response.ok) {
-                                return response.text().then(text => { throw new Error(text) });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (isActivoModal) {
-                                select.val(data.activo.estado_id).trigger('change');
-                                textarea.val(data.activo.observacion);
-                            } else {
-                                select.val(data.insumo.estado_id).trigger('change');
-                                textarea.val(data.insumo.observacion);
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error al cargar el insumo o activo:", error);
-                            alert("Error al cargar el insumo o activo: " + error.message);
-                        });
+                            .then(response => {
+                                if (!response.ok) {
+                                    return response.text().then(text => {
+                                        throw new Error(text)
+                                    });
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (isActivoModal) {
+                                    select.val(data.activo.estado_id).trigger('change');
+                                    textarea.val(data.activo.observacion);
+                                } else {
+                                    select.val(data.insumo.estado_id).trigger('change');
+                                    textarea.val(data.insumo.observacion);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Error al cargar el insumo o activo:", error);
+                                alert("Error al cargar el insumo o activo: " + error.message);
+                            });
                     }
 
                 })
@@ -506,7 +464,8 @@
                 {
                     const checkInsumo{{ $insumo->id }} = document.getElementById('CheckInsumoSal{{ $insumo->id }}');
                     if (checkInsumo{{ $insumo->id }}.checked) {
-                        const cantidadInsumo{{ $insumo->id }} = document.getElementById('CanInsumoSal{{ $insumo->id }}').value;
+                        const cantidadInsumo{{ $insumo->id }} = document.getElementById(
+                            'CanInsumoSal{{ $insumo->id }}').value;
                         items.push({
                             id: {{ $insumo->id }},
                             nombre: '{{ $insumo->nombre_elemento }}',
@@ -522,7 +481,8 @@
                 {
                     const checkActivo{{ $activo->id }} = document.getElementById('CheckActivoSal{{ $activo->id }}');
                     if (checkActivo{{ $activo->id }}.checked) {
-                        const cantidadActivo{{ $activo->id }} = document.getElementById('CanActivoSal{{ $activo->id }}').value;
+                        const cantidadActivo{{ $activo->id }} = document.getElementById(
+                            'CanActivoSal{{ $activo->id }}').value;
                         items.push({
                             id: {{ $activo->id }},
                             nombre: '{{ $activo->nombre_elemento }}',
@@ -535,26 +495,31 @@
 
             // Enviar los items al servidor
             fetch(`{{ route('enviar.solicitud.items') }}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ items: items, sedeId: {{ $sedeId }} })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al enviar la solicitud de items: ' + error.message);
-            });
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        items: items,
+                        sedeId: {{ $sedeId }}
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al enviar la solicitud de items: ' + error.message);
+                });
         }
 
         // Función para verificar si el activo está reportado
@@ -580,12 +545,127 @@
             fetch(`{{ route('obtener.mantenimientos') }}?sede_id=${sedeId}`)
                 .then(response => {
                     if (!response.ok) {
-                        return response.text().then(text => { throw new Error(text) });
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
                     }
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
+                    //console.log(data);
+                    const mantenimientos = data;
+                    const mantenimientosDiv = document.getElementById('mantenimientos');
+                    mantenimientosDiv.innerHTML = '';
+                    mantenimientos.forEach(mantenimiento => {
+                        const mantenimientoDiv = document.createElement('div');
+                        mantenimientoDiv.classList.add('item-actividad');
+                        mantenimientoDiv.innerHTML = `
+                            <div class="item-actividad">
+                            <div class="contenedor-actividad">
+                                <span>
+                                    <img src="${mantenimiento.sede_activo.activo.imagen}"
+                                        alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
+                                        class="imagen-insumo">
+                                    ${mantenimiento.sede_activo.activo.nombre_elemento}
+                                </span>
+                                <div class="iconos">
+                                    <span class="icono" data-toggle="modal" id="editarBtn${mantenimiento.id}"
+                                        data-target="#mantenimientoModal${mantenimiento.id}"
+                                        onclick="llenarDatosMantenimiento(${mantenimiento.id})">
+                                        <img src="{{ asset('assets/icons/editar.png') }}" alt="Editar"
+                                            style="width: 28px; height: 28px;">
+                                    </span>
+                                    <span class="icono" data-toggle="modal" id="finalizarBtn${mantenimiento.id}"
+                                        data-target="#finalModal${mantenimiento.id}"
+                                        onclick="cargarEstados(${mantenimiento.id})">
+                                        <img src="{{ asset('assets/icons/finalizar.png') }}" alt="Finalizar"
+                                            style="width: 28px; height: 28px; margin-left: 15px;">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal de mantenimiento de activo -->
+                        <div class="modal fade" id="mantenimientoModal${mantenimiento.id}" tabindex="-1"
+                            role="dialog" aria-labelledby="mantenimientoModalLabel${mantenimiento.id}"
+                            aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="mantenimientoModalLabel${mantenimiento.id}">
+                                            ${mantenimiento.sede_activo.activo.nombre_elemento}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="contenedor-imagen-modal">
+                                            <img src="${mantenimiento.sede_activo.activo.imagen}"
+                                                alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
+                                                class="img-fluid">
+                                        </div>
+                                        <p>Estado: ${mantenimiento.sede_activo.estados ? mantenimiento.sede_activo.estados.nombre : ''}</p>
+                                        <div class="form-group">
+                                            <label for="fecha${mantenimiento.id}">Fecha mantenimiento</label>
+                                            <input type="date" class="form-control"
+                                                id="fecha${mantenimiento.id}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="observacionesMant${mantenimiento.id}">Observaciones</label>
+                                            <textarea class="form-control" id="observacionesMant${mantenimiento.id}" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary"
+                                            id="programarBtn${mantenimiento.id}"
+                                            onclick="actualizarMantenimiento(${mantenimiento.id})">
+                                            Programar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal de finalización de mantenimiento -->
+                        <div class="modal fade" id="finalModal${mantenimiento.id}" tabindex="-1" role="dialog"
+                            aria-labelledby="finalModalLabel${mantenimiento.id}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="finalModalLabel${mantenimiento.id}">
+                                            ${mantenimiento.sede_activo.activo.nombre_elemento}</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="contenedor-imagen-modal">
+                                            <img src="${mantenimiento.sede_activo.activo.imagen}"
+                                                alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
+                                                class="img-fluid">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="novedades${mantenimiento.id}">Estado</label>
+                                            <select class="form-control" id="novedadesF${mantenimiento.id}">
+                                                <!-- Opciones se llenarán dinámicamente -->
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="observacionesMant${mantenimiento.id}">Observaciones</label>
+                                            <textarea class="form-control" id="observacionesMantF${mantenimiento.id}" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary"
+                                            id="finalizarBtn${mantenimiento.id}"
+                                            onclick="finalizarMantenimiento(${mantenimiento.id})">
+                                            Finalizar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                        mantenimientosDiv.appendChild(mantenimientoDiv);
+                    });
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -594,10 +674,10 @@
         }
 
         // Llamar a obtenerMantenimientos cuando se hace clic en la pestaña "Mantenimientos"
-        //document.getElementById('pills-mantenimientos-tab').addEventListener('click', obtenerMantenimientos);
+        // document.getElementById('pills-mantenimientos-tab').addEventListener('click', obtenerMantenimientos);
 
         // Llamar a la función verificarActivoReportado al abrir el modal
-        $('.modal').on('show.bs.modal', function () {
+        $('.modal').on('show.bs.modal', function() {
             const modal = $(this);
             const id = modal.attr('id').replace('activoModal', '');
             console.log(`ID: ${id}`);
@@ -605,6 +685,33 @@
                 verificarActivoReportado(id);
             }
         });
+
+        function cargarEstados(id) {
+            fetch(`{{ route('obtener.estados') }}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(estados => {
+                    console.log(estados);
+                    const select = document.getElementById('novedadesF'+id);
+                    select.innerHTML = '<option value="">Seleccione</option>';
+                    estados.forEach(estado => {
+                        const option = document.createElement('option');
+                        option.value = estado.id;
+                        option.textContent = estado.nombre;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar los estados: ' + error.message);
+                });
+        }
 
         // Llenar el campo de observaciones y fecha con los datos del mantenimiento
         function llenarDatosMantenimiento(id) {
@@ -623,7 +730,7 @@
         }
 
         // Llamar a la función llenarDatosMantenimiento al abrir el modal
-        $('.modal').on('show.bs.modal', function () {
+        $('.modal').on('show.bs.modal', function() {
             const modal = $(this);
             const id = modal.attr('id').replace('mantenimientoModal', '');
             if (modal.attr('id').includes('mantenimientoModal')) {
@@ -635,34 +742,36 @@
         function actualizarMantenimiento(id) {
             const fecha = document.getElementById(`fecha${id}`).value;
             const observaciones = document.getElementById(`observacionesMant${id}`).value;
-
-            fetch(`{{ route('actualizar.mantenimiento') }}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    mtto_programado: fecha,
-                    observaciones_reportadas: observaciones
+            console.log('Está entrando a la función');
+            fetch(`{{ route('actualizar.mantenimiento.details') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        mtto_programado: fecha,
+                        observaciones_reportadas: observaciones
+                    })
                 })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                // Close the modal after saving
-                $(`#mantenimientoModal${id}`).modal('hide');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al actualizar el mantenimiento: ' + error.message);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    // Close the modal after saving
+                    //$(`#mantenimientoModal${id}`).modal('hide');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al actualizar el mantenimiento: ' + error.message);
+                });
         }
 
         // Function to set the minimum date for the date input
@@ -674,7 +783,7 @@
         }
 
         // Call setMinDate on page load
-        document.addEventListener('DOMContentLoaded', setMinDate);
+        // document.addEventListener('DOMContentLoaded', setMinDate);
 
         // Function to finalize maintenance
         function finalizarMantenimiento(id) {
@@ -682,33 +791,36 @@
             const observaciones = document.getElementById(`observacionesMantF${id}`).value;
 
             fetch(`{{ route('finalizar.mantenimiento') }}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    id: id,
-                    estado_id: estadoId,
-                    observaciones: observaciones
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        estado_id: estadoId,
+                        observaciones: observaciones
+                    })
                 })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => { throw new Error(text) });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                // Close the modal after saving
-                $(`#finalModal${id}`).modal('hide');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al finalizar el mantenimiento: ' + error.message);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    // Close the modal after saving
+                    // $(`#finalModal${id}`).modal('hide');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al finalizar el mantenimiento: ' + error.message);
+                });
             obtenerMantenimientos();
         }
+        //obtenerMantenimientos();
     </script>
 @endpush

@@ -129,7 +129,7 @@
                 <div class="form-group flex-grow-1 row">
                     <div class="col-3">
                         <label for="celular">Celular:</label>
-                        <input type="text" id="celular" name="celular" class="form-control">
+                        <input type="text" id="celular" name="celular" class="form-control" maxlength="10" required>
                         <span class="error-message" id="errorCelular"></span>
                     </div>
                     <div class="col-3">

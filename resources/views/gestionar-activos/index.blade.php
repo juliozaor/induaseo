@@ -116,7 +116,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <div class="contenedor-titulo">
-                                <span id="crearActivoModalLabel" class="titulo-modal">Asignar Turno</span>
+                                <span id="crearActivoModalLabel" class="titulo-modal">Asignar Activo</span>
                                 <span class="subtitulo-modal">- Todos los campos son obligatorios</span>
                             </div>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">

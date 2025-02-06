@@ -27,8 +27,8 @@
             <div class="card-info">
                 <img src="{{ asset('assets/icons/location.svg') }}" alt="Ubicación" class="card-icon">
                 <span>{{$turno->sede->nombre}} <br> {{$turno->sede->direccion}}</span>
-            </div>
-            <a href="{{ route('actividades.turno', ['id' => $turno->id, 'sede_id' => $turno->sede->id]) }}" class="btn boton-secundario" onclick="setTurnoData({{ $turno->id }}, {{ $turno->sede->id }})">Iniciar turno</a>
+            </div>{{ $turno->turno_id }}
+            <a href="{{ route('actividades.turno', ['id' => $turno->turno->id, 'sede_id' => $turno->sede->id]) }}" class="btn boton-secundario" onclick="setTurnoData({{ $turno->turno->id }}, {{ $turno->sede->id }})">Iniciar turno</a>
         </div>
     </div>
     @endforeach

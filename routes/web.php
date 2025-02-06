@@ -227,7 +227,7 @@ Route::get('/activo-reportado/{id}', [SeguimientoActividadesController::class, '
 Route::get('/obtener-datos-mantenimiento/{id}', [SeguimientoActividadesController::class, 'obtenerDatosMantenimiento'])->name('obtener.datos.mantenimiento');
 
 // Add route for updating maintenance details
-Route::post('/actualizar-mantenimiento', [SeguimientoActividadesController::class, 'actualizarMantenimiento'])->name('actualizar.mantenimiento');
+Route::post('/actualizar-mantenimiento', [SeguimientoActividadesController::class, 'actualizarMantenimiento'])->name('actualizar.mantenimiento.details');
 
 // Add route for finalizing maintenance
 Route::post('/finalizar-mantenimiento', [SeguimientoActividadesController::class, 'finalizarMantenimiento'])->name('finalizar.mantenimiento');
