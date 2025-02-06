@@ -30,7 +30,7 @@
                 paginacionContainer.innerHTML = '';
 
                 // Llenar la tabla con los datos
-                data.forEach(regional => {
+                data.data.forEach(regional => {
                     const row = document.createElement("tr");
                     const estadoClase = regional.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
@@ -46,6 +46,8 @@
 
                 // Mostrar total de registros
                 document.querySelector('.registros-encontrados').textContent = `Total: ${data.total}`;
+
+                
 
                 // Generar paginación
                 const { current_page, last_page } = data;
@@ -173,11 +175,6 @@
 
         const formData = new FormData(regionalForm);
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-        
 
         fetch(url, {
                 method: 'POST',

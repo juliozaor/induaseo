@@ -16,10 +16,7 @@ use App\Http\Controllers\ActivosController;
 use App\Http\Controllers\GestionarActivosController;
 use App\Http\Controllers\InsumosController;
 use App\Http\Controllers\SeguimientoActividadesController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\SupervisorController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\AlertasController;
 use App\Http\Controllers\GestionarInventarioController;
 use App\Http\Controllers\InformacionController;
 use App\Http\Controllers\InformacionNovedadesController;
@@ -37,9 +34,6 @@ use App\Http\Controllers\RegionalesController;
 |
 */
 
-/* Route::get('/login', function () {
-    return view('login');
-})->name('login')->middleware('guest'); */
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -87,8 +81,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/actividades-evidencias', [ActividadesEvidenciasController::class, 'index'])->name('actividades.evidencias.index');
     Route::get('/actividades-evidencias/consultar', [ActividadesEvidenciasController::class, 'consultar'])->name('actividades.evidencias.consultar');
     Route::get('/actividades-evidencias/detalle/{id}', [ActividadesEvidenciasController::class, 'getTurnoDetalle'])->name('actividades.evidencias.detalle');
-    //Route::get('/informacion-novedades', [InformacionNovedadesController::class, 'index'])->name('informacion.novedades.index');
-    // ...other routes...
+
     Route::get('/novedades', [InformacionController::class, 'obtenerNovedades'])->name('novedades.obtener');
     Route::get('/informacion', [SeguimientoActividadesController::class, 'informacion'])->name('informacion');
 
@@ -101,17 +94,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/regional', [RegionalesController::class, 'show'])->name('regionales.show');
     Route::post('/regionales/actualizar/{id}', [RegionalesController::class, 'update'])->name('regionales.update');
     Route::delete('/regionales/{id}', [RegionalesController::class, 'destroy'])->name('regionales.destroy');
+
+    Route::get('/alertas', [AlertasController::class, 'index'])->name('alertas.index');
+    Route::post('/alertas/consultar', [AlertasController::class, 'consultar'])->name('alertas.consultar');
 });
-/*
-Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-Route::get('/supervisor/dashboard', [SupervisorController::class, 'index'])->name('supervisor.dashboard');
-Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard'); */
 
 Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obtener.paises');
 Route::get('/ciudades', [MaestrasController::class, 'obtenerCiudades'])->name('obtener.ciudades');
 Route::get('/clientes-select', [MaestrasController::class, 'obtenerClientes'])->name('obtener.clientes');
 Route::get('/sectores-economicos', [MaestrasController::class, 'obtenerSectoresEconomicos'])->name('obtener.sectoresEconomicos');
-Route::get('/regionales', [MaestrasController::class, 'obtenerRegionales'])->name('obtener.regionales');
 
 Route::get('/maestras/clientes', [MaestrasController::class, 'clientes'])->name('maestras.clientes');
 

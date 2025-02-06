@@ -158,6 +158,7 @@ class MaestrasController extends Controller
 
                 // Obtener datos paginados
                 $regionales = $query->paginate($registrosPorPagina);
+
                 return response()->json($regionales);
             }
 

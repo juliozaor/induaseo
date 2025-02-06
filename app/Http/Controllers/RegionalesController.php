@@ -10,10 +10,11 @@ class RegionalesController extends Controller
 {
     public function index(Request $request)
     {
+        
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
 
-        $query = Regionales::with(['creador', 'actualizador']);
+        $query = Regionales::query();
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");

@@ -194,6 +194,8 @@
                 `;
                     tablaAreasBody.appendChild(row);
                 });
+                console.log(data);
+                
 
                 // Mostrar total de registros
                 document.querySelector('.registros-encontrados').textContent = `Total: ${data.total}`;
