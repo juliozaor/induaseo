@@ -48,7 +48,6 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre del Insumo</th>
-                    <th>Estado del Insumo</th>
                     <th>Marca</th>
                     <th>Código</th>
                     <th>Clasificación</th>
@@ -110,17 +109,16 @@
                 <div class="form-group flex-grow-1 row">
                     <div class="col-3">
                         <label for="cantidadInsumo">Cantidad:</label>
-                        <input type="number" id="cantidadInsumo" name="cantidadInsumo" class="form-control" required>
+                        <input type="text" id="cantidadInsumo" name="cantidadInsumo" class="form-control" maxlength="10" required>
                         <span class="error-message" id="errorCantidadInsumo"></span>
                     </div>
-                    <div class="col-3">
+                    <!-- <div class="col-3">
                         <label for="estadoInsumo">Estado:</label>
                         <select id="estadoInsumo" name="estadoInsumo" class="form-control" required>
                             <option value="">Seleccione</option>
-                            <!-- Opciones de estado se llenarán dinámicamente -->
                         </select>
                         <span class="error-message" id="errorEstadoInsumo"></span>
-                    </div>
+                    </div> -->
                     <div class="col-3">
                         <label for="proveedorInsumo">Proveedor:</label>
                         <input type="text" id="proveedorInsumo" name="proveedorInsumo" class="form-control" required>
@@ -128,7 +126,7 @@
                     </div>
                     <div class="col-3">
                         <label for="telefonoProveedorInsumo">Teléfono Proveedor:</label>
-                        <input type="text" id="telefonoProveedorInsumo" name="telefonoProveedorInsumo" class="form-control" required>
+                        <input type="text" id="telefonoProveedorInsumo" name="telefonoProveedorInsumo" class="form-control" maxlength="10" required>
                         <span class="error-message" id="errorTelefonoProveedorInsumo"></span>
                     </div>
                 </div>

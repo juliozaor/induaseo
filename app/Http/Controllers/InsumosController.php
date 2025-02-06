@@ -20,7 +20,7 @@ class InsumosController extends Controller
                 'codigoInsumo' => 'required|string|max:255',
                 'clasificacionInsumo' => 'required|exists:clasificaciones,id',
                 'cantidadInsumo' => 'required|integer',
-                'estadoInsumo' => 'required|exists:estados,id',
+                /* 'estadoInsumo' => 'required|exists:estados,id', */
                 'estado' => 'required|boolean',
                 'proveedorInsumo' => 'required|string|max:255',
                 'telefonoProveedorInsumo' => 'required|string|max:255',
@@ -34,7 +34,7 @@ class InsumosController extends Controller
             $insumo->codigo = $request->input('codigoInsumo');
             $insumo->clasificacion_id = $request->input('clasificacionInsumo');
             $insumo->cantidad = $request->input('cantidadInsumo');
-            $insumo->estado_id = $request->input('estadoInsumo');
+            $insumo->estado_id = 1; // Set estado_id to 1 by default
             $insumo->estado = $request->input('estado');
             $insumo->proveedor = $request->input('proveedorInsumo');
             $insumo->telefono_proveedor = $request->input('telefonoProveedorInsumo');
@@ -59,7 +59,7 @@ class InsumosController extends Controller
                 'codigoInsumo' => 'required|string|max:255',
                 'clasificacionInsumo' => 'required|exists:clasificaciones,id',
                 'cantidadInsumo' => 'required|integer',
-                'estadoInsumo' => 'required|exists:estados,id',
+                /* 'estadoInsumo' => 'required|exists:estados,id', */
                 'estado' => 'required|boolean',
                 'proveedorInsumo' => 'required|string|max:255',
                 'telefonoProveedorInsumo' => 'required|string|max:255',
@@ -71,7 +71,7 @@ class InsumosController extends Controller
             $insumo->codigo = $request->input('codigoInsumo');
             $insumo->clasificacion_id = $request->input('clasificacionInsumo');
             $insumo->cantidad = $request->input('cantidadInsumo');
-            $insumo->estado_id = $request->input('estadoInsumo');
+            $insumo->estado_id = 1; // Set estado_id to 1 by default
             $insumo->estado = $request->input('estado');
             $insumo->proveedor = $request->input('proveedorInsumo');
             $insumo->telefono_proveedor = $request->input('telefonoProveedorInsumo');
@@ -107,7 +107,7 @@ class InsumosController extends Controller
             $clasificacion = $request->input('clasificacion');
             $estado = $request->input('estado');
 
-            $query = Insumos::with(['clasificacion', 'estado']);
+            $query = Insumos::with(['clasificacion', 'estados']);
 
             if ($buscar) {
                 $query->where('nombre_elemento', 'like', "%{$buscar}%")
@@ -120,7 +120,7 @@ class InsumosController extends Controller
             }
 
             if ($estado !== null) {
-                $query->where('estado_id', $estado);
+                $query->where('estado', $estado);
             }
 
             $insumos = $query->paginate($registrosPorPagina);

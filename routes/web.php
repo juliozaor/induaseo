@@ -180,6 +180,7 @@ Route::get('admin/maestras/insumos', [MaestrasController::class, 'clientes'])->n
 Route::post('/insumos/guardar', [InsumosController::class, 'guardar'])->name('insumos.guardar');
 Route::put('/insumos/actualizar/{id}', [InsumosController::class, 'actualizar'])->name('insumos.actualizar');
 Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obtener');
+Route::get('/insumos/consultar', [InsumosController::class, 'consultar'])->name('insumos.consultar');
 
 
 

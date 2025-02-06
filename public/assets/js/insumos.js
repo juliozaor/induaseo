@@ -16,7 +16,7 @@
         const tablaSeleccionada = tablaMaestraSelect.value;
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
-        const clasificacion = filtroClasificacion.value;
+        const clasificacion = filtroClasificacion.value; // Ensure this is correctly referenced
         const estado = filtroEstado.value;
 
         if (!tablaSeleccionada) {
@@ -30,12 +30,12 @@
         formData.append('clasificacion', clasificacion);
         formData.append('estado', estado);
 
-        fetch(`../admin/maestras/consultar?page=${page}`, {
-                method: 'POST',
+        fetch(`../insumos/consultar?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}&clasificacion=${clasificacion}&estado=${estado}`, {
+                method: 'GET', // Change method back to POST
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData
+                }
+                /* body: formData */
             })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
@@ -53,7 +53,6 @@
                     row.innerHTML = `
                     <td>${insumo.id}</td>
                     <td>${insumo.nombre_elemento}</td>
-                    <td>${insumo.estado.nombre}</td>
                     <td>${insumo.marca}</td>
                     <td>${insumo.codigo}</td>
                     <td>${insumo.clasificacion.nombre}</td>
@@ -127,7 +126,8 @@
 
     cargarDatos(1);
     cargarClasificaciones();
-    cargarEstados();
+    //cargarFiltroClasificacionInsumo();
+    //cargarEstados();
 
     // Eventos
     consultarBtn.addEventListener("click", () => cargarDatos(1));
@@ -146,7 +146,7 @@
 
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
-        modal.style.display = "flex";        
+        modal.style.display = "flex";
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -166,7 +166,7 @@
             }
 
             editMode = true;
-
+            cargarClasificaciones();
             // Aquí continúa el código de apertura del modal y carga de datos
             modalTitle.textContent = "Editar insumo";
             modalActionBtn.textContent = "Guardar Cambios";
@@ -178,13 +178,13 @@
                     }
                     return response.json();
                 })
-                .then((insumo) => {   
+                .then((insumo) => {
                     document.getElementById("nombreInsumo").value = insumo.nombre_elemento;
                     document.getElementById("marcaInsumo").value = insumo.marca;
                     document.getElementById("codigoInsumo").value = insumo.codigo;
                     document.getElementById("clasificacionInsumo").value = insumo.clasificacion_id;
                     document.getElementById("cantidadInsumo").value = insumo.cantidad;
-                    document.getElementById("estadoInsumo").value = insumo.estado_id;
+                    /* document.getElementById("estadoInsumo").value = insumo.estado_id; */
                     document.getElementById("proveedorInsumo").value = insumo.proveedor;
                     document.getElementById("telefonoProveedorInsumo").value = insumo.telefono_proveedor;
                     document.getElementById("estadoInsumoToggle").checked = insumo.estado === 1;
@@ -268,9 +268,20 @@
     function cargarClasificaciones() {
         fetch(`../clasificaciones`)
             .then(response => response.json())
-            .then(clasificaciones => {                
+            .then(clasificaciones => {
                 const clasificacionSelect = document.getElementById("clasificacionInsumo");
+                const filtroClasificacionInsumo = document.getElementById("filtroClasificacionInsumo");
+
                 clasificacionSelect.innerHTML = '<option value="">Seleccione</option>';
+                filtroClasificacionInsumo.innerHTML = '<option value="">Todas las clasificaciones</option>';
+
+                clasificaciones.forEach(clasificacion => {
+                    const option = document.createElement("option");
+                    option.value = clasificacion.id;
+                    option.textContent = clasificacion.nombre;
+                    clasificacionSelect.appendChild(option);
+                    filtroClasificacionInsumo.appendChild(option);
+                });
                 clasificaciones.forEach(clasificacion => {
                     const option = document.createElement("option");
                     option.value = clasificacion.id;
@@ -279,22 +290,6 @@
                 });
             })
             .catch(error => console.error("Error al cargar las clasificaciones:", error));
-    }
-
-    function cargarEstados() {
-        fetch(`../estados`)
-            .then(response => response.json())
-            .then(estados => {                
-                const estadoSelect = document.getElementById("estadoInsumo");
-                estadoSelect.innerHTML = '<option value="">Seleccione</option>';
-                estados.forEach(estado => {
-                    const option = document.createElement("option");
-                    option.value = estado.id;
-                    option.textContent = estado.nombre;
-                    estadoSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error("Error al cargar los estados:", error));
     }
 
     function resetForm() {
@@ -327,4 +322,15 @@
 
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
+
+    const cantidadInsumo = document.getElementById("cantidadInsumo");
+    cantidadInsumo.addEventListener("input", function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    const telefonoProveedorInsumo = document.getElementById("telefonoProveedorInsumo");
+    telefonoProveedorInsumo.addEventListener("input", function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
 })();
