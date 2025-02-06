@@ -45,7 +45,7 @@
             informacionModalTitle.textContent = "Editar información";
             informacionModalActionBtn.textContent = "Guardar Cambios";
 
-            fetch(`../informacion?id=${informacionId}`)
+            fetch(`../informacion/obtener?id=${informacionId}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Error al cargar los datos de la información.");
@@ -81,6 +81,7 @@
     document.getElementById("closeInformacionModal").addEventListener("click", function() {
         informacionModal.style.display = "none";
         resetInformacionForm();
+        document.getElementById("fileLabel").textContent = ''; // Clear the file label
     });
 
     // Guardar cambios
@@ -151,6 +152,7 @@
         informacionModalActionBtn.textContent = "Crear Información";
         editMode = false;
         informacionId = null;
+        document.getElementById("fileLabel").textContent = ''; // Clear the file label
     }
 
     // Cargar tipos de multimedia

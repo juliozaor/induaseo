@@ -76,7 +76,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/informacion', [InformacionController::class, 'index'])->name('admin.informacion.index');
     Route::post('/admin/informacion', [InformacionController::class, 'cargarInformacion'])->name('admin.informacion.cargar');
     Route::post('/informacion/guardar', [InformacionController::class, 'guardar'])->name('informacion.guardar');
-    Route::get('/informacion', [InformacionController::class, 'obtenerInformacion'])->name('informacion.obtener');
+    Route::get('/informacion/obtener', [InformacionController::class, 'obtenerInformacion'])->name('informacion.obtener');
     Route::put('/informacion/actualizar/{id}', [InformacionController::class, 'actualizar'])->name('informacion.actualizar');
     Route::get('/actividades-evidencias', [ActividadesEvidenciasController::class, 'index'])->name('actividades.evidencias.index');
     Route::get('/actividades-evidencias/consultar', [ActividadesEvidenciasController::class, 'consultar'])->name('actividades.evidencias.consultar');

@@ -120,7 +120,7 @@
                         <label for="url" class="form-label">Adjuntar multimedia <span class="subtitulo-modal">- Formatos permitidos: PDF, MP4, PNG, JPG</span></label>
                         <input class="form-control" type="file" id="url" name="url">
                         <span class="error-message" id="errorUrl"></span>
-                        <span id="fileLabel" class="file-label"></span> <!-- Add this line -->
+                        <span id="fileLabel" class="file-label"></span> 
                     </div>
                 </div>
                 
