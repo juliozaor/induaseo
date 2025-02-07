@@ -321,6 +321,11 @@
     // Llama a la función cuando cambia el estado del checkbox
     estadoToggle.addEventListener("change", actualizarEstadoLabel);
 
+    const cantidad = document.getElementById("cantidad");
+    cantidad.addEventListener("input", function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
 })();

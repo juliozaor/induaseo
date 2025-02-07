@@ -67,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/gestionar-inventario', [GestionarInventarioController::class, 'index'])->name('gestionar.inventario.index');
     Route::get('/gestionar-inventario/consultar', [GestionarInventarioController::class, 'consultar'])->name('gestionar.inventario.consultar');
     Route::post('/gestionar-inventario/guardar', [GestionarInventarioController::class, 'guardar'])->name('gestionar.inventario.guardar');
-    Route::put('/gestionar-inventario/actualizar/{id}', [GestionarInventarioController::class, 'actualizar'])->name('gestionar.inventario.actualizar');
+    Route::post('/gestionar-inventario/actualizar/{id}', [GestionarInventarioController::class, 'actualizar'])->name('gestionar.inventario.actualizar');
     Route::get('/gestionar-inventario/obtener', [GestionarInventarioController::class, 'obtenerInventario'])->name('gestionar.inventario.obtener');
     Route::get('/sedes', [GestionarInventarioController::class, 'getSedes'])->name('sedes.obtener');
     Route::get('/obtener-sede', [SedeController::class, 'obtenerSede'])->name('obtener.sede');

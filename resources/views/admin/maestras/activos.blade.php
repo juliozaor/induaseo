@@ -1,4 +1,3 @@
-
 <div class="btn-nuevo">
     <button class="btn-consultar" id="openModalActivoBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
@@ -109,7 +108,7 @@
                 <div class="form-group flex-grow-1 row">
                     <div class="col-3">
                         <label for="cantidad">Cantidad:</label>
-                        <input type="number" id="cantidad" name="cantidad" class="form-control" required>
+                        <input type="text" id="cantidad" name="cantidad" class="form-control" required>
                         <span class="error-message" id="errorCantidad"></span>
                     </div>
                     <div class="col-3">
@@ -133,3 +132,5 @@
         </div>
     </div>
 </div>
+
+

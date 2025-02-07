@@ -40,9 +40,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${inventario.cantidad}</td>
                         <td>${inventario.sede}</td>
                         <td>${inventario.cliente}</td>
-                        <td>${inventario.creado_por}</td>
+                        <td>${inventario.creado_por ?? ''}</td>
                         <td>${inventario.ultima_actualizacion}</td>
-                        <td>${inventario.editado_por}</td>
+                        <td>${inventario.editado_por ?? ''}</td>
                         <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${inventario.id}"></td>
                     `;
                     inventariosTableBody.appendChild(row);
@@ -60,14 +60,10 @@ document.addEventListener('DOMContentLoaded', function () {
     clienteSelect.addEventListener('change', function () {
         const clienteId = this.value;
 
-        // Reset selectedOptions and clear the selectedOptionsContainer
-        selectedOptions = [];
-        selectedOptionsContainer.innerHTML = '';
-
         fetch(`sedes?cliente_id=${clienteId}`)
             .then(response => response.json())
             .then(data => {
-                sedeSelect.innerHTML = '<option value="">Seleccione una o varias sedes</option>';
+                sedeSelect.innerHTML = '<option value="">Seleccione una sede</option>';
                 data.forEach(sede => {
                     const option = document.createElement('option');
                     option.value = sede.id;
@@ -78,56 +74,20 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching sedes:', error));
     });
 
-    // Evento para actualizar el input de sede al seleccionar una sede
-    sedeSelect.addEventListener('change', function () {
-        const selectedValue = sedeSelect.value;
-        const selectedText = sedeSelect.options[sedeSelect.selectedIndex].text;
-        console.log(selectedValue, selectedText)
-
-        if (selectedValue && !selectedOptions.find(opt => opt.value === selectedValue)) {
-            selectedOptions.push({ value: selectedValue, text: selectedText });
-            renderSelectedOptions();
-        }
-
-        // Eliminar la opción seleccionada del select
-        sedeSelect.options[sedeSelect.selectedIndex].style.display = 'none';
-        sedeSelect.value = '';
-    });
-
-    function renderSelectedOptions() {
-        selectedOptionsContainer.innerHTML = '';
-        selectedOptions.forEach((option, index) => {
-            const badge = document.createElement('span');
-            badge.className = 'badge';
-            badge.innerHTML = `
-                ${option.text}
-                <button onclick="removeOption(${index})" type="button" class="btn-close ms-2" aria-label="Remove" >X</button>
-            `;
-            selectedOptionsContainer.appendChild(badge);
-        });
+    function cargarSedes(clienteId) {
+        return fetch(`sedes?cliente_id=${clienteId}`)
+            .then(response => response.json())
+            .then(data => {
+                sedeSelect.innerHTML = '<option value="">Seleccione una sede</option>';
+                data.forEach(sede => {
+                    const option = document.createElement('option');
+                    option.value = sede.id;
+                    option.textContent = sede.nombre;
+                    sedeSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching sedes:', error));
     }
-
-    /* btnQuitarSede.addEventListener('click', function () {
-        console.log('remover')
-    }); */
-
-    // Definir la función removeOption en el ámbito global
-    window.removeOption = function(index) {
-        // console.log('remover')
-        const removedOption = selectedOptions.splice(index, 1)[0];
-        renderSelectedOptions();
-
-        // Volver a mostrar la opción eliminada en el select
-        const optionToShow = Array.from(sedeSelect.options).find(opt => opt.value === removedOption.value);
-        if (optionToShow) {
-            optionToShow.style.display = 'block';
-        }
-    }
-
-    // Evento para consultar inventarios al hacer clic en el botón de consultar
-    /* consultarBtn.addEventListener('click', function () {
-        consultarInventarios();
-    }); */
 
     // Evento para editar un inventario al hacer clic en el icono de editar
     document.addEventListener('click', function (event) {
@@ -153,37 +113,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log("Datos del inventario:", inventario); // Log the fetched data
 
                     // Populate form fields with inventario data
-                    itemSelect.value = inventario.item_id;
+                    itemSelect.value = inventario.insumo_id;
                     clienteSelect.value = inventario.sede.cliente.id;
-                    sedeSelect.value = inventario.sede.id;
-                    const estadoSelect = document.getElementById("estadoInventario");
-                    estadoSelect.value = inventario.estado_id;
-                    codigoInput.value = inventario.numero_serie;
-                    cantidadInput.value = inventario.cantidad;
-
-                    // Clear previous image previews
-                    imagenesPreview.innerHTML = '';
-
-                    // Populate image previews
-                    inventario.imagenes.forEach(imagen => {
-                        const imgContainer = document.createElement('div');
-                        imgContainer.classList.add('img-container');
-                        const img = document.createElement('img');
-                        img.src = `${imagen.imagen}`; // Ensure the full URL is used
-                        img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
-                        img.style.width = '100px';
-                        img.style.height = '100px';
-                        const removeBtn = document.createElement('button');
-                        removeBtn.textContent = 'X';
-                        removeBtn.classList.add('remove-btn');
-                        removeBtn.addEventListener('click', function () {
-                            imgContainer.remove();
-                            // Optionally, handle image removal from the server here
-                        });
-                        imgContainer.appendChild(img);
-                        imgContainer.appendChild(removeBtn);
-                        imagenesPreview.appendChild(imgContainer);
+                    cargarSedes(inventario.sede.cliente.id).then(() => {
+                        sedeSelect.value = inventario.sede_id;
                     });
+                    codigoInput.value = inventario.item.codigo;
+                    cantidadInput.value = inventario.cantidad;
 
                     $(crearInventarioModal).modal('show');// Ensure jQuery is used to show the modal
                 })
@@ -194,15 +130,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Evento para guardar un inventario al hacer clic en el botón de guardar
     guardarInventarioBtn.addEventListener('click', function () {
         const url = editMode ? `gestionar-inventario/actualizar/${inventarioId}` : `gestionar-inventario/guardar`;
-        const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(document.getElementById('crearInventarioForm'));
-        formData.append('sede_id', sedeSelect.value);
 
-        if (editMode) {
-            formData.append("_method", "PUT");
+        // Log form data for debugging
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
         }
-
         fetch(url, {
             method: "POST", // Always use POST for FormData
             headers: {
@@ -211,6 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
             body: formData,
         })
             .then((response) => {
+                console.log("Respuesta del servidor:", response);
                 if (!response.ok) {
                     return response.json().then((data) => {
                         throw data;
@@ -262,8 +197,9 @@ document.addEventListener('DOMContentLoaded', function () {
         guardarInventarioBtn.textContent = "Crear Inventario";
         editMode = false;
         inventarioId = null;
-        imagenesPreview.innerHTML = ''; // Clear image previews
-        imagenesInput.value = ''; // Clear image input
+        /* imagenesPreview.innerHTML = ''; // Clear image previews
+        imagenesInput.value = ''; // Clear image input */
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
     }
 
     // Evento para abrir el modal de crear inventario
@@ -275,9 +211,19 @@ document.addEventListener('DOMContentLoaded', function () {
         sedeSelect.options[sedeSelect.selectedIndex].textContent;
         //imagenesPreview.innerHTML = ''; // Clear image previews
         //imagenesInput.value = ''; // Clear image input
-        cargarItems(); // Cargar los artículos al abrir el modal
+        resetInventarioForm();
         $(crearInventarioModal).modal('show'); // Use jQuery to show the modal
     });
+
+    // Evento para limpiar los mensajes de error al cerrar el modal
+    $('#crearInventarioModal').on('hidden.bs.modal', function () {
+        clearErrorMessages(); // Clear error messages
+    });
+
+    // Función para limpiar los mensajes de error
+    function clearErrorMessages() {
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+    }
 
     // Función para formatear fechas
     function formatDate(dateString) {
@@ -329,4 +275,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    cargarItems(); // Cargar los artículos al abrir el modal
 });
