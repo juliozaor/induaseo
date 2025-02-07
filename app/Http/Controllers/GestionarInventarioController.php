@@ -104,12 +104,10 @@ class GestionarInventarioController extends Controller
     {
         // Validar los datos del formulario
         $validatedData = $request->validate([
-            'itemSelect' => 'required|exists:insumos,id',
-            'cantidadInput' => 'required|integer|min:1',
-            'estado' => 'required|boolean',
-            'estadoInventario' => 'required|exists:estados,id',
-            'imagenesInput' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'sedeSelect' => 'required|exists:sedes,id',
+            'clienteSelect' => 'required|exists:clientes,id',
+                'sedeSelect' => 'required|exists:sedes,id',
+                'itemSelect' => 'required|exists:insumos,id',
+                'cantidadInput' => 'required|integer|min:1',
         ]);
 
         // Buscar el inventario por ID
@@ -124,6 +122,7 @@ class GestionarInventarioController extends Controller
             'estado' => 1,
             'actualizador_id' => Auth::id(),
         ]);
+
 
         return response()->json(['message' => 'Inventario actualizado exitosamente', 'inventario' => $inventario]);
     }
