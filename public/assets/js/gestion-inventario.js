@@ -197,8 +197,9 @@ document.addEventListener('DOMContentLoaded', function () {
         guardarInventarioBtn.textContent = "Crear Inventario";
         editMode = false;
         inventarioId = null;
-        /* imagenesPreview.innerHTML = ''; // Clear image previews
-        imagenesInput.value = ''; // Clear image input */
+        cantidadDisponibleSpan.textContent = ''; // Clear available quantity
+        imagenesPreview.innerHTML = ''; // Clear image previews
+        imagenesInput.value = ''; // Clear image input
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
     }
 
@@ -218,6 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Evento para limpiar los mensajes de error al cerrar el modal
     $('#crearInventarioModal').on('hidden.bs.modal', function () {
         clearErrorMessages(); // Clear error messages
+        resetInventarioForm(); // Reset form fields
     });
 
     // Función para limpiar los mensajes de error
@@ -262,6 +264,45 @@ document.addEventListener('DOMContentLoaded', function () {
                 cantidadDisponibleSpan.textContent = `Disponible: ${data.cantidad}`;
             })
             .catch(error => console.error('Error fetching items:', error));
+    });
+
+    // Evento para mostrar la vista previa de las imágenes seleccionadas
+    imagenesInput.addEventListener('change', function () {
+        imagenesPreview.innerHTML = ''; // Clear previous previews
+        const dt = new DataTransfer();
+        for (const file of imagenesInput.files) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgContainer = document.createElement('div');
+                imgContainer.classList.add('img-container');
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
+                img.style.width = '100px';
+                img.style.height = '100px';
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'X';
+                removeBtn.classList.add('remove-btn');
+                removeBtn.addEventListener('click', function () {
+                    imgContainer.remove();
+                    // Remove the file from the input
+                    const files = Array.from(imagenesInput.files);
+                    const index = files.indexOf(file);
+                    if (index > -1) {
+                        files.splice(index, 1);
+                        dt.items.clear();
+                        files.forEach(f => dt.items.add(f));
+                        imagenesInput.files = dt.files;
+                    }
+                });
+                imgContainer.appendChild(img);
+                imgContainer.appendChild(removeBtn);
+                imagenesPreview.appendChild(imgContainer);
+                dt.items.add(file); // Add file to DataTransfer
+            };
+            reader.readAsDataURL(file);
+        }
+        imagenesInput.files = dt.files; // Update input files
     });
 
     document.addEventListener('DOMContentLoaded', function () {

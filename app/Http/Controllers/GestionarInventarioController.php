@@ -34,12 +34,12 @@ class GestionarInventarioController extends Controller
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%")
-                  ->orWhereHas('sede', function($q) use ($buscar) {
-                      $q->where('nombre', 'like', "%{$buscar}%");
-                  })
-                  ->orWhereHas('sede.cliente', function($q) use ($buscar) {
-                      $q->where('nombre', 'like', "%{$buscar}%");
-                  });
+                ->orWhereHas('sede', function ($q) use ($buscar) {
+                    $q->where('nombre', 'like', "%{$buscar}%");
+                })
+                ->orWhereHas('sede.cliente', function ($q) use ($buscar) {
+                    $q->where('nombre', 'like', "%{$buscar}%");
+                });
         }
 
         $inventarios = $query->paginate($registrosPorPagina);
@@ -81,10 +81,11 @@ class GestionarInventarioController extends Controller
                 'sedeSelect' => 'required|exists:sedes,id',
                 'itemSelect' => 'required|exists:insumos,id',
                 'cantidadInput' => 'required|integer|min:1',
+                'imagenesInput' => 'nullable|array',
+                'imagenesInput.*' => 'image|mimes:jpeg,png,jpg|max:2048',
             ]);
-            //dd($validatedData);
             // Crear un nuevo inventario
-            Inventario::create([
+            $inventario = Inventario::create([
                 'sede_id' => $request->sedeSelect,
                 'insumo_id' => $request->itemSelect,
                 'cantidad' => $request->cantidadInput,
@@ -92,6 +93,17 @@ class GestionarInventarioController extends Controller
                 'estado' => 1,
                 'creador_id' => Auth::id(),
             ]);
+
+            if ($request->hasFile('imagenesInput')) {
+                foreach ($request->file('imagenesInput') as $file) {
+                    $filename = time() . '_' . $file->getClientOriginalName();
+                    $path = $file->move(public_path('assets/recursos'), $filename);
+                    ImagenInventario::create([
+                        'inventario_id' => $inventario->id,
+                        'imagen' => 'assets/recursos/' . $filename,
+                    ]);
+                }
+            }
 
             return response()->json(['message' => 'Inventario guardado exitosamente']);
         } catch (ValidationException $e) {
@@ -105,9 +117,11 @@ class GestionarInventarioController extends Controller
         // Validar los datos del formulario
         $validatedData = $request->validate([
             'clienteSelect' => 'required|exists:clientes,id',
-                'sedeSelect' => 'required|exists:sedes,id',
-                'itemSelect' => 'required|exists:insumos,id',
-                'cantidadInput' => 'required|integer|min:1',
+            'sedeSelect' => 'required|exists:sedes,id',
+            'itemSelect' => 'required|exists:insumos,id',
+            'cantidadInput' => 'required|integer|min:1',
+            'imagenesInput' => 'nullable|array',
+            'imagenesInput.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         // Buscar el inventario por ID
@@ -123,6 +137,16 @@ class GestionarInventarioController extends Controller
             'actualizador_id' => Auth::id(),
         ]);
 
+        if ($request->hasFile('imagenesInput')) {
+            foreach ($request->file('imagenesInput') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->move(public_path('assets/recursos'), $filename);
+                ImagenInventario::create([
+                    'inventario_id' => $inventario->id,
+                    'imagen' => 'assets/recursos/' . $filename,
+                ]);
+            }
+        }
 
         return response()->json(['message' => 'Inventario actualizado exitosamente', 'inventario' => $inventario]);
     }

@@ -126,6 +126,19 @@
                                         <span class="error-message" id="errorCantidadInput"></span>
                                     </div>
                                 </div>
+                                <div class="form-group flex-grow-1 row">
+                                    <div class="col">
+                                        <label for="imagenesInput">Imagen Formatos permitidos PNG, JPG</label>
+                                        <div class="input-group">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="imagenesInput" name="imagenesInput" accept="image/*">
+                                                <label class="custom-file-label" for="imagenesInput">Selecciona un archivo desde el dispositivo</label>
+                                            </div>
+                                        </div>
+                                        <span class="error-message" id="errorImagenesInput"></span>
+                                        <div id="imagenesPreview" class="imagenes-preview mt-3"></div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                         <div class="modal-footer">
