@@ -68,7 +68,7 @@
     <div class="tabla-paginacion"></div>
 </div>
 
-<div id="createInsumoModal" class="modal">
+<div id="createInsumoModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="createInsumoModalLabel" aria-hidden="true">
     <div class="modal-content">
         <div class="modal-header">
             <div class="contenedor-titulo">

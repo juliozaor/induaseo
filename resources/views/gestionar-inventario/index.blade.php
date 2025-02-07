@@ -87,7 +87,7 @@
                         </div>
                         <div class="modal-body">
                             <form id="crearInventarioForm">
-                                <input type="hidden" id="inventarioId" name="inventarioId">
+                                {{-- <input type="hidden" id="inventarioId" name="inventarioId"> --}}
                                 <div class="form-group flex-grow-1 row">
                                     <div class="col">
                                         <label for="clienteSelect">Cliente</label>
@@ -101,10 +101,9 @@
                                     </div>
                                     <div class="col">
                                         <label for="sedeSelect">Asignar sede</label>
-                                        <select id="sedeSelect" name="sedeSelect" class="form-control" >
-                                            <option value="">Seleccione una o varias sedes</option>
+                                        <select id="sedeSelect" name="sedeSelect" class="form-control">
+                                            <option value="">Seleccione una sede</option>
                                         </select>
-                                        <div class="selected-options mt-3" id="selectedOptions"></div>
                                         <span class="error-message" id="errorSedeSelect"></span>
                                     </div>
                                 </div>
@@ -123,7 +122,7 @@
                                     </div>
                                     <div class="col">
                                         <label for="cantidadInput">Cantidad <span id="cantidadDisponible" class="text-success"></span></label>
-                                        <input type="number" id="cantidadInput" class="form-control" name="cantidad" min="1">
+                                        <input type="number" id="cantidadInput" class="form-control" name="cantidadInput" min="1">
                                         <span class="error-message" id="errorCantidadInput"></span>
                                     </div>
                                 </div>

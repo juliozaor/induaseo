@@ -154,6 +154,7 @@
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
+            clearErrorMessages(); // Limpiar mensajes de error
         }
     });
 
@@ -200,6 +201,7 @@
     document.getElementById("closeInsumo").addEventListener("click", function() {
         modal.style.display = "none";
         resetForm();
+        clearErrorMessages(); // Limpiar mensajes de error
     });
 
     // Guardar cambios
@@ -298,6 +300,11 @@
         modalActionBtn.textContent = "Crear Insumo";
         editMode = false;
         insumoId = null;
+    }
+
+    // Función para limpiar los mensajes de error
+    function clearErrorMessages() {
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
     }
 
     // Actualizar estado del toggle

@@ -30,7 +30,7 @@ class GestionarInventarioController extends Controller
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
 
-        $query = Inventario::with(['sede.cliente', 'item', 'estado', 'creador', 'actualizador']);
+        $query = Inventario::with(['sede.cliente', 'item', 'estados', 'creador', 'actualizador']);
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%")
@@ -51,13 +51,13 @@ class GestionarInventarioController extends Controller
         $inventariosData = array_map(function ($inventario) {
             return [
                 'id' => $inventario->id,
-                'nombre' => $inventario->item->nombre,
+                'nombre' => $inventario->item->nombre_elemento,
                 'cantidad' => $inventario->cantidad,
                 'sede' => $inventario->sede->nombre,
                 'cliente' => $inventario->sede->cliente->nombre,
-                'creado_por' => $inventario->creador->nombres,
+                'creado_por' => $inventario->creador->nombres ?? 'N/A',
                 'ultima_actualizacion' => $inventario->updated_at->format('d-m-Y'),
-                'editado_por' => $inventario->actualizador->nombres,
+                'editado_por' => $inventario->actualizador->nombres ?? 'N/A',
             ];
         }, $inventariosData);
 
@@ -78,23 +78,20 @@ class GestionarInventarioController extends Controller
             // Validar los datos del formulario
             $validatedData = $request->validate([
                 'clienteSelect' => 'required|exists:clientes,id',
-                'sedeSelect' => 'required|array|min:1',
-                'sedeSelect.*' => 'exists:sedes,id',
+                'sedeSelect' => 'required|exists:sedes,id',
                 'itemSelect' => 'required|exists:insumos,id',
-                'cantidad' => 'required|integer|min:1',
+                'cantidadInput' => 'required|integer|min:1',
             ]);
-
-            // Crear un nuevo inventario para cada sede seleccionada
-            foreach ($request->sedeSelect as $sedeId) {
-                $inventario = Inventario::create([
-                    'sede_id' => $sedeId,
-                    'item_id' => $request->itemSelect,
-                    'cantidad' => $request->cantidad,
-                    'estado_id' => 1,
-                    'estado' => 1,
-                    'creador_id' => Auth::id(),
-                ]);
-            }
+            //dd($validatedData);
+            // Crear un nuevo inventario
+            Inventario::create([
+                'sede_id' => $request->sedeSelect,
+                'insumo_id' => $request->itemSelect,
+                'cantidad' => $request->cantidadInput,
+                'estado_id' => 1,
+                'estado' => 1,
+                'creador_id' => Auth::id(),
+            ]);
 
             return response()->json(['message' => 'Inventario guardado exitosamente']);
         } catch (ValidationException $e) {
@@ -108,24 +105,23 @@ class GestionarInventarioController extends Controller
         // Validar los datos del formulario
         $validatedData = $request->validate([
             'itemSelect' => 'required|exists:insumos,id',
-            'cantidad' => 'required|integer|min:1',
+            'cantidadInput' => 'required|integer|min:1',
             'estado' => 'required|boolean',
             'estadoInventario' => 'required|exists:estados,id',
             'imagenesInput' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'sedeSelect' => 'required|array|min:1',
-            'sedeSelect.*' => 'exists:sedes,id',
+            'sedeSelect' => 'required|exists:sedes,id',
         ]);
 
         // Buscar el inventario por ID
-        $inventario = Inventario::findOrFail($id);
-
+        $inventario = Inventario::find($id);
+        /* dd($inventario); */
         // Actualizar los datos del inventario
         $inventario->update([
-            'sede_id' => $request->sedeSelect[0], // Asignar la primera sede seleccionada
+            'sede_id' => $request->sedeSelect,
             'item_id' => $request->itemSelect,
-            'cantidad' => $request->cantidad,
-            'estado_id' => $request->estadoInventario,
-            'estado' => $request->estado,
+            'cantidad' => $request->cantidadInput,
+            'estado_id' => 1,
+            'estado' => 1,
             'actualizador_id' => Auth::id(),
         ]);
 
@@ -136,7 +132,7 @@ class GestionarInventarioController extends Controller
     public function obtenerInventario(Request $request)
     {
         $id = $request->input('id');
-        $inventario = Inventario::with('sede.cliente', 'item', 'estado', 'creador', 'actualizador', 'imagenes')->findOrFail($id);
+        $inventario = Inventario::with('sede.cliente', 'item', 'estados', 'creador', 'actualizador')->findOrFail($id);
         return response()->json($inventario);
     }
 

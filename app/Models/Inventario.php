@@ -11,7 +11,7 @@ class Inventario extends Model
 
     protected $fillable = [
         'sede_id',
-        'item_id',
+        'insumo_id',
         'cantidad',
         'estado_id',
         'estado',
@@ -29,7 +29,7 @@ class Inventario extends Model
         return $this->belongsTo(Insumos::class, 'insumo_id');
     }
 
-    public function estado()
+    public function estados()
     {
         return $this->belongsTo(Estados::class, 'estado_id');
     }

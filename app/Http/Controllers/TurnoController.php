@@ -74,10 +74,10 @@ class TurnoController extends Controller
     public function obtenerTurnos(Request $request)
     {
         $buscar = $request->input('buscar');
-        $registrosPorPagina = $request->input('registros_por_pagina', 10);
+        $registrosPorPagina = $request->input('registros_por_pagina', 10000);
 
         $query = Turno::with(['frecuencia', 'actividades', 'creador', 'actualizador']);
-
+        // dd($query);
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
         }
