@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+(function() {
 
     const clienteSelect = document.getElementById('clienteSelect');
     const sedeSelect = document.getElementById('sedeSelect');
@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     return response.json();
                 })
                 .then((activo) => {
-                    console.log("Datos del activo:", activo); // Log the fetched data
 
                     // Populate form fields with activo data
                     const activoSelect = document.getElementById('activoSelect');
@@ -225,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     guardarMantenimientoBtn.addEventListener('click', function () {
-        console.log("Guardando mantenimiento...");
         const formData = new FormData(document.getElementById('mantenimientoForm'));
         const mantenimientoId = document.querySelector('.icono-ver[data-id]').getAttribute('data-id');
 
@@ -341,11 +339,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Llenar el select de estados para el filtro de mantenimientos
                 estadoMantenimientoSelect.innerHTML = '<option value="">Todos los estados</option>';
+                estadoActivoSelect.innerHTML = '<option value="">Todos los estados</option>';
                 estados.forEach(estado => {
                     const option = document.createElement("option");
                     option.value = estado.id;
                     option.textContent = estado.nombre;
                     estadoMantenimientoSelect.appendChild(option);
+                    estadoActivoSelect.appendChild(option.cloneNode(true));
                 });
             })
             .catch(error => console.error("Error al cargar los estados:", error));
@@ -354,55 +354,21 @@ document.addEventListener('DOMContentLoaded', function () {
     cargarActivos();
     cargarEstados();
 
-    imagenesInput.addEventListener('change', function () {
-
-        imagenesPreview.innerHTML = ''; // Clear previous previews
-        const dt = new DataTransfer();
-        for (const file of imagenesInput.files) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imgContainer = document.createElement('div');
-                imgContainer.classList.add('img-container');
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
-                img.style.width = '100px';
-                img.style.height = '100px';
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = 'X';
-                removeBtn.classList.add('remove-btn');
-                removeBtn.addEventListener('click', function () {
-                    imgContainer.remove();
-                    // Remove the file from the input
-                    for (const fileItem of imagenesInput.files) {
-                        if (fileItem !== file) {
-                            dt.items.add(fileItem);
-                        }
-                    }
-                    imagenesInput.files = dt.files;
-                });
-                imgContainer.appendChild(img);
-                imgContainer.appendChild(removeBtn);
-                imagenesPreview.appendChild(imgContainer);
-                dt.items.add(file); // Add file to DataTransfer
-            };
-            reader.readAsDataURL(file);
-        }
-        imagenesInput.files = dt.files; // Update input files
-    });
-
-    estadoMantenimientoSelect.addEventListener('change', function () {
-        console.log("Consultando mantenimientos...");
-        consultarMantenimientos();
-    });
-
+    document.getElementById('pills-mantenimiento-tab').addEventListener('click', consultarMantenimientos);
+    busquedaMantenimientoInput.addEventListener("input", () => consultarMantenimientos());
+    estadoMantenimientoSelect.addEventListener("change", () => consultarMantenimientos());
+    registrosMantenimientoPorPagina.addEventListener('change', consultarMantenimientos);
+    
     function consultarMantenimientos() {
+        
         const sedeId = sedeSelect.value;
         const estadoId = estadoMantenimientoSelect.value;
+        const registrosPorPagina = registrosMantenimientoPorPagina.value;
+        const buscar = busquedaMantenimientoInput.value;
 
-        fetch(`gestionar-activos/obtener-mantenimientos?sede_id=${sedeId}&estado_id=${estadoId}`)
+        fetch(`gestionar-activos/obtener-mantenimientos?sede_id=${sedeId}&estado_id=${estadoId}&registros_por_pagina=${registrosPorPagina}&buscar=${buscar}`)
             .then(response => response.json())
-            .then(data => { console.log(data)
+            .then(data => { 
                 if (!Array.isArray(data)) {
                     throw new Error('Invalid response format');
                 }
@@ -410,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 data.forEach(mantenimiento => {
                     const row = document.createElement('tr');
                     const estadoClase = mantenimiento.estado ? 'estado-activo' : 'estado-inactivo';
-                    console.log(mantenimiento.sedes_activos)
+                
                     row.innerHTML = `
                         <td>${mantenimiento.id}</td>
                         <td>${formatDate(mantenimiento.ultimo_mtto)}</td>
@@ -434,6 +400,97 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching mantenimientos:', error));
     }
 
-    document.getElementById('pills-mantenimiento-tab').addEventListener('click', consultarMantenimientos);
+    document.addEventListener('DOMContentLoaded', function () {
+        const busquedaTurnoInput = document.getElementById('busquedaTurnoInput');
+        const estadoActivoSelect = document.getElementById('estadoActivoSelect');
+        const registrosTurnoPorPagina = document.getElementById('registrosTurnoPorPagina');
 
-});
+        busquedaTurnoInput.addEventListener('input', consultarActivos);
+        estadoActivoSelect.addEventListener('change', consultarActivos);
+        registrosTurnoPorPagina.addEventListener('change', consultarActivos);
+
+        function consultarActivos() {
+
+            const sedeId = sedeSelect.value;
+            const estadoId = estadoActivoSelect.value;
+            const registrosPorPagina = registrosTurnoPorPagina.value;
+            const buscar = busquedaTurnoInput.value;
+
+            fetch(`gestionar-activos/consultar?sede_id=${sedeId}&estado_id=${estadoId}&registros_por_pagina=${registrosPorPagina}&buscar=${buscar}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!Array.isArray(data.data)) {
+                        throw new Error('Invalid response format');
+                    }
+                    activosTableBody.innerHTML = '';
+                    data.data.forEach(activo => {
+                        const row = document.createElement('tr');
+                        const estadoClase = activo.estado ? 'estado-activo' : 'estado-inactivo';
+                        row.innerHTML = `
+                            <td>${activo.id}</td>
+                            <td>${activo.activo.nombre_elemento}</td>
+                            <td>${activo.cantidad}</td>
+                            <td>${activo.estados?.nombre}</td>
+                            <td>${activo.sede.nombre}</td>
+                            <td>${activo.sede.cliente.nombre}</td>
+                            <td><div class="${estadoClase}">${activo.estado ? 'Activo' : 'Inactivo'}</div></td>
+                            <td>${activo.creador?.nombres || 'N/A'}</td>
+                            <td>${formatDate(activo.created_at)}</td>
+                            <td>${activo.actualizador?.nombres || 'N/A'}</td>
+                            <td>${formatDate(activo.updated_at)}</td>
+                            <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}"></td>
+                        `;
+                        activosTableBody.appendChild(row);
+                    });
+                    totalActivos.textContent = `Total: ${data.data.length}`;
+                    pillsTab.style.display = 'flex';
+                    pillsTabContent.style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching activos:', error));
+        }
+
+        document.getElementById('pills-activos-tab').addEventListener('click', consultarActivos);
+
+        const imagenesInput = document.getElementById('imagenesInput');
+        const imagenesPreview = document.getElementById('imagenesPreview');
+
+        imagenesInput.addEventListener('change', function () {
+            imagenesPreview.innerHTML = ''; // Clear previous previews
+            const dt = new DataTransfer();
+            for (const file of imagenesInput.files) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.classList.add('img-container');
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
+                    img.style.width = '100px';
+                    img.style.height = '100px';
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'X';
+                    removeBtn.classList.add('remove-btn');
+                    removeBtn.addEventListener('click', function () {
+                        imgContainer.remove();
+                        // Remove the file from the input
+                        const files = Array.from(imagenesInput.files);
+                        const index = files.indexOf(file);
+                        if (index > -1) {
+                            files.splice(index, 1);
+                            dt.items.clear();
+                            files.forEach(f => dt.items.add(f));
+                            imagenesInput.files = dt.files;
+                        }
+                    });
+                    imgContainer.appendChild(img);
+                    imgContainer.appendChild(removeBtn);
+                    imagenesPreview.appendChild(imgContainer);
+                    dt.items.add(file); // Add file to DataTransfer
+                };
+                reader.readAsDataURL(file);
+            }
+            imagenesInput.files = dt.files; // Update input files
+        });
+    });
+
+})();

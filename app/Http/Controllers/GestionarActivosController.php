@@ -23,30 +23,26 @@ class GestionarActivosController extends Controller
 
     public function consultar(Request $request)
     {
-
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
-        //$estado = $request->input('estado');
+        $estado = $request->input('estado_id');
+        $sedeId = $request->input('sede_id');
 
         $query = SedesActivos::with(['sede.cliente', 'activo', 'estados', 'creador', 'actualizador']);
 
-        /*  if ($buscar) {
-            $query->where('direccion', 'like', "%{$buscar}%")
-                  ->orWhereHas('cliente', function($q) use ($buscar) {
-                      $q->where('nombre', 'like', "%{$buscar}%");
-                  })
-                  ->orWhereHas('ciudad', function($q) use ($buscar) {
-                      $q->where('nombre', 'like', "%{$buscar}%");
-                  });
-        } */
+        if ($buscar) {
+            $query->whereHas('activo', function($q) use ($buscar) {
+                $q->where('nombre_elemento', 'like', "%{$buscar}%");
+            });
+        }
 
-        /*  if ($cliente) {
-            $query->where('cliente_id', $cliente);
+        if ($sedeId) {
+            $query->where('sede_id', $sedeId);
         }
 
         if ($estado !== null) {
-            $query->where('estado', $estado);
-        } */
+            $query->where('estado_id', $estado);
+        }
 
         $activos = $query->paginate($registrosPorPagina);
 
@@ -77,12 +73,13 @@ class GestionarActivosController extends Controller
             if ($request->hasFile('imagenesInput')) {
                 $file = $request->file('imagenesInput');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('imagenes'), $filename);
+                $path = $file->storeAs('imagenes', $filename, 'public');
                 ImagenSedeActivo::create([
                     'sede_activo_id' => $activo->id,
                     'imagen' => 'imagenes/' . $filename,
                 ]);
             }
+
             return response()->json(['message' => 'Activo guardado exitosamente']);
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
@@ -142,6 +139,8 @@ class GestionarActivosController extends Controller
         try {
             $sedeId = $request->input('sede_id');
             $estadoId = $request->input('estado_id');
+            $registrosPorPagina = $request->input('registros_por_pagina', 10);
+            $buscar = $request->input('buscar');
 
             $mantenimientos = Mantenimiento::with(['estado', 'creador', 'actualizador', 'sedes_activos.activo', 'sedes_activos.sede.cliente'])
                 ->whereHas('sedes_activos', function ($query) use ($sedeId) {
@@ -150,9 +149,14 @@ class GestionarActivosController extends Controller
                 ->when($estadoId, function ($query, $estadoId) {
                     return $query->where('estado_id', $estadoId);
                 })
-                ->get();
+                ->when($buscar, function ($query, $buscar) {
+                    return $query->whereHas('sedes_activos.activo', function ($q) use ($buscar) {
+                        $q->where('nombre_elemento', 'like', "%{$buscar}%");
+                    });
+                })
+                ->paginate($registrosPorPagina);
 
-            return response()->json($mantenimientos->toArray());
+            return response()->json($mantenimientos->items());
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching mantenimientos: ' . $e->getMessage()], 500);
         }

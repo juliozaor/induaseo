@@ -251,7 +251,7 @@
                     
                     document.getElementById("nombre").value = turno.nombre;
                     document.getElementById("frecuencia").value = turno.frecuencia_id;
-                    document.getElementById("detalleFrecuencia").value = turno.frecuencia_cantidad;
+                    document.getElementById("detalleFrecuencia").value = turno.frecuencia_detalle;
                     document.getElementById("estadoToggle").checked = turno.estado === 1;
                     document.querySelector("label[for='estadoToggle']").textContent = turno.estado ? "Activo" : "Inactivo";
 
@@ -321,14 +321,14 @@
 
     
         // Escucha los cambios en el select de frecuencia
-        frecuenciaSelect.addEventListener("change", function() {
+/*         frecuenciaSelect.addEventListener("change", function() {
             const frecuenciaId = parseInt(frecuenciaSelect.value);
             const frecuencia = frecuenciaArr.find(f => f.id === frecuenciaId);
 
             if (frecuencia) {
                 detalleFrecuenciaInput.value = frecuencia.detalle;
             }
-        });
+        }); */
 
     agregarActividadBtn.addEventListener("click", function() {
         const nombreActividad = nuevaActividadInput.value;

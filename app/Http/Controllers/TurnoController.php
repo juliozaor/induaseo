@@ -25,7 +25,7 @@ class TurnoController extends Controller
             $turno = Turno::create([
                 'nombre' => $request->nombre,
                 'frecuencia_id' => $request->frecuencia,
-                'frecuencia_cantidad' => $request->detalleFrecuencia,
+                'frecuencia_detalle' => $request->detalleFrecuencia,
                 'estado' => $request->estado,
                 'creador_id' => Auth::id(),
             ]);
@@ -53,7 +53,7 @@ class TurnoController extends Controller
             $turno->update([
                 'nombre' => $request->nombre,
                 'frecuencia_id' => $request->frecuencia,
-                'frecuencia_cantidad' => $request->detalleFrecuencia,
+                'frecuencia_detalle' => $request->detalleFrecuencia,
                 'estado' => $request->estado,
                 'actualizador_id' => Auth::id(),
             ]);

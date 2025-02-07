@@ -10,7 +10,7 @@ class Turno extends Model
     use HasFactory;
     protected $fillable = [
         'nombre', 'frecuencia_id', 'frecuencia_cantidad', 'observacion',
-        'estado', 'creador_id', 'actualizador_id'
+        'estado', 'creador_id', 'actualizador_id', 'frecuencia_detalle'
     ];
 
     public function frecuencia()

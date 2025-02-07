@@ -66,10 +66,10 @@
 
                 <div class="busqueda-container">
                     <div class="input-container">
-                        <input type="text" class="busqueda-input" id="busquedaTurnoInput" placeholder="Buscar...">
+                        <input type="text" class="busqueda-input" id="busquedaTurnoInput" name="busquedaTurnoInput" placeholder="Buscar...">
                     </div>
                     <div class="input-container2">
-                        <select id="estadoActivoSelect" class="busqueda-select">
+                        <select id="estadoActivoSelect" name="estadoActivoSelect" class="busqueda-select">
                             <option value="">Todos los estados</option>
                             <!-- Opciones de estados se llenarán dinámicamente -->
                         </select>
@@ -174,7 +174,7 @@
                                         <label for="imagenesInput">Imagen Formatos permitidos PNG, JPG</label>
                                         <div class="input-group">
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="customFile"
+                                                <input type="file" class="custom-file-input" id="imagenesInput"
                                                     name="imagenesInput" accept="image/*">
                                                 <label class="custom-file-label" for="imagenesInput">Selecciona un archivo
                                                     desde el dispositivo</label>
@@ -205,17 +205,16 @@
 
                 <div class="busqueda-container">
                     <div class="input-container">
-                        <input type="text" class="busqueda-input" id="busquedaMantenimientoInput" placeholder="Buscar...">
+                        <input type="text" class="busqueda-input" id="busquedaMantenimientoInput" name="busquedaMantenimientoInput" placeholder="Buscar...">
                     </div>
                     <div class="input-container2">
-                        <label for="estadoMantenimientoSelect">Estados</label>
-                        <select id="estadoMantenimientoSelect" class="busqueda-select">
+                        <select id="estadoMantenimientoSelect" name="estadoMantenimientoSelect" class="busqueda-select">
                             <option value="">Todos los estados</option>
                             <!-- Opciones de estados se llenarán dinámicamente -->
                         </select>
                     </div>
                     <span class="registros-encontrados" id="totalMantenimientos">Total: 0</span>
-                    <select class="registros-por-pagina" id="registrosMantenimientoPorPagina">
+                    <select id="registrosMantenimientoPorPagina" class="registros-por-pagina">
                         <option value="5">5</option>
                         <option value="10">10</option>
                         <option value="20">20</option>

@@ -80,7 +80,7 @@
                     </div>
                     <div class="col-12">
                         <label for="detalleFrecuencia">Detalle Frecuencia:</label>
-                        <input type="text" id="detalleFrecuencia" name="detalleFrecuencia" class="form-control" required>
+                        <textarea type="text" id="detalleFrecuencia" name="detalleFrecuencia" class="form-control" required></textarea>
                         <span class="error-message" id="errorDetalleFrecuencia"></span>
                     </div>
                 </div>
