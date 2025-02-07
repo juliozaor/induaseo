@@ -120,7 +120,7 @@ class GestionarInventarioController extends Controller
             'cantidadInput' => 'required|integer|min:1',
             'imagenesInput' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-        //dd($validatedData);
+
         // Buscar el inventario por ID
         $inventario = Inventario::find($id);
         // Actualizar los datos del inventario
@@ -132,7 +132,7 @@ class GestionarInventarioController extends Controller
             'estado' => 1,
             'actualizador_id' => Auth::id(),
         ]);
-        dd($request->hasFile('imagenesInput'));
+
         if ($request->hasFile('imagenesInput')) {
             $file = $request->file('imagenesInput');
             $filename = time() . '_' . $file->getClientOriginalName();

@@ -280,7 +280,6 @@
             .then(response => response.json())
             .then(clientes => {
                 if (tipo === 1) {
-
                     const clienteSelect = document.getElementById("cliente");
                     clienteSelect.innerHTML = '<option value="">Seleccione</option>';
                     clientes.forEach(cliente => {
@@ -290,17 +289,18 @@
                         clienteSelect.appendChild(option);
                     });
                 } else {
-                const clienteSelectFiltro = document.getElementById("filtroCliente");
-                clienteSelectFiltro.innerHTML = '<option value="">Seleccione</option>';
-                clientes.forEach(cliente => {
-                    const option = document.createElement("option");
-                    option.value = cliente.id;
-                    option.textContent = cliente.nombre;
-                    clienteSelectFiltro.appendChild(option);
-                });
+                    const clienteSelectFiltro = document.getElementById("filtroCliente");
+                    if (clienteSelectFiltro) {
+                        clienteSelectFiltro.innerHTML = '<option value="">Seleccione</option>';
+                        clientes.forEach(cliente => {
+                            const option = document.createElement("option");
+                            option.value = cliente.id;
+                            option.textContent = cliente.nombre;
+                            clienteSelectFiltro.appendChild(option);
+                        });
+                    }
                 }
             })
-
             .catch(error => console.error("Error al cargar los clientes:", error));
     }
 
@@ -338,18 +338,21 @@
     }
 
     function cargarRegionales() {
-
         fetch(`../regionales`)
             .then(response => response.json())
             .then(regionales => {
-                const regionalSelect = document.getElementById("regional");
-                regionalSelect.innerHTML = '<option value="">Seleccione</option>';
-                regionales.forEach(regional => {
-                    const option = document.createElement("option");
-                    option.value = regional.id;
-                    option.textContent = regional.nombre;
-                    regionalSelect.appendChild(option);
-                });
+                if (Array.isArray(regionales.data)) {
+                    const regionalSelect = document.getElementById("regional");
+                    regionalSelect.innerHTML = '<option value="">Seleccione</option>';
+                    regionales.data.forEach(regional => {
+                        const option = document.createElement("option");
+                        option.value = regional.id;
+                        option.textContent = regional.nombre;
+                        regionalSelect.appendChild(option);
+                    });
+                } else {
+                    console.error("Error: La respuesta no es un array.");
+                }
             })
             .catch(error => console.error("Error al cargar los regionales:", error));
     }
