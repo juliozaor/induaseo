@@ -121,6 +121,32 @@ document.addEventListener('DOMContentLoaded', function () {
                     codigoInput.value = inventario.item.codigo;
                     cantidadInput.value = inventario.cantidad;
 
+                    // Clear previous image previews
+                    imagenesPreview.innerHTML = '';
+
+                    // Populate image previews if images exist
+                    if (inventario.imagenes && inventario.imagenes.length > 0) {
+                        inventario.imagenes.forEach(imagen => {
+                            const imgContainer = document.createElement('div');
+                            imgContainer.classList.add('img-container');
+                            const img = document.createElement('img');
+                            img.src = `${imagen.imagen}`; // Ensure the full URL is used
+                            img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
+                            img.style.width = '100px';
+                            img.style.height = '100px';
+                            const removeBtn = document.createElement('button');
+                            removeBtn.textContent = 'X';
+                            removeBtn.classList.add('remove-btn');
+                            removeBtn.addEventListener('click', function () {
+                                imgContainer.remove();
+                                // Optionally, handle image removal from the server here
+                            });
+                            imgContainer.appendChild(img);
+                            imgContainer.appendChild(removeBtn);
+                            imagenesPreview.appendChild(imgContainer);
+                        });
+                    }
+
                     $(crearInventarioModal).modal('show');// Ensure jQuery is used to show the modal
                 })
                 .catch((error) => console.error("Error al cargar los datos del inventario:", error));
@@ -303,6 +329,14 @@ document.addEventListener('DOMContentLoaded', function () {
             reader.readAsDataURL(file);
         }
         imagenesInput.files = dt.files; // Update input files
+
+        // Display the selected file name if a file is selected
+        const fileLabel = document.getElementById('fileLabel');
+        if (imagenesInput.files.length > 0) {
+            fileLabel.textContent = `Archivo seleccionado: ${imagenesInput.files[0].name}`;
+        } else {
+            fileLabel.textContent = ''; // Clear the file label if no file is selected
+        }
     });
 
     document.addEventListener('DOMContentLoaded', function () {

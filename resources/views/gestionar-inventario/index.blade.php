@@ -137,6 +137,7 @@
                                         </div>
                                         <span class="error-message" id="errorImagenesInput"></span>
                                         <div id="imagenesPreview" class="imagenes-preview mt-3"></div>
+                                        <span id="fileLabel" class="file-label"></span> <!-- Add this line -->
                                     </div>
                                 </div>
                             </form>

@@ -81,8 +81,7 @@ class GestionarInventarioController extends Controller
                 'sedeSelect' => 'required|exists:sedes,id',
                 'itemSelect' => 'required|exists:insumos,id',
                 'cantidadInput' => 'required|integer|min:1',
-                'imagenesInput' => 'nullable|array',
-                'imagenesInput.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+                'imagenesInput' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
             ]);
             // Crear un nuevo inventario
             $inventario = Inventario::create([
@@ -95,14 +94,13 @@ class GestionarInventarioController extends Controller
             ]);
 
             if ($request->hasFile('imagenesInput')) {
-                foreach ($request->file('imagenesInput') as $file) {
-                    $filename = time() . '_' . $file->getClientOriginalName();
-                    $path = $file->move(public_path('assets/recursos'), $filename);
-                    ImagenInventario::create([
-                        'inventario_id' => $inventario->id,
-                        'imagen' => 'assets/recursos/' . $filename,
-                    ]);
-                }
+                $file = $request->file('imagenesInput');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->move(public_path('assets/recursos'), $filename);
+                ImagenInventario::create([
+                    'inventario_id' => $inventario->id,
+                    'imagen' => 'assets/recursos/' . $filename,
+                ]);
             }
 
             return response()->json(['message' => 'Inventario guardado exitosamente']);
@@ -120,13 +118,11 @@ class GestionarInventarioController extends Controller
             'sedeSelect' => 'required|exists:sedes,id',
             'itemSelect' => 'required|exists:insumos,id',
             'cantidadInput' => 'required|integer|min:1',
-            'imagenesInput' => 'nullable|array',
-            'imagenesInput.*' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'imagenesInput' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
         ]);
-
+        //dd($validatedData);
         // Buscar el inventario por ID
         $inventario = Inventario::find($id);
-        /* dd($inventario); */
         // Actualizar los datos del inventario
         $inventario->update([
             'sede_id' => $request->sedeSelect,
@@ -136,16 +132,15 @@ class GestionarInventarioController extends Controller
             'estado' => 1,
             'actualizador_id' => Auth::id(),
         ]);
-
+        dd($request->hasFile('imagenesInput'));
         if ($request->hasFile('imagenesInput')) {
-            foreach ($request->file('imagenesInput') as $file) {
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->move(public_path('assets/recursos'), $filename);
-                ImagenInventario::create([
-                    'inventario_id' => $inventario->id,
-                    'imagen' => 'assets/recursos/' . $filename,
-                ]);
-            }
+            $file = $request->file('imagenesInput');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->move(public_path('assets/recursos'), $filename);
+            ImagenInventario::create([
+                'inventario_id' => $inventario->id,
+                'imagen' => 'assets/recursos/' . $filename,
+            ]);
         }
 
         return response()->json(['message' => 'Inventario actualizado exitosamente', 'inventario' => $inventario]);
