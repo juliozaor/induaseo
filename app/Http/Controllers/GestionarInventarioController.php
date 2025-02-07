@@ -92,15 +92,18 @@ class GestionarInventarioController extends Controller
                 'estado' => 1,
                 'creador_id' => Auth::id(),
             ]);
-
             if ($request->hasFile('imagenesInput')) {
                 $file = $request->file('imagenesInput');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->move(public_path('assets/recursos'), $filename);
+                $path = $file->move(public_path('imagenes'), $filename);
+                $imagePath = 'imagenes/' . $filename;
                 ImagenInventario::create([
                     'inventario_id' => $inventario->id,
-                    'imagen' => 'assets/recursos/' . $filename,
+                    'imagen' => $imagePath,
                 ]);
+                // Actualizar la imagen en la tabla de insumos
+                $insumo = Insumos::find($request->itemSelect);
+                $insumo->update(['imagen' => $imagePath]);
             }
 
             return response()->json(['message' => 'Inventario guardado exitosamente']);
@@ -136,11 +139,15 @@ class GestionarInventarioController extends Controller
         if ($request->hasFile('imagenesInput')) {
             $file = $request->file('imagenesInput');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->move(public_path('assets/recursos'), $filename);
+            $path = $file->move(public_path('imagenes'), $filename);
+            $imagePath = 'imagenes/' . $filename;
             ImagenInventario::create([
                 'inventario_id' => $inventario->id,
-                'imagen' => 'assets/recursos/' . $filename,
+                'imagen' => $imagePath,
             ]);
+            // Actualizar la imagen en la tabla de insumos
+            $insumo = Insumos::find($request->itemSelect);
+            $insumo->update(['imagen' => $imagePath]);
         }
 
         return response()->json(['message' => 'Inventario actualizado exitosamente', 'inventario' => $inventario]);
@@ -164,7 +171,7 @@ class GestionarInventarioController extends Controller
     public function obtenerItem($id)
     {
         //dd($id);
-        $itemInsumo = Insumos::findOrFail($id);
+        $itemInsumo = Insumos::with('imagenes')->findOrFail($id);
 
         if (!$itemInsumo) {
             return response()->json(['error' => 'Articulo no encontrado'], 404);

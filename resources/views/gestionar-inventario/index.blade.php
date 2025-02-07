@@ -130,9 +130,9 @@
                                     <div class="col">
                                         <label for="imagenesInput">Imagen Formatos permitidos PNG, JPG</label>
                                         <div class="input-group">
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="imagenesInput" name="imagenesInput" accept="image/*">
-                                                <label class="custom-file-label" for="imagenesInput">Selecciona un archivo desde el dispositivo</label>
+                                            <div class="">
+                                                <input type="file" class="form-control" id="imagenesInput" name="imagenesInput" accept="image/*">
+                                                <label class="" for="imagenesInput">Selecciona un archivo desde el dispositivo</label>
                                             </div>
                                         </div>
                                         <span class="error-message" id="errorImagenesInput"></span>

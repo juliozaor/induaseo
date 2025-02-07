@@ -328,8 +328,8 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             reader.readAsDataURL(file);
         }
-        imagenesInput.files = dt.files; // Update input files
-
+        //imagenesInput.files = dt.files; // Update input files
+        console.log(dt.files);
         // Display the selected file name if a file is selected
         const fileLabel = document.getElementById('fileLabel');
         if (imagenesInput.files.length > 0) {
