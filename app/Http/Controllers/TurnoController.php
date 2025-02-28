@@ -67,7 +67,7 @@ class TurnoController extends Controller
     public function obtenerTurno(Request $request)
     {
         $id = $request->input('id');
-        $turno = Turno::with(['frecuencia', 'actividades', 'creador', 'actualizador'])->findOrFail($id);
+        $turno = Turno::with(['frecuencia', 'creador', 'actualizador'])->findOrFail($id);
         return response()->json($turno);
     }
 
@@ -76,7 +76,7 @@ class TurnoController extends Controller
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10000);
 
-        $query = Turno::with(['frecuencia', 'actividades', 'creador', 'actualizador']);
+        $query = Turno::with(['frecuencia','creador', 'actualizador']);
         // dd($query);
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
@@ -87,7 +87,15 @@ class TurnoController extends Controller
         return response()->json($turnos);
     }
 
-    public function obtenerActividades($turnoId)
+    public function destroy($id)
+    {
+        $turno = Turno::findOrFail($id);
+        $turno->delete();
+
+        return response()->json(['message' => 'Turno eliminado con éxito.']);
+    }
+
+    /* public function obtenerActividades($turnoId)
     {
 
         try {
@@ -125,5 +133,5 @@ class TurnoController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
-    }
+    } */
 }

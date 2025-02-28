@@ -22,13 +22,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const btnQuitarSede = document.getElementById('btnQuitarSede')
 
+    const totalInventarios = document.getElementById('totalInventarios');
+    //const paginacionContainer = document.getElementById('inventariosPaginacion');
+    const paginacionContainer = document.createElement('div');
+    paginacionContainer.classList.add('paginacion');
+    document.querySelector(".tabla-paginacion").appendChild(paginacionContainer);
+    const registrosInventarioPorPagina = document.getElementById('registrosInventarioPorPagina');
+    const busquedaInventarioInput = document.getElementById('busquedaInventarioInput');
+
     let inventarioId = null;
     let editMode = false;
     let selectedOptions = [];
 
     // Función para consultar inventarios
-    function consultarInventarios() {
-        fetch(`gestionar-inventario/consultar`)
+    function consultarInventarios(page = 1) {
+        const registrosPorPagina = registrosInventarioPorPagina.value;
+        const buscar = busquedaInventarioInput.value;
+
+        fetch(`gestionar-inventario/consultar?page=${page}&registros_por_pagina=${registrosPorPagina}&buscar=${buscar}`)
             .then(response => response.json())
             .then(data => {
                 inventariosTableBody.innerHTML = '';
@@ -43,14 +54,83 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${inventario.creado_por ?? ''}</td>
                         <td>${inventario.ultima_actualizacion}</td>
                         <td>${inventario.editado_por ?? ''}</td>
-                        <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${inventario.id}"></td>
+                        <td>
+                            <img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${inventario.id}">
+                            <img src="assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${inventario.id}">
+                        </td>
                     `;
                     inventariosTableBody.appendChild(row);
                 });
+
+                // Generar paginación
+                const { current_page, last_page } = data;
+
+                // Limpiar la paginación anterior
+                paginacionContainer.innerHTML = '';
+
+                // Botón de página anterior
+                const prevButton = document.createElement("button");
+                prevButton.textContent = "Ant.";
+                prevButton.classList.add("page-button", "ant");
+                prevButton.disabled = current_page === 1;
+                prevButton.addEventListener('click', () => {
+                    consultarInventarios(current_page - 1);
+                });
+                paginacionContainer.appendChild(prevButton);
+
+                // Crear botones de página (máximo 6 números)
+                const startPage = Math.max(1, current_page - 2);
+                const endPage = Math.min(last_page, current_page + 3);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageButton = document.createElement("button");
+                    pageButton.classList.add('page-button');
+                    pageButton.textContent = i;
+                    pageButton.style = i === current_page ? 'background: #000000;' : 'font: normal normal normal 12px/16px Neo Sans Std; color: #4B4B4B;';
+                    if (i === current_page) pageButton.classList.add('active');
+
+                    pageButton.addEventListener('click', () => {
+                        consultarInventarios(i);
+                    });
+
+                    paginacionContainer.appendChild(pageButton);
+                }
+
+                // Botón de página siguiente
+                const nextButton = document.createElement("button");
+                nextButton.textContent = "Sig.";
+                nextButton.classList.add("page-button", "sig");
+                nextButton.disabled = current_page === last_page;
+                nextButton.addEventListener('click', () => {
+                    consultarInventarios(current_page + 1);
+                });
+                paginacionContainer.appendChild(nextButton);
+
+                // Mostrar total de registros
+                const registrosEncontrados = document.querySelector('.registros-encontrados');
+                if (registrosEncontrados) {
+                    registrosEncontrados.textContent = `Total: ${data.total}`;
+                }
+
+                //renderPagination(data);
                 pillsTab.style.display = 'flex';
                 pillsTabContent.style.display = 'block';
             })
             .catch(error => console.error('Error fetching inventarios:', error));
+    }
+
+    function renderPagination(data) {
+        inventariosPaginacion.innerHTML = '';
+        for (let i = 1; i <= data.last_page; i++) {
+            const pageItem = document.createElement('button');
+            pageItem.textContent = i;
+            pageItem.classList.add('page-item');
+            if (i === data.current_page) {
+                pageItem.classList.add('active');
+            }
+            pageItem.addEventListener('click', () => consultarInventarios(i));
+            inventariosPaginacion.appendChild(pageItem);
+        }
     }
 
     // Consultar inventarios al cargar la página
@@ -150,6 +230,34 @@ document.addEventListener('DOMContentLoaded', function () {
                     $(crearInventarioModal).modal('show');// Ensure jQuery is used to show the modal
                 })
                 .catch((error) => console.error("Error al cargar los datos del inventario:", error));
+        }
+
+        if (event.target.classList.contains('icono-eliminar')) {
+            const inventarioId = event.target.getAttribute('data-id');
+            if (!inventarioId) {
+                console.error("Error: No se encontró el ID del inventario en el botón.");
+                return;
+            }
+
+            if (confirm("¿Está seguro de que desea eliminar este inventario?")) {
+                fetch(`gestionar-inventario/eliminar/${inventarioId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el inventario.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Inventario eliminado con éxito.");
+                    consultarInventarios(); // Reload the table
+                })
+                .catch(error => console.error("Error al eliminar el inventario:", error));
+            }
         }
     });
 
@@ -350,6 +458,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    registrosInventarioPorPagina.addEventListener('change', () => consultarInventarios());
+    busquedaInventarioInput.addEventListener('input', () => consultarInventarios());
 
     cargarItems(); // Cargar los artículos al abrir el modal
 });

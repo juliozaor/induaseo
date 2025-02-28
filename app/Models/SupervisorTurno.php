@@ -31,4 +31,9 @@ class SupervisorTurno extends Model
     {
         return $this->belongsTo(Turno::class, 'turno_id');
     }
+
+    public function areas()
+    {
+        return $this->hasMany(TurnoArea::class,'turno_id','id');
+    }
 }

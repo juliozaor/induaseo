@@ -16,8 +16,8 @@
         const tablaSeleccionada = tablaMaestraSelect.value;
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
-        const clasificacion = filtroClasificacion.value;
-        const estado = filtroEstado.value;
+        const clasificacion = '';//filtroClasificacion.value;
+        const estado = '';//filtroEstado.value;
 
         if (!tablaSeleccionada) {
             return;
@@ -63,7 +63,10 @@
                     <td>${formatDate(activo.created_at)}</td>
                     <td>${activo.actualizador?.nombres || 'N/A'}</td>
                     <td>${formatDate(activo.updated_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${activo.id}">
+                    </td>
                 `;
                     tablaActivosBody.appendChild(row);
                 });
@@ -131,7 +134,7 @@
     consultarBtn.addEventListener("click", () => cargarDatos(1));
     registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
     busquedaInput.addEventListener("input", () => cargarDatos(1));
-    filtroClasificacion.addEventListener("change", () => cargarDatos(1));
+    //filtroClasificacion.addEventListener("change", () => cargarDatos(1));
     filtroEstado.addEventListener("change", () => cargarDatos(1));
 
     // Modal functionality
@@ -189,6 +192,34 @@
                     modal.style.display = "flex"; // Muestra el modal
                 })
                 .catch((error) => console.error("Error al cargar los datos del activo:", error));
+        }
+
+        if (event.target.classList.contains("icono-eliminar")) {
+            const activoId = event.target.getAttribute("data-id");
+            if (!activoId) {
+                console.error("Error: No se encontró el ID del activo en el botón.");
+                return;
+            }
+
+            if (confirm("¿Está seguro de que desea eliminar este activo?")) {
+                fetch(`../activos/${activoId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el activo.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Activo eliminado con éxito.");
+                    cargarDatos(1); // Reload the table
+                })
+                .catch(error => console.error("Error al eliminar el activo:", error));
+            }
         }
     });
 

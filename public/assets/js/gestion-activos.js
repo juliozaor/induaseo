@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     const clienteSelect = document.getElementById('clienteSelect');
     const sedeSelect = document.getElementById('sedeSelect');
@@ -26,6 +26,16 @@
     const mantenimientoModal = document.getElementById('mantenimientoModal');
     const guardarMantenimientoBtn = document.getElementById('guardarMantenimientoBtn');
 
+    const paginacionContainer = document.createElement('div');
+    paginacionContainer.classList.add('paginacion');
+    document.querySelector(".tabla-paginacion").appendChild(paginacionContainer);
+
+    const paginacionContainer2 = document.createElement('div');
+    paginacionContainer2.classList.add('paginacion');
+    document.querySelector(".tabla-paginacion-mant").appendChild(paginacionContainer2);
+
+    const registrosTurnoPorPagina = document.getElementById('registrosTurnoPorPagina');
+
     let activoId = null;
     let assignedActivoId = null;
     let editMode = false;
@@ -52,39 +62,101 @@
     });
 
     consultarBtn.addEventListener('click', function () {
-        const sedeId = sedeSelect.value;
+        consultarActivos(1);
+    });
 
-        fetch(`gestionar-activos/consultar?sede_id=${sedeId}`)
+    function consultarActivos(page = 1) {
+        const sedeId = sedeSelect.value;
+        const estadoId = estadoActivoSelect.value;
+        const registrosPorPagina = registrosTurnoPorPagina.value;
+        const buscar = busquedaTurnoInput.value;
+
+        fetch(`gestionar-activos/consultar?sede_id=${sedeId}&estado_id=${estadoId}&page=${page}&registros_por_pagina=${registrosPorPagina}&buscar=${buscar}`)
             .then(response => response.json())
             .then(data => {
+                if (!Array.isArray(data.data)) {
+                    throw new Error('Invalid response format');
+                }
                 activosTableBody.innerHTML = '';
                 data.data.forEach(activo => {
                     const row = document.createElement('tr');
                     const estadoClase = activo.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
-                        <td>${activo.id}</td>
-                        <td>${activo.activo.nombre_elemento}</td>
-                        <td>${activo.cantidad}</td>
-                        <td>${activo.estados?.nombre}</td>
-                        <td>${activo.sede.nombre}</td>
-                        <td>${activo.sede.cliente.nombre}</td>
-                        <td><div class="${estadoClase}">${activo.estado ? 'Activo' : 'Inactivo'}</div></td>
-                        <td>${activo.creador?.nombres || 'N/A'}</td>
-                        <td>${formatDate(activo.created_at)}</td>
-                        <td>${activo.actualizador?.nombres || 'N/A'}</td>
-                        <td>${formatDate(activo.updated_at)}</td>
-                        <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}"></td>
-                    `;
+                            <td>${activo.id}</td>
+                            <td>${activo.activo.nombre_elemento}</td>
+                            <td>${activo.cantidad}</td>
+                            <td>${activo.estados?.nombre}</td>
+                            <td>${activo.sede.nombre}</td>
+                            <td>${activo.sede.cliente.nombre}</td>
+                            <td><div class="${estadoClase}">${activo.estado ? 'Activo' : 'Inactivo'}</div></td>
+                            <td>${activo.creador?.nombres || 'N/A'}</td>
+                            <td>${formatDate(activo.created_at)}</td>
+                            <td>${activo.actualizador?.nombres || 'N/A'}</td>
+                            <td>${formatDate(activo.updated_at)}</td>
+                            <td>
+                                <img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}">
+                                <img src="assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${activo.id}">
+                            </td>
+                        `;
                     activosTableBody.appendChild(row);
                 });
-                totalActivos.textContent = `Total: ${data.data.length}`;
+
+                // Generar paginación
+                const { current_page, last_page } = data;
+
+                // Limpiar la paginación anterior
+                paginacionContainer.innerHTML = '';
+
+                // Botón de página anterior
+                const prevButton = document.createElement("button");
+                prevButton.textContent = "Ant.";
+                prevButton.classList.add("page-button", "ant");
+                prevButton.disabled = current_page === 1;
+                prevButton.addEventListener('click', () => {
+                    consultarActivos(current_page - 1);
+                });
+                paginacionContainer.appendChild(prevButton);
+
+                // Crear botones de página (máximo 6 números)
+                const startPage = Math.max(1, current_page - 2);
+                const endPage = Math.min(last_page, current_page + 3);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageButton = document.createElement("button");
+                    pageButton.classList.add('page-button');
+                    pageButton.textContent = i;
+                    pageButton.style = i === current_page ? 'background: #000000;' : 'font: normal normal normal 12px/16px Neo Sans Std; color: #4B4B4B;';
+                    if (i === current_page) pageButton.classList.add('active');
+
+                    pageButton.addEventListener('click', () => {
+                        consultarActivos(i);
+                    });
+
+                    paginacionContainer.appendChild(pageButton);
+                }
+
+                // Botón de página siguiente
+                const nextButton = document.createElement("button");
+                nextButton.textContent = "Sig.";
+                nextButton.classList.add("page-button", "sig");
+                nextButton.disabled = current_page === last_page;
+                nextButton.addEventListener('click', () => {
+                    consultarActivos(current_page + 1);
+                });
+                paginacionContainer.appendChild(nextButton);
+
+                // Mostrar total de registros
+                const registrosEncontrados = document.querySelector('.registros-encontrados');
+                if (registrosEncontrados) {
+                    registrosEncontrados.textContent = `Total: ${data.total}`;
+                }
                 pillsTab.style.display = 'flex';
                 pillsTabContent.style.display = 'block';
             })
             .catch(error => console.error('Error fetching activos:', error));
 
-        consultarMantenimientos();
-    });
+        consultarMantenimientos(1);
+    }
 
     document.addEventListener('click', function (event) {
         if (event.target.classList.contains('icono-editar')) {
@@ -166,6 +238,35 @@
                     $(mantenimientoModal).modal('show'); // Use jQuery to show the modal
                 })
                 .catch(error => console.error("Error al cargar los datos del mantenimiento:", error));
+        }
+
+        if (event.target.classList.contains('icono-eliminar')) {
+            const activoId = event.target.getAttribute('data-id');
+            const sedeId = sedeSelect.value; // Obtener el ID de la sede seleccionada
+            if (!activoId) {
+                console.error("Error: No se encontró el ID del activo en el botón.");
+                return;
+            }
+
+            if (confirm("¿Está seguro de que desea eliminar este activo?")) {
+                fetch(`gestionar-activos/eliminar/${activoId}?sede_id=${sedeId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error al eliminar el activo.");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert(data.message);
+                        consultarActivos(); // Reload the table
+                    })
+                    .catch(error => console.error("Error al eliminar el activo:", error));
+            }
         }
     });
 
@@ -354,29 +455,29 @@
     cargarActivos();
     cargarEstados();
 
-    document.getElementById('pills-mantenimiento-tab').addEventListener('click', consultarMantenimientos);
-    busquedaMantenimientoInput.addEventListener("input", () => consultarMantenimientos());
-    estadoMantenimientoSelect.addEventListener("change", () => consultarMantenimientos());
-    registrosMantenimientoPorPagina.addEventListener('change', consultarMantenimientos);
-    
-    function consultarMantenimientos() {
-        
+    document.getElementById('pills-mantenimiento-tab').addEventListener('click', consultarMantenimientos(1));
+    busquedaMantenimientoInput.addEventListener("input", () => consultarMantenimientos(1));
+    estadoMantenimientoSelect.addEventListener("change", () => consultarMantenimientos(1));
+    registrosMantenimientoPorPagina.addEventListener('change', consultarMantenimientos(1));
+
+    function consultarMantenimientos(page = 1) {
+
         const sedeId = sedeSelect.value;
         const estadoId = estadoMantenimientoSelect.value;
         const registrosPorPagina = registrosMantenimientoPorPagina.value;
         const buscar = busquedaMantenimientoInput.value;
 
-        fetch(`gestionar-activos/obtener-mantenimientos?sede_id=${sedeId}&estado_id=${estadoId}&registros_por_pagina=${registrosPorPagina}&buscar=${buscar}`)
+        fetch(`gestionar-activos/obtener-mantenimientos?sede_id=${sedeId}&estado_id=${estadoId}&page=${page}&registros_por_pagina=${registrosPorPagina}&buscar=${buscar}`)
             .then(response => response.json())
-            .then(data => { 
-                if (!Array.isArray(data)) {
+            .then(data => {
+                if (!Array.isArray(data.data)) {
                     throw new Error('Invalid response format');
                 }
                 mantenimientosTableBody.innerHTML = '';
-                data.forEach(mantenimiento => {
+                data.data.forEach(mantenimiento => {
                     const row = document.createElement('tr');
                     const estadoClase = mantenimiento.estado ? 'estado-activo' : 'estado-inactivo';
-                
+
                     row.innerHTML = `
                         <td>${mantenimiento.id}</td>
                         <td>${formatDate(mantenimiento.ultimo_mtto)}</td>
@@ -395,7 +496,57 @@
                     `;
                     mantenimientosTableBody.appendChild(row);
                 });
-                totalMantenimientos.textContent = `Total: ${data.length}`;
+
+                // Generar paginación
+                const { current_page, last_page } = data;
+
+                // Limpiar la paginación anterior
+                paginacionContainer2.innerHTML = '';
+
+                // Botón de página anterior
+                const prevButton2 = document.createElement("button");
+                prevButton2.textContent = "Ant.";
+                prevButton2.classList.add("page-button", "ant");
+                prevButton2.disabled = current_page === 1;
+                prevButton2.addEventListener('click', () => {
+                    consultarMantenimientos(current_page - 1);
+                });
+                paginacionContainer2.appendChild(prevButton2);
+
+                // Crear botones de página (máximo 6 números)
+                const startPage2 = Math.max(1, current_page - 2);
+                const endPage2 = Math.min(last_page, current_page + 3);
+
+                for (let i = startPage2; i <= endPage2; i++) {
+                    const pageButton2 = document.createElement("button");
+                    pageButton2.classList.add('page-button');
+                    pageButton2.textContent = i;
+                    pageButton2.style = i === current_page ? 'background: #000000;' : 'font: normal normal normal 12px/16px Neo Sans Std; color: #4B4B4B;';
+                    if (i === current_page) pageButton2.classList.add('active');
+
+                    pageButton2.addEventListener('click', () => {
+                        consultarMantenimientos(i);
+                    });
+
+                    paginacionContainer2.appendChild(pageButton2);
+                }
+
+                // Botón de página siguiente
+                const nextButton = document.createElement("button");
+                nextButton.textContent = "Sig.";
+                nextButton.classList.add("page-button", "sig");
+                nextButton.disabled = current_page === last_page;
+                nextButton.addEventListener('click', () => {
+                    consultarMantenimientos(current_page + 1);
+                });
+                paginacionContainer2.appendChild(nextButton);
+
+                // Mostrar total de registros
+                const registrosEncontrados = document.querySelector('.registros-encontrados-mant');
+                if (registrosEncontrados) {
+                    registrosEncontrados.textContent = `Total: ${data.total}`;
+                }
+                //totalMantenimientos.textContent = `Total: ${data.length}`;
             })
             .catch(error => console.error('Error fetching mantenimientos:', error));
     }
@@ -409,45 +560,7 @@
         estadoActivoSelect.addEventListener('change', consultarActivos);
         registrosTurnoPorPagina.addEventListener('change', consultarActivos);
 
-        function consultarActivos() {
-
-            const sedeId = sedeSelect.value;
-            const estadoId = estadoActivoSelect.value;
-            const registrosPorPagina = registrosTurnoPorPagina.value;
-            const buscar = busquedaTurnoInput.value;
-
-            fetch(`gestionar-activos/consultar?sede_id=${sedeId}&estado_id=${estadoId}&registros_por_pagina=${registrosPorPagina}&buscar=${buscar}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!Array.isArray(data.data)) {
-                        throw new Error('Invalid response format');
-                    }
-                    activosTableBody.innerHTML = '';
-                    data.data.forEach(activo => {
-                        const row = document.createElement('tr');
-                        const estadoClase = activo.estado ? 'estado-activo' : 'estado-inactivo';
-                        row.innerHTML = `
-                            <td>${activo.id}</td>
-                            <td>${activo.activo.nombre_elemento}</td>
-                            <td>${activo.cantidad}</td>
-                            <td>${activo.estados?.nombre}</td>
-                            <td>${activo.sede.nombre}</td>
-                            <td>${activo.sede.cliente.nombre}</td>
-                            <td><div class="${estadoClase}">${activo.estado ? 'Activo' : 'Inactivo'}</div></td>
-                            <td>${activo.creador?.nombres || 'N/A'}</td>
-                            <td>${formatDate(activo.created_at)}</td>
-                            <td>${activo.actualizador?.nombres || 'N/A'}</td>
-                            <td>${formatDate(activo.updated_at)}</td>
-                            <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}"></td>
-                        `;
-                        activosTableBody.appendChild(row);
-                    });
-                    totalActivos.textContent = `Total: ${data.data.length}`;
-                    pillsTab.style.display = 'flex';
-                    pillsTabContent.style.display = 'block';
-                })
-                .catch(error => console.error('Error fetching activos:', error));
-        }
+        //consultarActivos()
 
         document.getElementById('pills-activos-tab').addEventListener('click', consultarActivos);
 
@@ -489,8 +602,9 @@
                 };
                 reader.readAsDataURL(file);
             }
-            imagenesInput.files = dt.files; // Update input files
+            //imagenesInput.files = dt.files; // Update input files
         });
     });
 
 })();
+

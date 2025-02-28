@@ -41,7 +41,7 @@
         </button>
     </div>
 
-    
+
 
 <div class="listado-container">
     <h2 class="listado-titulo">Asignación de Turnos</h2>
@@ -69,7 +69,8 @@
                     <th>Identificación</th>
                     <th>Nombres y Apellidos</th>
                     <th>Turno</th>
-                    <th>Cant de Actividades</th>
+                    <th>Cant de Areas</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody id="turnosTableBody">
@@ -134,63 +135,37 @@
             <div class="modal-footer">
                 <button type="button" class="btn-consultar" id="guardarTurnoBtn">Guardar</button>
             </div>
-        </div>
-    </div>
-</div>
-
-              <!-- Modal for Assigned Tasks -->
-<div class="modal fade" id="tareasModal" tabindex="-1" role="dialog" aria-labelledby="tareasModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="contenedor-titulo">
-                    <span id="tareasModalLabel" class="titulo-modal">Tareas Asignadas</span>
-                </div>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="tareasForm">
-                    <div class="form-group">
-                        <label for="supervisorNombre">Supervisor:</label>
-                        <input type="text" id="supervisorNombre" class="form-control" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="sedeNombre">Sede:</label>
-                        <input type="text" id="sedeNombre" class="form-control" readonly>
-                    </div>
-                    <h5>Tareas asignadas</h5>
-                    <div class="tabla-container tabla-tareas">
-                        <table class="tabla" id="tablaTareas">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Descripción</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tareasTableBody">
-                                <!-- Datos de tareas -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="actividadSection">
-                        <div class="form-group">
-                            <label for="nuevaTareaNombre">Nueva Tarea:</label>
-                            <div class="select-container2">
-                                <input type="text" id="nuevaTareaNombre" class="form-control" placeholder="Nombre de la tarea">
-                                <input type="text" id="nuevaTareaDescripcion" class="form-control" placeholder="Descripción de la tarea">
-                                <button id="agregarTareaBtn" class="btn-actividad" style="min-width: 130px;">Agregar Tarea</button>
-                            </div>
+            <div id="areaSection" style="display: none;">
+                <div class="form-group">
+                    <label for="nuevaAreaSelect">Nueva Área:</label>
+                    <div class="select-container2 row">
+                        <div class="col-md-9">
+                            <select id="nuevaAreaSelect" class="form-control">
+                                <!-- Opciones de áreas -->
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button id="agregarTareaBtn" class="btn-consultar" style="min-width: 130px;">Agregar Área</button>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-consultar" id="volverBtn">Volver</button>
-                <button type="button" class="btn-consultar" id="guardarTareaBtn">Guardar y finalizar</button>
+                </div>
+                <div class="tabla-container" style="max-height: 100px">
+                    <table class="tabla" id="tablaTareas">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tareasTableBody">
+                            <!-- Datos de áreas -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-consultar" id="guardarFinalizarBtn">Guardar y finalizar</button>
+                </div>
             </div>
         </div>
     </div>

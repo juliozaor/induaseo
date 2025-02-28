@@ -6,11 +6,15 @@ use App\Models\Area;
 use App\Models\Tarea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Actividades;
+use Exception;
+use Illuminate\Validation\ValidationException;
 
 use function PHPUnit\Framework\isNan;
 
 class AreaController extends Controller
 {
+    // Listar todas las áreas con filtros opcionales
     public function index(Request $request)
     {
         $buscar = $request->input('buscar');
@@ -19,7 +23,7 @@ class AreaController extends Controller
         $sedeId = $request->input('sede_id');
         $estado = $request->input('estado');
 
-        $query = Area::with(['sede.cliente', 'creador', 'actualizador']);
+        $query = Area::with(['sede.cliente', 'actividades', 'creador', 'actualizador']);
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
@@ -44,6 +48,7 @@ class AreaController extends Controller
         return response()->json($areas);
     }
 
+    // Almacenar una nueva área
     public function store(Request $request)
     {
 
@@ -63,6 +68,7 @@ class AreaController extends Controller
         return response()->json(['message' => 'Área creada con éxito', 'area' => $area], 201);
     }
 
+    // Mostrar detalles de un área específica
     public function show(Request $request)
     {
         $id = $request->input('id');
@@ -70,6 +76,7 @@ class AreaController extends Controller
         return response()->json($area);
     }
 
+    // Actualizar un área existente
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
@@ -94,40 +101,101 @@ class AreaController extends Controller
         return response()->json(['message' => 'Área actualizada correctamente', 'area' => $area]);
     }
 
+    // Eliminar un área
     public function destroy($id)
     {
         $area = Area::findOrFail($id);
         $area->delete();
-        return response()->json(['message' => 'Área eliminada correctamente'], 204);
+        return response()->json(['message' => 'Área eliminada correctamente']);
     }
 
+    // Obtener tareas para un área específica
     public function obtenerTareas($areaId)
     {
-        $tareas = Tarea::where('area_id', $areaId)->get();
-        return response()->json($tareas);
+        // $tareas = Tarea::where('area_id', $areaId)->get();
+        // return response()->json($tareas);
     }
 
+    // Almacenar una nueva tarea para un área
     public function guardarTarea(Request $request)
     {
-        $validated = $request->validate([
-            'area_id' => 'required|exists:areas,id',
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:255',
-        ]);
+        // $validated = $request->validate([
+        //     'area_id' => 'required|exists:areas,id',
+        //     'nombre' => 'required|string|max:255',
+        //     'descripcion' => 'nullable|string|max:255',
+        // ]);
 
-        $tarea = Tarea::create([
-            'area_id' => $validated['area_id'],
-            'nombre' => $validated['nombre'],
-            'descripcion' => $validated['descripcion'],
-        ]);
+        // $tarea = Tarea::create([
+        //     'area_id' => $validated['area_id'],
+        //     'nombre' => $validated['nombre'],
+        //     'descripcion' => $validated['descripcion'],
+        // ]);
 
-        return response()->json(['message' => 'Tarea creada con éxito', 'tarea' => $tarea]);
+        // return response()->json(['message' => 'Tarea creada con éxito', 'tarea' => $tarea]);
     }
 
+    // Eliminar una tarea
     public function eliminarTarea($id)
     {
-        $tarea = Tarea::findOrFail($id);
-        $tarea->delete();
-        return response()->json(['message' => 'Tarea eliminada correctamente']);
+        // $tarea = Tarea::findOrFail($id);
+        // $tarea->delete();
+        // return response()->json(['message' => 'Tarea eliminada correctamente']);
+    }
+
+    // Obtener actividades para un área específica
+    public function obtenerActividades($areaId)
+    {
+        try {
+            $actividades = Area::findOrFail($areaId)->actividades()->get();
+            return response()->json($actividades);
+        } catch (Exception $e) {
+            return response()->json($e);
+        }
+    }
+
+    // Eliminar una actividad
+    public function eliminarActividad($id)
+    {
+        $actividad = Actividades::findOrFail($id);
+        $actividad->delete();
+        return response()->json(['message' => 'Actividad eliminada correctamente.']);
+    }
+
+    // Almacenar una nueva actividad para un área
+    public function guardarActividad(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'area_id' => 'required|exists:areas,id',
+                'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string|max:255',
+            ]);
+
+            $actividad = Actividades::create([
+                'area_id' => $request->area_id,
+                'nombre' => $request->nombre,
+                'descripcion' => $request->descripcion,
+            ]);
+
+            return response()->json(['message' => 'Actividad creada con éxito', 'actividad' => $actividad]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
+    }
+
+    // Verificar si un nombre de área ya existe en una ubicación específica
+    public function verificarNombre(Request $request)
+    {
+        $nombre = $request->input('nombre');
+        $sedeId = $request->input('sede_id');
+        $exists = Area::where('nombre', $nombre)->where('sede_id', $sedeId)->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
+    public function obtenerAreasPorSede($sedeId)
+    {
+        $areas = Area::where('sede_id', $sedeId)->get();
+        return response()->json($areas);
     }
 }

@@ -16,8 +16,8 @@
     <!-- CSS y fuentes -->
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}?v={{ time() }}">
-    
-    
+
+
 </head>
 <body>
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -55,27 +55,27 @@
                   <div class="user-icon-circle" id="userDropdownToggle">
                       <img src="{{ asset('assets/icons/usuario.png') }}" alt="Usuario" class="user-icon">
                   </div>
-                  
+
                   <!-- Menú desplegable de usuario -->
                   <div class="dropdown-menu" id="userDropdownMenu">
                       <p>ROL: {{ Auth::user()->rol }}</p>
                       <div class="divider"></div>
-                      <a href="#" class="sub-text">
+                      <a href="{{ route('profile.edit') }}" class="sub-text">
                           <img src="{{ asset('assets/icons/configuracion.png') }}" alt="Configuración" class="sub-icon">Configuración de Cuenta
                       </a>
-                      
+
                       <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
-                    
+
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="sub-text">
                         <img src="{{ asset('assets/icons/salir.png') }}" alt="Salir" class="sub-icon">Salir
                     </a>
-                    
+
                   </div>
               </div>
             </div>
-            
+
             <!-- Contenido principal -->
             <div class="content">
                 @yield('content', view('default_content'))
@@ -87,8 +87,8 @@
     @include('components.alert_modal')
 
     <!-- jQuery y Bootstrap JS CDN para que el modal funcione -->
-    
-    
+
+
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
       <!-- Script para activar el modal con alertas dinámicas -->
@@ -114,7 +114,7 @@
           storedMenus.forEach(menu => {
               const li = document.createElement('li');
               const currentRoute = "{{ Route::currentRouteName() }}";
-             
+
               const isActive = currentRoute.startsWith(menu.route_name) ? 'active' : '';
               li.className = isActive;
               li.innerHTML = `<a href="{{ url('${menu.route}') }}">${menu.icon}<span>${menu.name}</span></a>`;

@@ -142,7 +142,7 @@ class GestionarActivosController extends Controller
             $registrosPorPagina = $request->input('registros_por_pagina', 10);
             $buscar = $request->input('buscar');
 
-            $mantenimientos = Mantenimiento::with(['estado', 'creador', 'actualizador', 'sedes_activos.activo', 'sedes_activos.sede.cliente'])
+            $query = Mantenimiento::with(['estado', 'creador', 'actualizador', 'sedes_activos.activo', 'sedes_activos.sede.cliente'])
                 ->whereHas('sedes_activos', function ($query) use ($sedeId) {
                     $query->where('sede_id', $sedeId);
                 })
@@ -153,10 +153,10 @@ class GestionarActivosController extends Controller
                     return $query->whereHas('sedes_activos.activo', function ($q) use ($buscar) {
                         $q->where('nombre_elemento', 'like', "%{$buscar}%");
                     });
-                })
-                ->paginate($registrosPorPagina);
-
-            return response()->json($mantenimientos->items());
+                });
+            $mantenimientos = $query->paginate($registrosPorPagina);
+            //dd($mantenimientos->items());
+            return response()->json($mantenimientos);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error fetching mantenimientos: ' . $e->getMessage()], 500);
         }
@@ -182,5 +182,15 @@ class GestionarActivosController extends Controller
         ]);
 
         return response()->json(['message' => 'Mantenimiento actualizado exitosamente']);
+    }
+
+    public function destroy($id, Request $request)
+    {
+        $sedeId = $request->query('sede_id'); // Obtener el ID de la sede de la consulta
+
+        $activo = SedesActivos::where('id', $id)->firstOrFail();
+        $activo->delete();
+
+        return response()->json(['message' => 'Asignación de Activo eliminada con éxito.']);
     }
 }

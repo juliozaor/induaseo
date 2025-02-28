@@ -325,6 +325,12 @@ input:checked + .slider:before {
     width: 15px;
     cursor: pointer;
 }
+.icono-eliminar{
+    margin-left: 15px;
+    width: 17px;
+    cursor: pointer;
+}
+
 .select-container2 {
     align-items: flex-end;
 }

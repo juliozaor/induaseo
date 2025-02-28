@@ -192,4 +192,12 @@ class GestionarInventarioController extends Controller
 
         return response()->json($itemsInsumos);
     }
+
+    public function destroy($id)
+    {
+        $inventario = Inventario::findOrFail($id);
+        $inventario->delete();
+
+        return response()->json(['message' => 'Inventario eliminado con éxito.']);
+    }
 }

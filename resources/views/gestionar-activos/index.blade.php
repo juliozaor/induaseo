@@ -213,7 +213,7 @@
                             <!-- Opciones de estados se llenarán dinámicamente -->
                         </select>
                     </div>
-                    <span class="registros-encontrados" id="totalMantenimientos">Total: 0</span>
+                    <span class="registros-encontrados-mant" id="totalMantenimientos">Total: 0</span>
                     <select id="registrosMantenimientoPorPagina" class="registros-por-pagina">
                         <option value="5">5</option>
                         <option value="10">10</option>
@@ -247,7 +247,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="tabla-paginacion"></div>
+                <div class="tabla-paginacion-mant"></div>
             </div>
         </div>
     </div>

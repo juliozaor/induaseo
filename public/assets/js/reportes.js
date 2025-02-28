@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const limpiarFiltroBtn = document.getElementById('limpiarFiltroBtn');
     const fechaInicio = document.getElementById('fechaInicio');
     const fechaFin = document.getElementById('fechaFin');
+    const turnoMenu = document.getElementById('turnoMenu');
 
     clienteSelect.addEventListener('change', function() {
         const clienteId = this.value;
@@ -25,14 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching sedes:', error));
     });
 
-
     consultarBtn.addEventListener('click', function() {
         const sedeId = sedeSelect.value;
-        
+
         fetch(`reportes/consultar?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {
-               actividadesTableBody.innerHTML = '';
+                actividadesTableBody.innerHTML = '';
                 data.forEach(turno => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -42,10 +42,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                     actividadesTableBody.appendChild(row);
                 });
-                nuevaAsignacionBtn.style.display = 'inline-block';
             })
             .catch(error => console.error('Error fetching actividades:', error));
 
+        fetch(`reportes/consultar-turnos?sede_id=${sedeId}`)
+            .then(response => response.json())
+            .then(data => {
+                turnoMenu.innerHTML = '';
+                data.forEach(turno => {
+                    const li = document.createElement('li');
+                    li.textContent = `Turno: ${turno.nombre}`;
+                    li.classList.add('menu-item');
+                    li.dataset.id = turno.id;
+                    turnoMenu.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error fetching turnos:', error));
 
         fetch(`reportes/activos?sede_id=${sedeId}`)
             .then(response => response.json())
@@ -63,11 +75,60 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             })
             .catch(error => console.error('Error fetching activos:', error));
-
-
-
     });
 
+    turnoMenu.addEventListener('click', function(event) {
+        if (event.target.classList.contains('menu-item')) {
+            const turnoId = event.target.dataset.id;
+            const submenu = event.target.nextElementSibling;
+
+            if (submenu && submenu.classList.contains('submenu')) {
+                submenu.remove();
+                event.target.classList.remove('expanded');
+            } else {
+                fetch(`reportes/consultar-areas?turno_id=${turnoId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const opciones = document.createElement('ul');
+                        opciones.classList.add('submenu');
+                        data.forEach(area => {
+                            const li = document.createElement('li');
+                            li.textContent = `Área: ${area.nombre}`;
+                            li.classList.add('submenu-item');
+                            li.dataset.id = area.id;
+                            opciones.appendChild(li);
+                        });
+                        event.target.insertAdjacentElement('afterend', opciones);
+                        event.target.classList.add('expanded');
+                    })
+                    .catch(error => console.error('Error fetching areas:', error));
+            }
+        } else if (event.target.classList.contains('submenu-item')) {
+            const areaId = event.target.dataset.id;
+            const submenu = event.target.nextElementSibling;
+
+            if (submenu && submenu.classList.contains('submenu')) {
+                submenu.remove();
+                event.target.classList.remove('expanded');
+            } else {
+                fetch(`reportes/consultar-actividades?area_id=${areaId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const opciones = document.createElement('ul');
+                        opciones.classList.add('submenu');
+                        data.forEach(actividad => {
+                            const li = document.createElement('li');
+                            li.textContent = `Actividad: ${actividad.nombre}`;
+                            li.classList.add('submenu-item-act');
+                            opciones.appendChild(li);
+                        });
+                        event.target.insertAdjacentElement('afterend', opciones);
+                        event.target.classList.add('expanded');
+                    })
+                    .catch(error => console.error('Error fetching actividades:', error));
+            }
+        }
+    });
 
     aplicarFiltroBtn.addEventListener('click', function() {
         const sedeId = sedeSelect.value;
@@ -112,8 +173,4 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Error fetching actividades:', error));
     });
-
-
-
-
 });

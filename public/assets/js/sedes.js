@@ -9,18 +9,13 @@
     const busquedaInput = document.getElementById("busquedaInput");
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
     const openModalBtn = document.getElementById("openModalBtn");
-    const filtroCliente = document.getElementById("filtroCliente");
-    const filtroEstado = document.getElementById("filtroEstado");
+    //const estadoFiltro = document.getElementById("estadoFiltro");
 
     function cargarDatos(page = 1) {
         const tablaSeleccionada = tablaMaestraSelect.value;
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
-        /* const cliente = filtroCliente.value;
-        const estado = filtroEstado.value; */
-
-        const cliente = '';
-        const estado = '';
+        const estado = ''//estadoFiltro.value;
 
         if (!tablaSeleccionada) {
             return;
@@ -30,9 +25,7 @@
         formData.append('tabla', tablaSeleccionada);
         formData.append('buscar', buscar);
         formData.append('registros_por_pagina', registrosPorPagina);
-        formData.append('cliente', cliente);
-        formData.append('estado', estado);
-       /*  formData.append('regional', filtroRegional.value); */
+        formData.append('estadoSede', estado);
 
         fetch(`../admin/maestras/consultar?page=${page}`, {
                 method: 'POST',
@@ -70,7 +63,10 @@
                     <td>${sede.actualizador?.nombres || 'N/A'}</td>
                     <td>${formatDate(sede.updated_at)}</td>
                     <td>${sede.regional?.nombre || 'N/A'}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${sede.id}">
+                    </td>
                 `;
                     tablaSedesBody.appendChild(row);
                 });
@@ -140,8 +136,7 @@
     consultarBtn.addEventListener("click", () => cargarDatos(1));
     registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
     busquedaInput.addEventListener("input", () => cargarDatos(1));
-   /*  filtroCliente.addEventListener("change", () => cargarDatos(1));
-    filtroEstado.addEventListener("change", () => cargarDatos(1)); */
+    //estadoFiltro.addEventListener("change", () => cargarDatos(1));
 
     // Modal functionality
     const modal = document.getElementById("createSedeModal");
@@ -150,10 +145,12 @@
     const sedeForm = document.getElementById("sedeForm");
     let editMode = false;
     let sedeId = null;
+    let originalNombre = '';
 
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
         modal.style.display = "flex";
+        resetNombreExists();
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -161,6 +158,7 @@
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
+            resetNombreExists();
         }
     });
 
@@ -186,7 +184,7 @@
                     return response.json();
                 })
                 .then((sede) => {
-
+                    originalNombre = sede.nombre;
                     document.getElementById("nombre").value = sede.nombre;
                     document.getElementById("cliente").value = sede.cliente_id;
                     document.getElementById("pais").value = sede.ciudad.pais_id;
@@ -203,16 +201,50 @@
                 })
                 .catch((error) => console.error("Error al cargar los datos de la sede:", error));
         }
+
+        if (event.target.classList.contains("icono-eliminar")) {
+            const sedeId = event.target.getAttribute("data-id");
+            if (!sedeId) {
+                console.error("Error: No se encontró el ID de la sede en el botón.");
+                return;
+            }
+
+            if (confirm("¿Está seguro de que desea eliminar esta sede?")) {
+                fetch(`../sedes/${sedeId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar la sede.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Sede eliminada con éxito.");
+                    cargarDatos(1); // Reload the table
+                })
+                .catch(error => console.error("Error al eliminar la sede:", error));
+            }
+        }
     });
 
     // Cerrar modal
     document.getElementById("close").addEventListener("click", function() {
         modal.style.display = "none";
         resetForm();
+        resetNombreExists();
     });
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
+        if (nombreExists) {
+            alert("El nombre de la sede ya existe. Por favor, elija otro nombre.");
+            return;
+        }
+
         const url = editMode ? `../sedes/actualizar/${sedeId}` : `../sedes/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -364,7 +396,7 @@
     });
 
     // Llamar a las funciones para cargar los datos al abrir el modal
-  /*   openModalBtn.addEventListener("click", function() {
+    /* openModalBtn.addEventListener("click", function() {
         cargarRegionales();
     }); */
 
@@ -374,6 +406,7 @@
         modalActionBtn.textContent = "Crear Sede";
         editMode = false;
         sedeId = null;
+        originalNombre = '';
     }
 
     // Actualizar estado del toggle
@@ -403,4 +436,34 @@
     telefono.addEventListener("input", function() {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
+
+    const nombreInput = document.getElementById("nombre");
+    const nombreExistsError = document.getElementById("nombreExistsError");
+    let nombreExists = false;
+
+    nombreInput.addEventListener("input", function() {
+        const nombre = nombreInput.value.trim();
+        if (nombre && nombre !== originalNombre) {
+            fetch(`../sedes/verificar-nombre?nombre=${nombre}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        nombreExistsError.textContent = "El nombre de la sede ya existe.";
+                        nombreExists = true;
+                    } else {
+                        nombreExistsError.textContent = "";
+                        nombreExists = false;
+                    }
+                })
+                .catch(error => console.error("Error al verificar el nombre de la sede:", error));
+        } else {
+            nombreExistsError.textContent = "";
+            nombreExists = false;
+        }
+    });
+
+    function resetNombreExists() {
+        nombreExists = false;
+        nombreExistsError.textContent = "";
+    }
 })();

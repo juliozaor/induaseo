@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function() {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
@@ -9,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const busquedaInput = document.getElementById("busquedaInput");
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
-    const openModalBtn = document.getElementById("openModalBtn"); // Ensure this is defined
+    const openModalBtn = document.getElementById("openModalBtn");
 
     function cargarDatos(page) {
         const tablaSeleccionada = tablaMaestraSelect.value;

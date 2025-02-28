@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     const sedeSelect = document.getElementById('sedeSelect');
     const consultarBtn = document.getElementById('consultarBtn');
-    const turnosTableBody = document.getElementById('turnosTableBody');   
+    const turnosTableBody = document.getElementById('turnosTableBody');
     const nuevaAsignacionBtn = document.getElementById('nuevaAsignacionBtn');
     const registrosEncontrados = document.querySelector('.registros-encontrados');
 
     consultarBtn.addEventListener('click', function() {
         const sedeId = sedeSelect.value;
-        
+
         fetch(`actividades-evidencias/consultar?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>${turno.regional}</td>
                         <td>${turno.actividades_completadas}</td>
                         <td>${turno.supervisor}</td>
-                        <td>${turno.observaciones}</td>
+                        <td>${turno.observaciones ?? 'Sin observaciones'}</td>
                         <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
                     `;
                     turnosTableBody.appendChild(row);
@@ -48,8 +48,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${actividad.id}</td>
+                            <td>${actividad.nombre_area}</td>
                             <td>${actividad.nombre}</td>
-                            <td>${actividad.descripcion}</td>
+
                             <td>${actividad.estado ? 'Pendiente' : 'Completado'}</td>
                             <td>${actividad.calificacion ?? 0}/5</td>
                         `;
@@ -60,4 +61,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => console.error('Error fetching turno details:', error));
         }
     });
-});
+});/* <td>${actividad.descripcion ? 'Sin observaciones' : actividad.descripcion}</td> */

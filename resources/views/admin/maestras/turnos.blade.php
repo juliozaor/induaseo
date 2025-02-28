@@ -39,7 +39,6 @@
                     <th>ID</th>
                     <th>Nombre Turno</th>
                     <th>Frecuencia</th>
-                    <th>Actividades</th>
                     <th>Estado</th>
                     <th>Fecha Actualización</th>
                     <th>Actualizado por</th>

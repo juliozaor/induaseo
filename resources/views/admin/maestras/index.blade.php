@@ -10,7 +10,7 @@
                 <select class="select-maestra" id="tablaMaestraSelect">
                     <option value="">Seleccionar</option>
                     @foreach ($tablasMaestras as $tabla)
-                        <option value="{{ $tabla }}">{{ ucfirst($tabla) }}</option>
+                        <option value="{{ $tabla['id'] }}">{{ $tabla['nombre'] }}</option>
                     @endforeach
                 </select>
                 <button class="btn-consultar" id="consultarBtn">Consultar</button>
@@ -98,6 +98,9 @@
                                 break;
                             case 'regionales':
                                 script.src = "{{ asset('assets/js/regionales.js') }}?v={{ time() }}";
+                                break;
+                            case 'actividades':
+                                script.src = "{{ asset('assets/js/actividades.js') }}?v={{ time() }}";
                                 break;
                             default:
                                 console.error('Tabla no encontrada');

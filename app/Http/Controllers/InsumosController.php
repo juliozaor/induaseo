@@ -131,4 +131,12 @@ class InsumosController extends Controller
             return response()->json(['error' => 'Error al consultar los insumos'], 500);
         }
     }
+
+    public function destroy($id)
+    {
+        $insumo = Insumos::findOrFail($id);
+        $insumo->delete();
+
+        return response()->json(['message' => 'Insumo eliminado con éxito.']);
+    }
 }

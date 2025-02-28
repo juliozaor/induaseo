@@ -69,7 +69,30 @@
     box-shadow: 0px 3px 20px #00000029;
     padding: 15px;
     border-radius: 6px;
-    width: 50%;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Contenedor Listado de Turnos */
+.listado-container2 {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 20px #00000029;
+    padding: 15px;
+    border-radius: 6px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    .listado-container {
+        width: calc(50% - 10px);
+    }
+}
+
+@media (min-width: 1000px) {
+    .listado-container2 {
+        width: calc(100% - 0px);
+    }
 }
 
 /* Título Listado de Turnos */
@@ -147,8 +170,6 @@
     letter-spacing: 0px;
     min-width: 120px; /* Fixed width for all columns */
 }
-
-
 
 .tabla tbody tr:nth-child(odd) {
     background: transparent linear-gradient(180deg, #F9F9F9 0%, #F7F7F7 43%, #F1F1F1 100%) 0% 0% no-repeat padding-box;
@@ -333,6 +354,7 @@ input:checked + .slider:before {
     max-height: 100px;
 }
 .container-body{
+    flex-wrap: wrap;
     display: flex;
     gap: 20px;
 }
@@ -349,4 +371,110 @@ input:checked + .slider:before {
     justify-content: flex-end;
     gap: 10px;
     padding-right: 20px;
+}
+
+/* Menu and Submenu Styles */
+.menu {
+    list-style-type: none;
+    padding: 0;
+    margin-left: 50px;
+}
+
+.menu-item {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f0f0f0;
+    margin-bottom: 5px;
+    position: relative;
+    transition: margin-bottom 0.3s;
+}
+
+.menu-item:hover {
+    background-color: #e0e0e0;
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s;
+    width: 16px; /* Ajustar el tamaño según sea necesario */
+    height: 16px; /* Ajustar el tamaño según sea necesario */
+    background-image: url('../images/flecha-recogida.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.menu-item.expanded::before {
+    background-image: url('../images/flecha-desplegada.png');
+    transform: translateY(-50%) rotate(0deg);
+}
+
+.submenu {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 5px;
+    margin-left: 50px;
+    border-radius: 6px;
+    z-index: 1;
+    position: relative;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.submenu-item {
+    cursor: pointer;
+    padding: 5px;
+    background-color: #d0d0d0;
+    margin-bottom: 3px;
+    position: relative;
+    transition: margin-bottom 0.3s;
+}
+
+.submenu-item:hover {
+    background-color: #c0c0c0;
+}
+
+.submenu-item::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s;
+    width: 16px; /* Ajustar el tamaño según sea necesario */
+    height: 16px; /* Ajustar el tamaño según sea necesario */
+    background-image: url('../images/flecha-recogida.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.submenu-item.expanded::before {
+    background-image: url('../images/flecha-desplegada.png');
+    transform: translateY(-50%) rotate(0deg);
+}
+
+.submenu-item-act {
+    cursor: pointer;
+    padding: 5px;
+    background-color: #b6b6b6;
+    margin-bottom: 3px;
+}
+
+.submenu-item-act:hover {
+    background-color: #a6a6a6;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

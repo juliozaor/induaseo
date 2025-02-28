@@ -23,15 +23,15 @@
         <div class="input-container">
             <input type="text" class="busqueda-input" id="busquedaActivoInput" placeholder="Buscar...">
         </div>
-        <select class="filtro form-control" id="filtroClasificacion" name="filtroClasificacion">
+        {{-- <select class="filtro form-control" id="filtroClasificacion" name="filtroClasificacion">
             <option value="">Todas las clasificaciones</option>
             <!-- Opciones de clasificaciones se llenarán dinámicamente -->
-        </select>
-        <select class="filtro form-control" id="filtroEstadoActivo">
+        </select> --}}
+        {{-- <select class="filtro form-control" id="filtroEstadoActivo">
             <option value="">Todos los estados</option>
             <option value="1">Activo</option>
             <option value="0">Inactivo</option>
-        </select>
+        </select> --}}
         <span class="registros-encontrados">Total: 0</span>
         <select class="registros-por-pagina" id="registrosPorPaginaActivo">
             <option value="5">5</option>

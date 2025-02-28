@@ -14,23 +14,30 @@
     </div>
 
     @foreach($turnos as $turno)
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Turno de supervisión</h5>
-            <div class="card-info">
-               {{--  <img src="{{ asset('assets/icons/reloj.svg') }}" alt="Supervisión" class="card-icon">
-                <span>13:00 - 18:00</span> --}}
-                <img src="{{ asset('assets/icons/calendar.svg') }}" alt="Fecha" class="card-icon">
-                <span>{{$turno->fecha_inicio}} al {{$turno->fecha_fin}}</span>
+        {{-- @if ($turno->turno->estado) --}}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Turno de supervisión</h5>
+                    <div class="card-info">
+                    {{--  <img src="{{ asset('assets/icons/reloj.svg') }}" alt="Supervisión" class="card-icon">
+                        <span>13:00 - 18:00</span> --}}
+                        <img src="{{ asset('assets/icons/calendar.svg') }}" alt="Fecha" class="card-icon">
+                        <span>{{$turno->fecha_inicio}} al {{$turno->fecha_fin}}</span>
+                    </div>
+                    <h5 class="card-title">Sede</h5>
+                    <div class="card-info">
+                        <img src="{{ asset('assets/icons/location.svg') }}" alt="Ubicación" class="card-icon">
+                        <span>{{$turno->sede->nombre}} <br> {{$turno->sede->direccion}}</span>
+                    </div>
+                    <a href="{{ route('actividades.turno', ['id' => $turno->turno->id, 'sede_id' => $turno->sede->id]) }}"
+                        class="btn boton-secundario" onclick="setTurnoData({{ $turno->turno->id }}, {{ $turno->sede->id }})">
+                        Iniciar turno
+                    </a>
+                </div>
             </div>
-            <h5 class="card-title">Sede</h5>
-            <div class="card-info">
-                <img src="{{ asset('assets/icons/location.svg') }}" alt="Ubicación" class="card-icon">
-                <span>{{$turno->sede->nombre}} <br> {{$turno->sede->direccion}}</span>
-            </div>
-            <a href="{{ route('actividades.turno', ['id' => $turno->turno->id, 'sede_id' => $turno->sede->id]) }}" class="btn boton-secundario" onclick="setTurnoData({{ $turno->turno->id }}, {{ $turno->sede->id }})">Iniciar turno</a>
-        </div>
-    </div>
+        {{-- @else
+            <p style="margin-left: 15px">No se ha asignado ningún turno o ya han sido finalizados todos los turnos.</p>
+        @endif --}}
     @endforeach
 
     <span class="titulo-novedades">Novedades</span>

@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaTurnosBody = document.querySelector("#tablaTurnos tbody");
@@ -12,11 +12,11 @@
 
     const frecuenciaSelect = document.getElementById("frecuencia");
     const detalleFrecuenciaInput = document.getElementById("detalleFrecuencia");
-    const actividadSection = document.getElementById("actividadSection");
+    /* const actividadSection = document.getElementById("actividadSection");
     const nuevaActividadInput = document.getElementById("nuevaActividad");
     const agregarActividadBtn = document.getElementById("agregarActividadBtn");
     const tablaActividadesBody = document.querySelector("#tablaActividades tbody");
-    const descripcionActividadInput = document.getElementById("descripcionActividad");
+    const descripcionActividadInput = document.getElementById("descripcionActividad"); */
 
     let frecuenciaArr = [];
 
@@ -25,7 +25,7 @@
             .then(response => response.json())
             .then(frecuencias => {
                 frecuenciaArr = frecuencias;
-                
+
                 frecuenciaSelect.innerHTML = '<option value="">Seleccione</option>';
                 frecuencias.forEach(frecuencia => {
                     const option = document.createElement("option");
@@ -37,13 +37,13 @@
             .catch(error => console.error('Error al cargar frecuencias:', error));
     }
 
-    function cargarActividades(turnoId) {
-        
+    /* function cargarActividades(turnoId) {
+
         fetch(`../actividades/${turnoId}`)
             .then(response => response.json())
-            .then(data => {                
+            .then(data => {
                 tablaActividadesBody.innerHTML = '';
-                if (data.length > 0) {                    
+                if (data.length > 0) {
                     data.forEach(actividad => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
@@ -51,7 +51,7 @@
                             <td>${actividad.nombre}</td>
                             <td>${actividad.descripcion}</td>
                             <td><button class="btn-eliminar" data-id="${actividad.id}">Eliminar</button></td>
-                        `;                        
+                        `;
                         tablaActividadesBody.appendChild(row);
                     });
                 } else {
@@ -70,9 +70,9 @@
                     </tr>
                 `;
             });
-    }
+    } */
 
-    function agregarActividad(turnoId, nombreActividad, descripcionActividad) {
+    /* function agregarActividad(turnoId, nombreActividad, descripcionActividad) {
         fetch(`../actividades`, {
             method: 'POST',
             headers: {
@@ -102,23 +102,24 @@
             cargarActividades(turnoId);
         })
         .catch(error => console.error('Error al eliminar actividad:', error));
-    }
+    } */
 
     function cargarDatos(page = 1) {
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
 
         fetch(`../turnos?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
             })
             .then(data => {
+                console.log(data)
                 // Limpiar la tabla y la paginación
                 tablaTurnosBody.innerHTML = '';
                 paginacionContainer.innerHTML = '';
@@ -131,16 +132,18 @@
                     <td>${turno.id}</td>
                     <td>${turno.nombre}</td>
                     <td>${turno.frecuencia.nombre}</td>
-                    <td>${turno.actividades.length}</td>
                     <td><div class="${estadoClase}">${turno.estado ? 'Activo' : 'Inactivo'}</div></td>
                     <td>${formatDate(turno.updated_at)}</td>
                     <td>${turno.actualizador?.nombres || 'N/A'}</td>
                     <td>${turno.creador?.nombres || 'N/A'}</td>
                     <td>${formatDate(turno.created_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${turno.id}">
+                    </td>
                 `;
                     tablaTurnosBody.appendChild(row);
-                });
+                });/* <td>${turno.actividades.length}</td> */
 
                 // Mostrar total de registros
                 document.querySelector('.registros-encontrados').textContent = `Total: ${data.total}`;
@@ -214,19 +217,19 @@
     let turnoId = null;
 
     // Abrir el modal
-    openModalBtn.addEventListener("click", function() {
+    openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex";
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             turnoId = event.target.getAttribute("data-id");
             if (!turnoId) {
@@ -248,30 +251,58 @@
                     return response.json();
                 })
                 .then((turno) => {
-                    
+
                     document.getElementById("nombre").value = turno.nombre;
                     document.getElementById("frecuencia").value = turno.frecuencia_id;
                     document.getElementById("detalleFrecuencia").value = turno.frecuencia_detalle;
                     document.getElementById("estadoToggle").checked = turno.estado === 1;
                     document.querySelector("label[for='estadoToggle']").textContent = turno.estado ? "Activo" : "Inactivo";
 
-                    actividadSection.style.display = "block";
-                    cargarActividades(turno.id);
+                    // actividadSection.style.display = "block";
+                    // cargarActividades(turno.id);
 
                     modal.style.display = "flex"; // Muestra el modal
                 })
                 .catch((error) => console.error("Error al cargar los datos del turno:", error));
         }
+
+        if (event.target.classList.contains("icono-eliminar")) {
+            const turnoId = event.target.getAttribute("data-id");
+            if (!turnoId) {
+                console.error("Error: No se encontró el ID del turno en el botón.");
+                return;
+            }
+
+            if (confirm("¿Está seguro de que desea eliminar este turno?")) {
+                fetch(`../turnos/${turnoId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el turno.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Turno eliminado con éxito.");
+                    cargarDatos(1); // Reload the table
+                })
+                .catch(error => console.error("Error al eliminar el turno:", error));
+            }
+        }
     });
 
     // Cerrar modal
-    document.getElementById("close").addEventListener("click", function() {
+    document.getElementById("close").addEventListener("click", function () {
         modal.style.display = "none";
         resetForm();
     });
 
     // Guardar cambios
-    modalActionBtn.addEventListener("click", function() {
+    modalActionBtn.addEventListener("click", function () {
         const url = editMode ? `../turnos/actualizar/${turnoId}` : `../turnos/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -283,12 +314,12 @@
         }
 
         fetch(url, {
-                method: "POST", // Always use POST for FormData
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST", // Always use POST for FormData
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -297,7 +328,7 @@
                 }
                 return response.json();
             })
-            .then((data) => {                
+            .then((data) => {
                 if (data.errors) {
                     showErrors(data.errors);
                 } else {
@@ -305,9 +336,11 @@
                         "ok.png", // Ruta del ícono de éxito
                         data.message // Mensaje de éxito
                     );
-                    actividadSection.style.display = "block";
-                    turnoId = data.turno.id; // Set the turnoId to the newly created or updated turno ID
-                    cargarActividades(turnoId);
+                    //actividadSection.style.display = "block";
+                    turnoId = data.turno.id; // Establecer el turnoId al ID del turno recién creado o actualizado
+                    //cargarActividades(turnoId);
+                    modal.style.display = "none";
+                    resetForm();
                 }
             })
             .catch((error) => {
@@ -319,18 +352,18 @@
             });
     });
 
-    
-        // Escucha los cambios en el select de frecuencia
-/*         frecuenciaSelect.addEventListener("change", function() {
-            const frecuenciaId = parseInt(frecuenciaSelect.value);
-            const frecuencia = frecuenciaArr.find(f => f.id === frecuenciaId);
 
-            if (frecuencia) {
-                detalleFrecuenciaInput.value = frecuencia.detalle;
-            }
-        }); */
+    // Escucha los cambios en el select de frecuencia
+    /*         frecuenciaSelect.addEventListener("change", function() {
+                const frecuenciaId = parseInt(frecuenciaSelect.value);
+                const frecuencia = frecuenciaArr.find(f => f.id === frecuenciaId);
 
-    agregarActividadBtn.addEventListener("click", function() {
+                if (frecuencia) {
+                    detalleFrecuenciaInput.value = frecuencia.detalle;
+                }
+            }); */
+
+    /* agregarActividadBtn.addEventListener("click", function() {
         const nombreActividad = nuevaActividadInput.value;
         const descripcionActividad = descripcionActividadInput.value;
         if (nombreActividad && descripcionActividad && turnoId) {
@@ -345,7 +378,7 @@
                 eliminarActividad(actividadId);
             }
         }
-    });
+    }); */
 
     function showErrors(errors) {
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
@@ -394,7 +427,7 @@
 
     const guardarFinalizarBtn = document.getElementById("guardarFinalizarBtn");
 
-    guardarFinalizarBtn.addEventListener("click", function() {
+    guardarFinalizarBtn.addEventListener("click", function () {
         modal.style.display = "none";
         cargarDatos(1);
         resetForm();

@@ -124,4 +124,20 @@ class SedeController extends Controller
 
         return response()->json($sedes);
     }
+
+    public function destroy($id)
+    {
+        $sede = Sede::findOrFail($id);
+        $sede->delete();
+
+        return response()->json(['message' => 'Sede eliminada con éxito.']);
+    }
+
+    public function verificarNombre(Request $request)
+    {
+        $nombre = $request->input('nombre');
+        $exists = Sede::where('nombre', $nombre)->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
 }

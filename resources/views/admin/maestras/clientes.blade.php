@@ -21,10 +21,14 @@
         <div class="input-container">
             <input type="text" class="busqueda-input" id="busquedaInput" placeholder="Buscar...">
         </div>
-
-
+        <div class="input-container2">
+            <select id="estadoFiltro" class="busqueda-select">
+                <option value="">Todos los estados</option>
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+            </select>
+        </div>
         {{-- <button class="busqueda-icono">
-
     </button> --}}
         <span class="registros-encontrados">Total: 0</span>
         <select class="registros-por-pagina" id="registrosPorPagina">

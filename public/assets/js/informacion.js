@@ -17,7 +17,7 @@
     // Abrir el modal
     openInformacionModalBtn.addEventListener("click", function() {
         informacionModal.style.display = "flex";
-    
+
         cargarTiposMultimedia();
         cargarCategorias();
         cargarClientes();
@@ -64,16 +64,44 @@
                         document.getElementById("sede_id").value = informacion.sede_id;
                         document.getElementById("cliente_id").value = informacion.sede.cliente.id;
                     });
-                    
+
                     document.getElementById("titulo").value = informacion.titulo;
                     document.getElementById("descripcion").value = informacion.descripcion;
                     // Display the existing file name as a label or placeholder
                     const fileLabel = document.getElementById("fileLabel");
                     fileLabel.textContent = `Archivo actual: ${informacion.url}`;
-                    
+
                     informacionModal.style.display = "flex"; // Muestra el modal
                 })
                 .catch((error) => console.error("Error al cargar los datos de la información:", error));
+        }
+
+        if (event.target.classList.contains("icono-eliminar")) {
+            const informacionId = event.target.getAttribute("data-id");
+            if (!informacionId) {
+                console.error("Error: No se encontró el ID de la información en el botón.");
+                return;
+            }
+
+            if (confirm("¿Está seguro de que desea eliminar esta información?")) {
+                fetch(`../informacion/eliminar/${informacionId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar la información.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Información eliminada con éxito.");
+                    cargarInformacion(1); // Reload the table
+                })
+                .catch(error => console.error("Error al eliminar la información:", error));
+            }
         }
     });
 
@@ -209,7 +237,7 @@
             .then(response => response.json())
             .then(sedes => {
                 sedeArr = sedes;
-                
+
                 sedeSelect.innerHTML = '<option value="">Seleccione</option>';
                 sedes.forEach(sede => {
                     const option = document.createElement("option");
@@ -256,7 +284,10 @@
                     <td>${informacion.tipo_multimedia.nombre}</td>
                     <td>${informacion.categoria.nombre}</td>
                     <td>${formatDate(informacion.fecha)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${informacion.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${informacion.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${informacion.id}">
+                    </td>
                 `;
                     tablaInformacionBody.appendChild(row);
                 });

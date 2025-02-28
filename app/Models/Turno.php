@@ -18,11 +18,11 @@ class Turno extends Model
         return $this->belongsTo(Frecuencia::class);
     }
 
-    public function actividades()
+    /* public function actividades()
     {
         return $this->hasMany(Actividades::class);
-    }
-    
+    } */
+
     public function creador()
     {
         return $this->belongsTo(Usuario::class, 'creador_id');

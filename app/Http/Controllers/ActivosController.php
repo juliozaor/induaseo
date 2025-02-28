@@ -115,4 +115,12 @@ class ActivosController extends Controller
 
         return response()->json($activos);
     }
+
+    public function destroy($id)
+    {
+        $activo = Activos::findOrFail($id);
+        $activo->delete();
+
+        return response()->json(['message' => 'Activo eliminado con éxito.']);
+    }
 }

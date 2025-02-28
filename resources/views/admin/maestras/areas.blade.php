@@ -59,6 +59,7 @@
                     <th>Nombre Área</th>
                     <th>Cliente</th>
                     <th>Sede</th>
+                    <th>Total Actividades</th>
                     <th>Estado</th>
                     <th>Fecha Actualización</th>
                     <th>Actualizado por</th>
@@ -67,7 +68,11 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                {{-- <tr>
+                    <td class="total-actividades"></td>
+                </tr> --}}
+            </tbody>
         </table>
     </div>
     <div class="tabla-paginacion"></div>
@@ -99,8 +104,9 @@
                     </div>
                     <div class="col-12">
                         <label for="nombre">Nombre:</label>
-                        <input type="text" id="nombre" name="nombre" class="form-control" required>
+                        <input type="text" id="nombre" name="nombre" class="form-control" required disabled>
                         <span class="error-message" id="errorNombre"></span>
+                        <span class="error-message" id="nombreExistente" style="display: none; color: red;">El nombre del área ya existe en la sede seleccionada.</span>
                     </div>
                 </div>
             </form>
@@ -111,24 +117,25 @@
                 <span class="slider round"></span>
             </label>
             <label for="estadoToggle">Activo</label>
-            <button id="modalActionBtn" class="btn-consultar">Crear Área</button>
+            <button id="modalActionBtn" class="btn-consultar" disabled>Crear Área</button>
         </div>
-       {{--  <div id="tareaSection" style="display: none;">
+        {{-- Aquí puedes agregar actividades para la nueva área --}}
+        <div id="actividadSection" style="display: none;">
             <div class="form-group">
-                <label for="nuevaTarea">Nueva Tarea:</label>
+                <label for="actividadSelect">Seleccionar Actividad:</label>
                 <div class="select-container2">
-                    <input type="text" id="nuevaTarea" class="form-control" placeholder="Nombre de la tarea">
-                    <input type="text" id="descripcionTarea" class="form-control" placeholder="Descripción de la tarea">
-                    <button id="agregarTareaBtn" class="btn-actividad" style="min-width: 130px;">Agregar Tarea</button>
+                    <select id="actividadSelect" class="form-control">
+                        {{-- Aquí se llenarán las actividades desde JavaScript --}}
+                    </select>
+                    <button id="agregarActividadBtn" class="btn-actividad" style="min-width: 130px;">Agregar Actividad</button>
                 </div>
             </div>
             <div class="tabla-container" style="max-height: 100px">
-                <table class="tabla" id="tablaTareas">
+                <table class="tabla" id="tablaActividades">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Descripción</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -138,6 +145,6 @@
             <div style="text-align: right; margin-top: 10px">
                 <button id="guardarFinalizarBtn" class="btn-consultar">Guardar y finalizar</button>
             </div>
-        </div> --}}
+        </div>
     </div>
 </div>

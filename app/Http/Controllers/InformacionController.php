@@ -133,4 +133,12 @@ class InformacionController extends Controller
         return view('seguimiento-actividades.informacion', compact('turnos'));
     }
 
+    public function destroy($id)
+    {
+        $informacion = Informacion::findOrFail($id);
+        $informacion->delete();
+
+        return response()->json(['message' => 'Información eliminada con éxito.']);
+    }
+
 }

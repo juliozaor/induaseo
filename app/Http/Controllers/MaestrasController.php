@@ -12,6 +12,7 @@ use App\Models\SectoresEconomico;
 use App\Models\Sede;
 use App\Models\Turno;
 use App\Models\Area;
+use App\Models\Actividades;
 use App\Models\Clasificaciones;
 use App\Models\Estados;
 use App\Models\Insumos;
@@ -23,7 +24,17 @@ class MaestrasController extends Controller
 {
     public function index()
     {
-        $tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas', 'activos', 'insumos', 'regionales'];
+        //$tablasMaestras = ['clientes', 'sedes', 'turnos', 'areas', 'activos', 'insumos', 'regionales'];
+        $tablasMaestras = [
+            ['id' => 'clientes', 'nombre' => '1. Clientes'],
+            ['id' => 'regionales', 'nombre' => '2. Regionales'],
+            ['id' => 'sedes', 'nombre' => '3. Sedes'],
+            ['id' => 'areas', 'nombre' => '4. Áreas'],
+            ['id' => 'actividades', 'nombre' => '5. Actividades'],
+            ['id' => 'activos', 'nombre' => '6. Activos'],
+            ['id' => 'insumos', 'nombre' => '7. Insumos'],
+            ['id' => 'turnos', 'nombre' => '8. Turnos'],
+        ];
         return view('admin.maestras.index', compact('tablasMaestras'));
     }
 
@@ -35,13 +46,20 @@ class MaestrasController extends Controller
             if ($tabla === 'clientes') {
                 $query = Cliente::with(['tipoDocumento', 'ciudad.pais', 'sectorEconomico', 'creador', 'actualizador']);
 
+                // Filtro estado
+                if ($request->filled('estado')) {
+                    $query->where('estado', $request->estado);
+                }
+
                 // Filtro de búsqueda
                 if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
-                    $query->where('nombre', 'like', "%$buscar%")
-                        ->orWhere('numero_documento', 'like', "%$buscar%")
-                        ->orWhereHas('ciudad', fn($q) => $q->where('nombre', 'like', "%$buscar%"))
-                        ->orWhereHas('tipoDocumento', fn($q) => $q->where('nombre', 'like', "%$buscar%"));
+                    $query->where(function($q) use ($buscar) {
+                        $q->where('nombre', 'like', "%$buscar%")
+                          ->orWhere('numero_documento', 'like', "%$buscar%")
+                          ->orWhereHas('ciudad', fn($q) => $q->where('nombre', 'like', "%$buscar%"))
+                          ->orWhereHas('tipoDocumento', fn($q) => $q->where('nombre', 'like', "%$buscar%"));
+                    });
                 }
 
                 // Cantidad de registros por página
@@ -54,6 +72,12 @@ class MaestrasController extends Controller
             } elseif ($tabla === 'sedes') {
                 $query = Sede::with(['cliente', 'ciudad.pais', 'creador', 'actualizador', 'regional']);
 
+                // Filtro estado
+                if ($request->filled('estado')) {
+                    $estado = $request->input('estado');
+                    $query->where('estado', $estado);
+                }
+
                 // Filtro de búsqueda
                 if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
@@ -62,17 +86,11 @@ class MaestrasController extends Controller
                         ->orWhereHas('ciudad', fn($q) => $q->where('nombre', 'like', "%$buscar%"));
                 }
 
-                /* // Filtro por cliente
+                // Filtro por cliente
                 if ($request->has('cliente') && $request->input('cliente') !== '') {
                     $cliente_id = $request->input('cliente');
                     $query->where('cliente_id', $cliente_id);
                 }
-
-                // Filtro por estado
-                if ($request->has('estado') && $request->input('estado') !== '') {
-                    $estado = $request->input('estado');
-                    $query->where('estado', $estado);
-                } */
 
                 // Cantidad de registros por página
                 $registrosPorPagina = $request->input('registros_por_pagina', 10);
@@ -113,6 +131,12 @@ class MaestrasController extends Controller
             } elseif ($tabla === 'activos') {
                 $query = Activos::with(['clasificacion', 'estados', 'creador', 'actualizador']);
 
+                // Filtro estado
+                if ($request->filled('estado')) {
+                    $estado = $request->input('estado');
+                    $query->where('estado', $estado);
+                }
+
                 // Filtro de búsqueda
                 if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
@@ -147,6 +171,11 @@ class MaestrasController extends Controller
             } elseif ($tabla === 'regionales') {
                 $query = Regionales::query();
 
+                // Filtro estado
+                if ($request->filled('estado')) {
+                    $query->where('estado', $request->estado);
+                }
+
                 // Filtro de búsqueda
                 if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
@@ -160,8 +189,23 @@ class MaestrasController extends Controller
                 $regionales = $query->paginate($registrosPorPagina);
 
                 return response()->json($regionales);
-            }
+            } elseif ($tabla === 'actividades') {
+                $query = Actividades::query();
 
+                // Filtro de búsqueda
+                if ($request->has('buscar') && $request->input('buscar') !== '') {
+                    $buscar = $request->input('buscar');
+                    $query->where('nombre', 'like', "%$buscar%");
+                }
+
+                // Cantidad de registros por página
+                $registrosPorPagina = $request->input('registros_por_pagina', 10);
+
+                // Obtener datos paginados
+                $actividades = $query->paginate($registrosPorPagina);
+
+                return response()->json($actividades);
+            }
             return response()->json(['error' => 'Tabla no encontrada'], 404);
         } catch (Exception $e) {
             return response()->json(['error' => 'Error al consultar los datos: ' . $e->getMessage()], 500);
@@ -181,12 +225,15 @@ class MaestrasController extends Controller
             return view('admin.maestras.areas', compact('tabla'));
         } elseif ($tabla === 'activos') {
             return view('admin.maestras.activos', compact('tabla'));
-        } elseif ($tabla === 'insumos') { // Add this block
+        } elseif ($tabla === 'insumos') {
             return view('admin.maestras.insumos', compact('tabla'));
         } elseif ($tabla === 'regionales') {
             return view('admin.maestras.regionales', compact('tabla'));
+        } elseif ($tabla === 'actividades') {
+            //dd(view('admin.maestras.actividades', compact('tabla')));
+            return view('admin.maestras.actividades', compact('tabla'));
         }
-        return response()->json(['error' => 'Tabla no encontrada'], 404);
+        return response()->json(['error' => 'Tabla'+$tabla+'no encontrada'], 404);
     }
 
     public function obtenerClientes(Request $request)
@@ -208,6 +255,13 @@ class MaestrasController extends Controller
         $regionales = Regionales::all();
 
         return response()->json($regionales);
+    }
+
+    public function obtenerActividades(Request $request)
+    {
+        $actividades = Actividades::all();
+
+        return response()->json($actividades);
     }
 
     public function obtenerCiudades(Request $request)
@@ -243,5 +297,13 @@ class MaestrasController extends Controller
     {
         $estados = Estados::all();
         return response()->json($estados);
+    }
+
+    public function validarIdentificacion(Request $request)
+    {
+        $numeroIdentificacion = $request->input('numero_identificacion');
+        $exists = Cliente::where('numero_documento', $numeroIdentificacion)->exists();
+
+        return response()->json(['exists' => $exists]);
     }
 }

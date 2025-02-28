@@ -18,7 +18,7 @@
             </div>
         </div>
     </div>
-    
+
 
 <div class="listado-container">
     <h2 class="listado-titulo">Listado de tareas y evidencias</h2>
@@ -90,8 +90,9 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
+                                <th>Area</th>
+                                <th>Actividad</th>
+                                {{-- <th>Descripción</th> --}}
                                 <th>Estado</th>
                                 <th>Calificación</th>
                             </tr>

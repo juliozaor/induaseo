@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Usuario; // Importar el modelo Usuario
 use App\Models\Sede; // Importar el modelo Sede
+use App\Models\Area;
+use App\Models\AreaActividad;
 use App\Models\Cliente; // Importar el modelo Cliente
 
 class SeguimientoActividadesController extends Controller
@@ -94,7 +96,7 @@ class SeguimientoActividadesController extends Controller
         $turnos = SupervisorTurno::with(['supervisor', 'sede', 'turno'])
             ->where('supervisor_id', $userId)
             ->get();
-            //dd($turnos);
+        //dd($turnos);
         return view('seguimiento-actividades.index', compact('turnos'));
     }
 
@@ -115,27 +117,40 @@ class SeguimientoActividadesController extends Controller
                 localStorage.setItem('sede_id', '$sedeId');
             }
         </script>";
-        //dd($turnoId, $sedeId);
-        $supervisorTurno = SupervisorTurno::with(['supervisor', 'sede', 'turno.actividades'])
+
+        $supervisorTurno = SupervisorTurno::with(['supervisor', 'sede', 'turno', 'areas'])
             ->where('supervisor_id', $userId)
-            ->whereHas('turno', function ($query) use ($turnoId) {
-                $query->where('id', $turnoId);
-            })
             ->first();
-            //dd($supervisorTurno);
 
-        $actividadesTrue = $supervisorTurno->turno->actividades->where('estado', true)->values() ?? [];
-        $actividadesFalse = $supervisorTurno->turno->actividades->where('estado', false)->values() ?? [];
+        $actividadesTrue = collect();
+        $actividadesFalse = collect();
 
+        foreach ($supervisorTurno->areas as $area) {
+            foreach ($area->area->areasActividades as $areaActividad) {
+                if ($areaActividad->estado) {
+                    $actividadesTrue->push($areaActividad->actividad);
+                } else {
+                    $actividadesFalse->push($areaActividad->actividad);
+                }
+            }
+        }
+        //dd($actividadesTrue, $actividadesFalse);
         return view('seguimiento-actividades.actividades', compact('supervisorTurno', 'actividadesTrue', 'actividadesFalse', 'sedeId', 'turnoId'));
     }
 
-    public function guardarCalificacion(Request $request, $id)
+    public function guardarCalificacion(Request $request, $actividadId)
     {
-        $actividad = Actividades::findOrFail($id);
-        $actividad->calificacion = $request->input('calificacion');
-        $actividad->estado = false;
+        //dd($request->input('area_id'),$actividadId);
+        $actividad = Actividades::findOrFail($actividadId);
+        //$actividad->calificacion = $request->input('calificacion');
         $actividad->save();
+
+        $actividadArea = AreaActividad::where('actividad_id', $actividadId)
+                                      ->where('area_id', $request->input('area_id'))
+                                      ->firstOrFail();
+        $actividadArea->estado = false;
+        $actividadArea->calificacion = $request->input('calificacion');
+        $actividadArea->save();
 
         if ($request->hasFile('evidencias')) {
             foreach ($request->file('evidencias') as $file) {
@@ -209,7 +224,7 @@ class SeguimientoActividadesController extends Controller
 
         if ($turno) {
             $turno->turno->observacion = $request->input('observaciones');
-            $turno->turno->estado = false;
+            //$turno->turno->estado = false;
             $turno->turno->save();
         }
 

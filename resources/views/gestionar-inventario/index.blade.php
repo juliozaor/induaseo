@@ -39,7 +39,7 @@
                     <div class="input-container">
                         <input type="text" class="busqueda-input" id="busquedaInventarioInput" placeholder="Buscar...">
                     </div>
-                    <span class="registros-encontrados">Total: 0</span>
+                    <span class="registros-encontrados" id="totalInventarios">Total: 0</span>
                     <select class="registros-por-pagina" id="registrosInventarioPorPagina">
                         <option value="5">5</option>
                         <option value="10">10</option>
@@ -69,7 +69,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="tabla-paginacion"></div>
+                <div class="tabla-paginacion" id="inventariosPaginacion"></div>
             </div>
 
             <!-- Modal para crear/editar inventario -->

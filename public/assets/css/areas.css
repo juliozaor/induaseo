@@ -165,6 +165,12 @@ input:checked + .slider:before {
     margin-top: 20px;
 }
 
+.tabla-paginacion-mant {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
 .page-button {
     background-color: #4CAF50;
     color: white;

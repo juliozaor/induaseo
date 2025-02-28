@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Actividad;
+use App\Models\Actividades;
 use Illuminate\Http\Request;
 
 class ActividadController extends Controller
@@ -34,7 +34,7 @@ class ActividadController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Actividad $actividad)
+    public function show(Actividades $actividad)
     {
         //
     }
@@ -42,7 +42,7 @@ class ActividadController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Actividad $actividad)
+    public function edit(Actividades $actividad)
     {
         //
     }
@@ -50,7 +50,7 @@ class ActividadController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Actividad $actividad)
+    public function update(Request $request, Actividades $actividad)
     {
         //
     }
@@ -58,7 +58,7 @@ class ActividadController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Actividad $actividad)
+    public function destroy(Actividades $actividad)
     {
         //
     }

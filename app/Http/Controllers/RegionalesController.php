@@ -10,14 +10,19 @@ class RegionalesController extends Controller
 {
     public function index(Request $request)
     {
-        
+
         $buscar = $request->input('buscar');
+        $estado = $request->input('estado');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
 
         $query = Regionales::query();
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
+        }
+
+        if ($request->filled('estado')) {
+            $query->where('estado',$estado);
         }
 
         $regionales = $query->paginate($registrosPorPagina);
@@ -67,6 +72,21 @@ class RegionalesController extends Controller
     {
         $regional = Regionales::findOrFail($id);
         $regional->delete();
-        return response()->json(['message' => 'Regional eliminada correctamente'], 204);
+        return response()->json(['message' => 'Regional eliminada correctamente']);
+    }
+
+    public function verificarNombre(Request $request)
+    {
+        $nombre = strtolower($request->query('nombre'));
+        $id = $request->query('id');
+
+        $query = Regionales::whereRaw('LOWER(nombre) = ?', [$nombre]);
+        if ($id) {
+            $query->where('id', '!=', $id);
+        }
+
+        $exists = $query->exists();
+
+        return response()->json(['exists' => $exists]);
     }
 }

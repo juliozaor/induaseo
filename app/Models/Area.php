@@ -17,10 +17,10 @@ class Area extends Model
         'actualizador_id',
     ];
 
-    public function tareas()
-    {
-        return $this->hasMany(Tarea::class);
-    }
+    // public function tareas()
+    // {
+    //     return $this->hasMany(Tarea::class);
+    // }
 
     public function creador()
     {
@@ -35,5 +35,15 @@ class Area extends Model
     public function sede()
     {
         return $this->belongsTo(Sede::class, 'sede_id');
+    }
+
+    public function actividades()
+    {
+        return $this->belongsToMany(Actividades::class,'areas_actividades','area_id', 'actividad_id');
+    }
+
+    public function areasActividades()
+    {
+        return $this->hasMany(AreaActividad::class, 'area_id');
     }
 }

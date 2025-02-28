@@ -22,10 +22,35 @@ class ActividadesEvidenciasController extends Controller
     {
         $sede_id = $request->sede_id;
 
-        $turnos = SupervisorTurno::with(['supervisor', 'sede', 'turno.actividades'])
+        $turnos = SupervisorTurno::with(['supervisor', 'sede', 'turno', 'areas'])
             ->where('sede_id', $sede_id)
             ->get()
             ->map(function ($turno) {
+                $actividadesCompletadasPorTurno = $turno->areas
+                ->map(function($area) {
+                    $actividadesCompletadasPorArea = $area->area->areasActividades->where('estado', false)->count();
+                    $totalActividadesPorArea = $area->area->areasActividades->count();
+                    return [
+                        'actividades_completadas' => $actividadesCompletadasPorArea,
+                        'total_actividades' => $totalActividadesPorArea,
+                    ];
+
+                });
+
+                $totalActividadesCompletadas = $actividadesCompletadasPorTurno->sum('actividades_completadas');
+                $totalTotalActividades = $actividadesCompletadasPorTurno->sum('total_actividades');
+
+                return [
+                    'id' => $turno->id,
+                    'fecha' => $turno->fecha_inicio,
+                    'nombre_turno' => $turno->turno->nombre,
+                    'regional' => $turno->sede->regional->nombre,
+                    'actividades_completadas' => "$totalActividadesCompletadas/$totalTotalActividades",
+                    'supervisor' => $turno->supervisor->nombres . ' ' . $turno->supervisor->apellidos,
+                    'observaciones' => $turno->turno->observacion,
+                ];
+            });
+            /* ->map(function ($turno) {
                 $actividadesCompletadas = $turno->turno->actividades->where('estado', false)->count();
                 $totalActividades = $turno->turno->actividades->count();
                 return [
@@ -37,21 +62,25 @@ class ActividadesEvidenciasController extends Controller
                     'supervisor' => $turno->supervisor->nombres . ' ' . $turno->supervisor->apellidos,
                     'observaciones' => $turno->turno->observacion,
                 ];
-            });
+            }); */
+        //dd($turnos);
         return response()->json($turnos);
     }
 
     public function getTurnoDetalle($id)
     {
-        $turno = SupervisorTurno::with(['supervisor', 'sede', 'turno.actividades'])->findOrFail($id);
-        $actividades = $turno->turno->actividades->map(function ($actividad) {
+        $turno = SupervisorTurno::with(['supervisor', 'sede', 'turno', 'areas'])->findOrFail($id);
+        $actividades = $turno->areas->flatMap(function ($area) {
+            return $area->area->areasActividades->map(function ($actividad) {
             return [
-                'id' => $actividad->id,
-                'nombre' => $actividad->nombre,
-                'descripcion' => $actividad->descripcion,
+                'id' => $actividad->actividad->id,
+                'nombre_area' => $actividad->area->nombre,
+                'nombre' => $actividad->actividad->nombre,
+                'descripcion' => $actividad->actividad->descripcion,
                 'estado' => $actividad->estado,
                 'calificacion' => $actividad->calificacion,
             ];
+            });
         });
 
         return response()->json([

@@ -203,6 +203,11 @@
     width: 15px;
     cursor: pointer;
 }
+.icono-eliminar{
+    margin-left: 15px;
+    width: 17px;
+    cursor: pointer;
+}
 .icono-ver{
     width: 15px;
     cursor: pointer;

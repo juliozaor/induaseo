@@ -1,11 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\SupervisorTurno;
 use App\Models\Sede;
 use App\Models\Usuario;
+use App\Models\Area;
+use App\Models\TurnoArea;
 
 class SupervisorTurnoController extends Controller
 {
@@ -17,20 +20,32 @@ class SupervisorTurnoController extends Controller
 
     public function consultar(Request $request)
     {
-        $turnos = SupervisorTurno::with(['supervisor', 'sede', 'turno'])
-            ->where('sede_id', $request->sede_id)
-            ->get()
-            ->map(function ($turno) {
-                $turno->turno->actividades_count = $turno->turno->actividades()->count();
-                return $turno;
+        $sedeId = $request->input('sede_id');
+        $buscar = $request->input('buscar');
+        $registrosPorPagina = $request->input('registros_por_pagina', 10);
+
+        $query = SupervisorTurno::with(['supervisor', 'sede', 'turno', 'areas'])
+            ->where('sede_id', $sedeId);
+
+        if ($buscar) {
+            $query->whereHas('supervisor', function ($q) use ($buscar) {
+                $q->where('nombres', 'like', "%{$buscar}%")
+                    ->orWhere('apellidos', 'like', "%{$buscar}%");
             });
+        }
+
+        $turnos = $query->paginate($registrosPorPagina);
+
+        $turnos->getCollection()->transform(function ($turno) {
+            $turno->areas_count = $turno->areas()->count();
+            return $turno;
+        });
 
         return response()->json($turnos);
     }
 
     public function guardar(Request $request)
     {
-        
         $validatedData = $request->validate([
             'supervisor_id' => 'required|exists:usuarios,id',
             'sede_id' => 'required|exists:sedes,id',
@@ -39,9 +54,9 @@ class SupervisorTurnoController extends Controller
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
         ]);
 
-        SupervisorTurno::create($validatedData);
+        $turno = SupervisorTurno::create($validatedData);
 
-        return response()->json(['message' => 'Turno asignado con éxito']);
+        return response()->json(['message' => 'Turno asignado con éxito', 'turno_id' => $turno->id]);
     }
 
     public function actualizar(Request $request, $id)
@@ -68,7 +83,7 @@ class SupervisorTurnoController extends Controller
 
     public function getSupervisores()
     {
-        $supervisores = Usuario::whereHas('roles', function($query) {
+        $supervisores = Usuario::whereHas('roles', function ($query) {
             $query->where('name', 'supervisor');
         })->get();
         return response()->json($supervisores);
@@ -82,12 +97,22 @@ class SupervisorTurnoController extends Controller
 
     public function getTareas($id)
     {
-        $turno = SupervisorTurno::with(['supervisor', 'sede', 'turno.actividades'])->findOrFail($id);
+        $turno = SupervisorTurno::with(['supervisor', 'sede', 'turno.areas'])->findOrFail($id);
         return response()->json([
             'supervisor' => $turno->supervisor,
             'sede' => $turno->sede,
-            'tareas' => $turno->turno->actividades
+            'tareas' => $turno->turno->areas
         ]);
+    }
+
+    public function getAreas($turnoId)
+    {
+        $turno = SupervisorTurno::with('areas')->findOrFail($turnoId);
+        $areas = $turno->areas->map(function ($turnoArea) {
+            return Area::find($turnoArea->area_id);
+        });
+
+        return response()->json($areas);
     }
 
     public function validarAsignacion(Request $request)
@@ -98,5 +123,23 @@ class SupervisorTurnoController extends Controller
             ->exists();
 
         return response()->json(['exists' => $exists]);
+    }
+
+    public function destroy($id)
+    {
+        $turno = SupervisorTurno::findOrFail($id);
+        $turno->delete();
+
+        $turnoAreas = TurnoArea::where('turno_id', $id)->get();
+
+        if ($turnoAreas) {
+            foreach ($turnoAreas as $turnoArea) {
+                $turnoArea->delete();
+            }
+            //$turnoAreas->delete();
+        }
+
+
+        return response()->json(['message' => 'Turno asignado eliminado con éxito.']);
     }
 }

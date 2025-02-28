@@ -18,8 +18,20 @@ class ClientesController extends Controller
 
     public function consultar(Request $request)
     {
-        // Obtener los datos de clientes con sus relaciones
-        $clientes = Cliente::with(['ciudad.pais', 'tipoDocumento', 'sectorEconomico'])->get();
+        $query = Cliente::with(['ciudad.pais', 'tipoDocumento', 'sectorEconomico']);
+
+        if ($request->has('estado') && $request->estado !== '') {
+            $query->where('estado', $request->estado);
+        }
+
+        if ($request->has('buscar') && $request->buscar !== '') {
+            $query->where(function($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->buscar . '%')
+                  ->orWhere('numero_documento', 'like', '%' . $request->buscar . '%');
+            });
+        }
+
+        $clientes = $query->paginate($request->registros_por_pagina);
 
         return response()->json($clientes);
     }
@@ -112,5 +124,13 @@ class ClientesController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['errors' => $e->errors()], 422);
         }
+    }
+
+    public function destroy($id)
+    {
+        $cliente = Cliente::findOrFail($id);
+        $cliente->delete();
+
+        return response()->json(['message' => 'Cliente eliminado correctamente.']);
     }
 }

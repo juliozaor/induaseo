@@ -13,8 +13,9 @@
     function cargarDatos(page = 1) {
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
+        const estado = estadoFiltro.value;
 
-        fetch(`../regionales?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
+        fetch(`../regionales?page=${page}&buscar=${buscar}&estado=${estado}&registros_por_pagina=${registrosPorPagina}`, {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -39,7 +40,10 @@
                     <td><div class="${estadoClase}">${regional.estado ? 'Activo' : 'Inactivo'}</div></td>
                     <td>${formatDate(regional.updated_at)}</td>
                     <td>${formatDate(regional.created_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${regional.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${regional.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${regional.id}">
+                    </td>
                 `;
                     tablaRegionalesBody.appendChild(row);
                 });
@@ -47,7 +51,7 @@
                 // Mostrar total de registros
                 document.querySelector('.registros-encontrados').textContent = `Total: ${data.total}`;
 
-                
+
 
                 // Generar paginación
                 const { current_page, last_page } = data;
@@ -107,6 +111,7 @@
     consultarBtn.addEventListener("click", () => cargarDatos(1));
     registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
     busquedaInput.addEventListener("input", () => cargarDatos(1));
+    estadoFiltro.addEventListener("change", () => cargarDatos(1));
 
     // Modal functionality
     const modal = document.getElementById("createRegionalModal");
@@ -150,7 +155,8 @@
                     }
                     return response.json();
                 })
-                .then((regional) => {                    
+                .then((regional) => {
+                    console.log(regional)
                     document.getElementById("nombre").value = regional.nombre;
                     document.getElementById("estadoToggle").checked = regional.estado === 1;
                     document.querySelector("label[for='estadoToggle']").textContent = regional.estado ? "Activo" : "Inactivo";
@@ -159,6 +165,37 @@
 
                 })
                 .catch((error) => console.error("Error al cargar los datos de la regional:", error));
+        }
+
+        if (event.target.classList.contains("icono-eliminar")) {
+            const regionalId = event.target.getAttribute("data-id");
+            if (!regionalId) {
+                console.error("Error: No se encontró el ID de la regional en el botón.");
+                return;
+            }
+
+            if (confirm("¿Estás seguro de que deseas eliminar esta regional?")) {
+                fetch(`../regionales/${regionalId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar la regional.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    showAlertModal(
+                        "ok.png", // Ruta del ícono de éxito
+                        data.message // Mensaje de éxito
+                    );
+                    cargarDatos(1);
+                })
+                .catch(error => console.error("Error al eliminar la regional:", error));
+            }
         }
     });
 
@@ -170,6 +207,27 @@
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
+        const nombre = document.getElementById("nombre").value.trim();
+        const urlVerificar = `../regionales/verificar-nombre?nombre=${encodeURIComponent(nombre)}&id=${editMode ? regionalId : ''}`;
+
+        fetch(urlVerificar, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.exists) {
+                document.getElementById("errorNombreDuplicado").textContent = "La regional que intenta ingresar ya existe.";
+            } else {
+                guardarRegional();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    function guardarRegional() {
         const url = editMode ? `../regionales/actualizar/${regionalId}` : `../regionales/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -191,7 +249,7 @@
                 }
                 return response.json();
             })
-            .then((data) => {                
+            .then((data) => {
                 if (data.errors) {
                     showErrors(data.errors);
                 } else {
@@ -210,7 +268,7 @@
                     console.error("Error al guardar la regional:", error);
                 }
             });
-    });
+    }
 
     function showErrors(errors) {
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');

@@ -9,10 +9,11 @@ class Actividades extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'descripcion', 'turno_id', 'calificacion'];
+    protected $fillable = ['nombre', 'descripcion', 'calificacion', 'estado'];
 
-    public function turno()
+    // Relación de muchos a muchos con Area
+    public function areas()
     {
-        return $this->belongsTo(Turno::class);
+        return $this->belongsToMany(Area::class, 'areas_actividades', 'actividad_id', 'area_id');
     }
 }

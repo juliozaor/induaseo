@@ -9,11 +9,13 @@
     const busquedaInput = document.getElementById("busquedaInput");
     const registrosPorPaginaSelect = document.getElementById("registrosPorPagina");
     const openModalBtn = document.getElementById("openModalBtn"); // Ensure this is defined
+    const estadoFiltro = document.getElementById("estadoFiltro");
 
     function cargarDatos(page = 1) {
         const tablaSeleccionada = tablaMaestraSelect.value;
         const buscar = busquedaInput.value;
         const registrosPorPagina = registrosPorPaginaSelect.value;
+        const estado = estadoFiltro.value;
 
         if (!tablaSeleccionada) {
             return;
@@ -23,6 +25,7 @@
         formData.append('tabla', tablaSeleccionada);
         formData.append('buscar', buscar);
         formData.append('registros_por_pagina', registrosPorPagina);
+        formData.append('estado', estado);
 
         fetch(`../admin/maestras/consultar?page=${page}`, {
                 method: 'POST',
@@ -60,7 +63,10 @@
                     <td>${formatDate(cliente.created_at)}</td>
                     <td>${cliente.actualizador?.nombres || 'N/A'}</td>
                     <td>${formatDate(cliente.updated_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${cliente.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${cliente.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${cliente.id}">
+                    </td>
                 `;
                     tablaClientesBody.appendChild(row);
                 });
@@ -128,6 +134,7 @@
     consultarBtn.addEventListener("click", () => cargarDatos(1));
     registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
     busquedaInput.addEventListener("input", () => cargarDatos(1));
+    estadoFiltro.addEventListener("change", () => cargarDatos(1));
 
     // Modal functionality
     const modal = document.getElementById("createClientModal");
@@ -136,11 +143,13 @@
     const clientForm = document.getElementById("clientForm");
     let editMode = false;
     let clientId = null;
-
+    let originalId = '';
 
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
         modal.style.display = "flex";
+        errorNumeroIdentificacion.textContent = ''; // Clear error message when opening the modal
+        identificacionValida = true; // Reset identificacionValida when opening the modal
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -148,6 +157,8 @@
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
+            errorNumeroIdentificacion.textContent = ''; // Clear error message when closing the modal
+            identificacionValida = true; // Reset identificacionValida when closing the modal
         }
     });
 
@@ -173,6 +184,7 @@
                     return response.json();
                 })
                 .then((cliente) => {
+                    originalId = cliente.numero_documento;
                     document.getElementById("tipoIdentificacion").value = cliente.tipo_documento_id;
                     document.getElementById("numeroIdentificacion").value = cliente.numero_documento;
                     document.getElementById("nombre").value = cliente.nombre;
@@ -189,16 +201,51 @@
                 })
                 .catch((error) => console.error("Error al cargar los datos del cliente:", error));
         }
+
+        if (event.target.classList.contains("icono-eliminar")) {
+            const clientId = event.target.getAttribute("data-id");
+            if (!clientId) {
+                console.error("Error: No se encontró el ID del cliente en el botón.");
+                return;
+            }
+
+            if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
+                fetch(`../clientes/${clientId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el cliente.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    cargarDatos(1); // Reload the table after deletion
+                })
+                .catch(error => console.error("Error al eliminar el cliente:", error));
+            }
+        }
     });
 
     // Cerrar modal
     document.getElementById("close").addEventListener("click", function() {
         modal.style.display = "none";
         resetForm();
+        errorNumeroIdentificacion.textContent = ''; // Clear error message when closing the modal
+        identificacionValida = true; // Reset identificacionValida when closing the modal
     });
 
     // Guardar cambios
     modalActionBtn.addEventListener("click", function() {
+        if (!identificacionValida) {
+            alert('¡La identificación ya existe, por favor, ingrese una diferente!');
+            return; // No permitir crear cliente si la identificación no es válida
+        }
+
         const url = editMode ? `../clientes/actualizar/${clientId}` : `../clientes/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -230,7 +277,6 @@
                     showErrors(data.errors);
                 } else {
                     showAlertModal(
-
                         "ok.png", // Ruta del ícono de éxito
                         data.message // Mensaje de éxito
                     );
@@ -285,6 +331,7 @@
         modalActionBtn.textContent = "Crear Cliente";
         editMode = false;
         clientId = null;
+        originalId = '';
     }
 
     // Cargar paises
@@ -378,10 +425,35 @@
 
 
     const numeroIdentificacionInput = document.getElementById("numeroIdentificacion");
-    const celular = document.getElementById("celular");
+    const errorNumeroIdentificacion = document.getElementById("errorNumeroIdentificacion");
+    let identificacionValida = true;
+
     numeroIdentificacionInput.addEventListener("input", function() {
         this.value = this.value.replace(/[^0-9]/g, '');
+        checkNumeroIdentificacion(this.value);
     });
+
+    function checkNumeroIdentificacion(numeroIdentificacion) {
+        if (numeroIdentificacion.length > 0 && numeroIdentificacion !== originalId) {
+            fetch(`../clientes/validar-identificacion?numero_identificacion=${numeroIdentificacion}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        errorNumeroIdentificacion.textContent = 'La identificación ingresada ya existe.';
+                        identificacionValida = false;
+                    } else {
+                        errorNumeroIdentificacion.textContent = '';
+                        identificacionValida = true;
+                    }
+                })
+                .catch(error => console.error('Error al verificar la identificación:', error));
+        } else {
+            errorNumeroIdentificacion.textContent = '';
+            identificacionValida = true;
+        }
+    }
+
+    const celular = document.getElementById("celular");
     celular.addEventListener("input", function() {
         this.value = this.value.replace(/[^0-9]/g, '');
     });

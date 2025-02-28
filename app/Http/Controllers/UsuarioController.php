@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 use App\Models\TiposDocumento;
+use App\Models\User; // Añadir esta línea para importar el modelo User
 
 class UsuarioController extends Controller
 {
@@ -120,17 +122,38 @@ class UsuarioController extends Controller
                 'estado' => 'required|boolean', // Validar estado
             ]);
 
-            $usuario->update([
-                'tipo_documento_id' => $request->tipoIdentificacion,
-                'numero_documento' => $request->numeroIdentificacion,
-                'nombres' => $request->nombres,
-                'apellidos' => $request->apellidos,
-                'fecha_nacimiento' => $request->fechaNacimiento,
-                'telefono' => $request->telefono,
-                'email' => $request->correo,
-                'cargo' => $request->cargo,
-                'estado' => $request->estado, // Actualizar estado
-            ]);
+            if ($request->correo !== $usuario->correo) {
+                $password = Str::random(8); // Generar una contraseña temporal
+                $usuario->update([
+                    'tipo_documento_id' => $request->tipoIdentificacion,
+                    'numero_documento' => $request->numeroIdentificacion,
+                    'nombres' => $request->nombres,
+                    'apellidos' => $request->apellidos,
+                    'fecha_nacimiento' => $request->fechaNacimiento,
+                    'telefono' => $request->telefono,
+                    'email' => $request->correo,
+                    'cargo' => $request->cargo,
+                    'password' => Hash::make($password),
+                    'estado' => $request->estado, // Actualizar estado
+                ]);
+
+                // Enviar correo con la contraseña temporal
+                Mail::to($usuario->email)->send(new \App\Mail\UsuarioCreado($usuario, $password));
+            } else {
+                $usuario->update([
+                    'tipo_documento_id' => $request->tipoIdentificacion,
+                    'numero_documento' => $request->numeroIdentificacion,
+                    'nombres' => $request->nombres,
+                    'apellidos' => $request->apellidos,
+                    'fecha_nacimiento' => $request->fechaNacimiento,
+                    'telefono' => $request->telefono,
+                    'email' => $request->correo,
+                    'cargo' => $request->cargo,
+                    'estado' => $request->estado, // Actualizar estado
+                ]);
+            }
+
+
 
             // Actualizar rol del usuario
             $usuario->roles()->sync([$request->perfil]);
@@ -159,4 +182,38 @@ class UsuarioController extends Controller
         $tiposDocumentos = TiposDocumento::all();
         return response()->json($tiposDocumentos);
     }
+
+    // Profile
+    public function editProfile()
+    {
+        $user = Auth::user();
+        return view('profile.edit', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'nombres' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        if ($request->email !== $user->email) {
+            
+        }
+
+        $user->nombres = $request->nombres; // Cambiar 'name' a 'nombres'
+        $user->email = $request->email;
+
+        if ($request->password) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('profile.edit')->with('success', 'Cuenta configurada correctamente.');
+    }
+
 }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Insumos extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'nombre_elemento',
         'marca',
@@ -42,5 +42,10 @@ class Insumos extends Model
     public function actualizador()
     {
         return $this->belongsTo(Usuario::class, 'actualizador_id');
+    }
+
+    public function imagenes()
+    {
+        return $this->hasMany(ImagenInventario::class, 'id');
     }
 }

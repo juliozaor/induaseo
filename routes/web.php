@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActividadController;
 use App\Http\Controllers\ActividadesEvidenciasController;
 use App\Http\Controllers\AreaController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,9 @@ use App\Http\Controllers\InformacionController;
 use App\Http\Controllers\InformacionNovedadesController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RegionalesController;
+use App\Http\Controllers\ActividadesController;
+use App\Http\Controllers\AreaActividadController;
+use App\Http\Controllers\TurnoAreaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +73,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/gestionar-inventario/guardar', [GestionarInventarioController::class, 'guardar'])->name('gestionar.inventario.guardar');
     Route::post('/gestionar-inventario/actualizar/{id}', [GestionarInventarioController::class, 'actualizar'])->name('gestionar.inventario.actualizar');
     Route::get('/gestionar-inventario/obtener', [GestionarInventarioController::class, 'obtenerInventario'])->name('gestionar.inventario.obtener');
+    Route::delete('/gestionar-inventario/eliminar/{id}', [GestionarInventarioController::class, 'destroy'])->name('gestionar.inventario.destroy');
     Route::get('/sedes', [GestionarInventarioController::class, 'getSedes'])->name('sedes.obtener');
     Route::get('/obtener-sede', [SedeController::class, 'obtenerSede'])->name('obtener.sede');
     Route::get('/inventario', [SeguimientoActividadesController::class, 'inventario'])->name('inventario');
@@ -78,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/informacion/guardar', [InformacionController::class, 'guardar'])->name('informacion.guardar');
     Route::get('/informacion/obtener', [InformacionController::class, 'obtenerInformacion'])->name('informacion.obtener');
     Route::put('/informacion/actualizar/{id}', [InformacionController::class, 'actualizar'])->name('informacion.actualizar');
+    Route::delete('/informacion/eliminar/{id}', [InformacionController::class, 'destroy'])->name('informacion.destroy');
     Route::get('/actividades-evidencias', [ActividadesEvidenciasController::class, 'index'])->name('actividades.evidencias.index');
     Route::get('/actividades-evidencias/consultar', [ActividadesEvidenciasController::class, 'consultar'])->name('actividades.evidencias.consultar');
     Route::get('/actividades-evidencias/detalle/{id}', [ActividadesEvidenciasController::class, 'getTurnoDetalle'])->name('actividades.evidencias.detalle');
@@ -87,8 +93,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/reportes', [ReporteController::class, 'index'])->name('reportes.index');
     Route::get('/reportes/consultar', [ReporteController::class, 'consultar'])->name('reportes.consultar');
+    Route::get('/reportes/consultar-turnos', [ReporteController::class, 'consultarTurnos'])->name('reportes.consultar-turnos');
+    Route::get('/reportes/consultar-areas', [ReporteController::class, 'consultarAreas'])->name('reportes.consultar-areas');
+    Route::get('/reportes/consultar-actividades', [ReporteController::class, 'consultarActividades'])->name('reportes.consultar-actividades');
     Route::get('/reportes/activos', [ReporteController::class, 'activos'])->name('reportes.activos');
     Route::get('/admin/maestras/regionales', [MaestrasController::class, 'clientes'])->name('maestras.regionales');
+
     Route::get('/regionales', [RegionalesController::class, 'index'])->name('regionales.index');
     Route::post('/regionales/guardar', [RegionalesController::class, 'store'])->name('regionales.store');
     Route::get('/regional', [RegionalesController::class, 'show'])->name('regionales.show');
@@ -97,6 +107,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/alertas', [AlertasController::class, 'index'])->name('alertas.index');
     Route::post('/alertas/consultar', [AlertasController::class, 'consultar'])->name('alertas.consultar');
+
+    Route::get('/actividades', [ActividadesController::class, 'index'])->name('actividades.index');
+    Route::post('/actividades/guardar', [ActividadesController::class, 'store'])->name('actividades.store');
+    Route::get('/actividad', [ActividadesController::class, 'show'])->name('actividad.show');
+    Route::post('/actividades/actualizar/{id}', [ActividadesController::class, 'update'])->name('actividades.update');
+    Route::delete('/actividades/{id}', [ActividadesController::class, 'destroy'])->name('actividades.destroy');
+
+    Route::get('/profile', [UsuarioController::class, 'editProfile'])->name('profile.edit');
+    Route::put('/profile', [UsuarioController::class, 'updateProfile'])->name('profile.update');
 });
 
 Route::get('/paises', [MaestrasController::class, 'obtenerPaises'])->name('obtener.paises');
@@ -109,20 +128,23 @@ Route::get('/maestras/clientes', [MaestrasController::class, 'clientes'])->name(
 Route::post('/clientes/guardar', [ClientesController::class, 'guardar'])->name('clientes.guardar');
 Route::get('/clientes', [ClientesController::class, 'obtenerCliente'])->name('clientes.obtener');
 Route::put('/clientes/actualizar/{id}', [ClientesController::class, 'actualizarCliente'])->name('clientes.actualizar');
+Route::delete('/clientes/{id}', [ClientesController::class, 'destroy'])->name('clientes.destroy');
 
 Route::get('/maestras/sedes', [MaestrasController::class, 'clientes'])->name('maestras.sedes');
 Route::post('/sedes/guardar', [SedeController::class, 'guardar'])->name('sedes.guardar');
 Route::put('/sedes/actualizar/{id}', [SedeController::class, 'actualizar'])->name('sedes.actualizar');
+Route::delete('/sedes/{id}', [SedeController::class, 'destroy'])->name('sedes.destroy');
 
 Route::get('/maestras/turnos', [MaestrasController::class, 'clientes'])->name('maestras.turnos');
 Route::post('/turnos/guardar', [TurnoController::class, 'guardar'])->name('turnos.guardar');
 Route::get('/turno', [TurnoController::class, 'obtenerTurno'])->name('turno.obtener');
 Route::put('/turnos/actualizar/{id}', [TurnoController::class, 'actualizar'])->name('turnos.actualizar');
+Route::delete('/turnos/{id}', [TurnoController::class, 'destroy'])->name('turnos.destroy');
 
 Route::get('/frecuencias', [MaestrasController::class, 'obtenerFrecuencias'])->name('obtener.frecuencias');
-Route::get('/actividades/{turnoId}', [TurnoController::class, 'obtenerActividades'])->name('obtener.actividades');
-Route::delete('/actividades/{id}', [TurnoController::class, 'eliminarActividad'])->name('eliminar.actividad');
-Route::post('/actividades', [TurnoController::class, 'guardarActividad'])->name('guardar.actividad');
+Route::get('/actividades/{areaId}', [AreaController::class, 'obtenerActividades'])->name('obtener.actividades');
+Route::delete('/actividades/{id}', [AreaController::class, 'eliminarActividad'])->name('eliminar.actividad');
+Route::post('/guardar-actividad', [AreaController::class, 'guardarActividad'])->name('guardar.actividad');
 
 Route::get('/turnos', [TurnoController::class, 'obtenerTurnos'])->name('turnos.obtener');
 
@@ -138,6 +160,8 @@ Route::get('/supervisores', [SupervisorTurnoController::class, 'getSupervisores'
 Route::get('/asignar-turnos/{id}', [SupervisorTurnoController::class, 'getTurno']);
 Route::put('/asignar-turnos/actualizar/{id}', [SupervisorTurnoController::class, 'actualizar']);
 Route::get('/asignar-turnos/tareas/{id}', [SupervisorTurnoController::class, 'getTareas'])->name('asignar.turnos.tareas');
+Route::get('/asignar-turnos/areas/{turnoId}', [SupervisorTurnoController::class, 'getAreas'])->name('asignar.turnos.areas');
+Route::delete('/asignar-turnos/eliminar/{id}', [SupervisorTurnoController::class, 'destroy'])->name('asignar.turnos.destroy');
 
 Route::get('/areas', [AreaController::class, 'index'])->name('areas.index');
 Route::post('/areas/guardar', [AreaController::class, 'store'])->name('areas.store');
@@ -148,7 +172,6 @@ Route::get('/tareas/{areaId}', [AreaController::class, 'obtenerTareas'])->name('
 Route::post('/tareas', [AreaController::class, 'guardarTarea'])->name('areas.tareas.store');
 Route::delete('/tareas/{id}', [AreaController::class, 'eliminarTarea'])->name('areas.tareas.destroy');
 
-
 Route::post('/asignar-turnos/guardar', [SupervisorTurnoController::class, 'guardar'])->name('asignar.turnos.guardar');
 Route::post('/asignar-turnos/validar', [SupervisorTurnoController::class, 'validarAsignacion'])->name('asignar.turnos.validar');
 
@@ -156,10 +179,12 @@ Route::post('/activos/guardar', [ActivosController::class, 'guardar'])->name('ac
 Route::put('/activos/actualizar/{id}', [ActivosController::class, 'actualizar'])->name('activos.actualizar');
 Route::get('/activo', [ActivosController::class, 'obtenerActivo'])->name('activo.obtener');
 Route::get('/activos', [ActivosController::class, 'obtenerActivos'])->name('activos.obtener');
+Route::delete('/activos/{id}', [ActivosController::class, 'destroy'])->name('activos.destroy');
 
 Route::post('/gestionar-activos/guardar', [GestionarActivosController::class, 'guardar'])->name('gestionar.activos.guardar');
 Route::put('/gestionar-activos/actualizar/{id}', [GestionarActivosController::class, 'actualizar'])->name('gestionar.activos.actualizar');
 Route::get('/gestionar-activo/consultar', [GestionarActivosController::class, 'obtenerActivo'])->name('gestionar.activo.obtener');
+Route::delete('/gestionar-activos/eliminar/{id}', [GestionarActivosController::class, 'destroy'])->name('gestionar.activos.destroy');
 
 Route::post('/admin/maestras/consultar', [MaestrasController::class, 'consultar'])->name('maestras.consultar');
 
@@ -172,8 +197,7 @@ Route::post('/insumos/guardar', [InsumosController::class, 'guardar'])->name('in
 Route::put('/insumos/actualizar/{id}', [InsumosController::class, 'actualizar'])->name('insumos.actualizar');
 Route::get('/insumos', [InsumosController::class, 'obtener'])->name('insumos.obtener');
 Route::get('/insumos/consultar', [InsumosController::class, 'consultar'])->name('insumos.consultar');
-
-
+Route::delete('/insumos/{id}', [InsumosController::class, 'destroy'])->name('insumos.destroy');
 
 // Add routes for clientes and sedes
 Route::get('/get-clientes', [GestionarActivosController::class, 'getClientes']);
@@ -193,7 +217,7 @@ Route::get('/inventario-turno', [SeguimientoActividadesController::class, 'obten
 Route::get('/informacion-novedades', [InformacionNovedadesController::class, 'index'])->name('informacion.novedades.index');
 Route::get('/informacion-novedades/buscar', [InformacionNovedadesController::class, 'buscarInformacion'])->name('informacion.novedades.buscar');
 
-Route::post('/guardar-calificacion/{id}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
+Route::post('/guardar-calificacion/{actividad}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
 
 Route::post('/finalizar-turno', [SeguimientoActividadesController::class, 'finalizarTurno'])->name('finalizarTurno');
 
@@ -238,3 +262,24 @@ Route::get('/items', [GestionarInventarioController::class, 'obtenerItems'])->na
 
 // Add route to fetch item details
 Route::get('/obtener-item/{id}', [GestionarInventarioController::class, 'obtenerItem'])->name('item.obtener');
+
+// Add route to handle identification number validation
+Route::get('/clientes/validar-identificacion', [MaestrasController::class, 'validarIdentificacion']);
+
+// Add route to verify name
+Route::get('/regionales/verificar-nombre', [RegionalesController::class, 'verificarNombre'])->name('regionales.verificar.nombre');
+Route::get('/sedes/verificar-nombre', [SedeController::class, 'verificarNombre'])->name('sedes.verificar.nombre');
+Route::get('/areas/verificar-nombre', [AreaController::class, 'verificarNombre'])->name('areas.verificar.nombre');
+Route::get('/actividades/verificar-nombre', [ActividadesController::class, 'verificarNombre'])->name('actividades.verificar.nombre');
+
+// Add routes for AreaActividadController
+Route::post('/areas_actividades', [AreaActividadController::class, 'store'])->name('areas_actividades.store');
+Route::delete('/areas_actividades/{id}', [AreaActividadController::class, 'destroy'])->name('areas_actividades.destroy');
+
+// Add routes for TurnoAreaController
+Route::post('/turnos_areas/area', [TurnoAreaController::class, 'store'])->name('turnos_areas.store');
+Route::delete('/turnos_areas/eliminar/{turnoId}', [TurnoAreaController::class, 'destroy'])->name('turnos_areas.destroy');
+Route::delete('/turnos_areas/eliminar/{turnoId}/{areaId}', [TurnoAreaController::class, 'destroyByArea'])->name('turnos_areas.destroyByArea');
+
+// Add route to fetch areas by sede
+Route::get('/areas-por-sede/{sedeId}', [AreaController::class, 'obtenerAreasPorSede'])->name('areas.por.sede');

@@ -25,11 +25,14 @@
         {{-- <select class="filtro form-control" id="filtroCliente" name="filtroCliente" >
             <option value="">Todos los clientes</option>
         </select>
-        <select class="filtro form-control" id="filtroEstado">
-            <option value="">Todos los estados</option>
-            <option value="1">Activo</option>
-            <option value="0">Inactivo</option>
-        </select> --}}
+         --}}
+         {{-- <div class="input-container2">
+            <select id="estadoFiltro" class="busqueda-select">
+                <option value="">Todos los estados</option>
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+            </select>
+        </div> --}}
         <span class="registros-encontrados">Total: 0</span>
         <select class="registros-por-pagina" id="registrosPorPagina">
             <option value="5">5</option>
@@ -86,6 +89,7 @@
                         <label for="nombre">Nombre:</label>
                         <input type="text" id="nombre" name="nombre" class="form-control" required>
                         <span class="error-message" id="errorNombre"></span>
+                        <span class="error-message" id="nombreExistsError"></span>
                     </div>
                     <div class="col-3">
                         <label for="cliente">Cliente:</label>

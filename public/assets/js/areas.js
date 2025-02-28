@@ -15,11 +15,13 @@
     const clienteFiltro = document.getElementById("clienteFiltro");
     const sedeFiltro = document.getElementById("sedeFiltro");
     const estadoFiltro = document.getElementById("estadoFiltro");
-    /* const tareaSection = document.getElementById("tareaSection"); */
-    const nuevaTareaInput = document.getElementById("nuevaTarea");
-    const agregarTareaBtn = document.getElementById("agregarTareaBtn");
-    const tablaTareasBody = document.querySelector("#tablaTareas tbody");
-    const descripcionTareaInput = document.getElementById("descripcionTarea");
+    const actividadSection = document.getElementById("actividadSection");
+    const nuevaActividadInput = document.getElementById("nuevaActividad");
+    const agregarActividadBtn = document.getElementById("agregarActividadBtn");
+    const tablaActividadesBody = document.querySelector("#tablaActividades tbody");
+    const descripcionActividadInput = document.getElementById("descripcionActividad");
+
+    const actividadSelect = document.getElementById("actividadSelect");
 
     let clienteArr = [];
     let sedeArr = [];
@@ -88,60 +90,92 @@
             .catch(error => console.error('Error al cargar sedes:', error));
     }
 
-    function cargarTareas(areaId) {
-        fetch(`../tareas/${areaId}`)
+    function cargarActividades(areaId) {
+        fetch(`../actividades/${areaId}`)
             .then(response => response.json())
             .then(data => {
-                tablaTareasBody.innerHTML = '';
+                tablaActividadesBody.innerHTML = '';
                 if (data.length > 0) {
-                    data.forEach(tarea => {
+                    data.forEach(actividad => {
                         const row = document.createElement("tr");
                         row.innerHTML = `
-                            <td>${tarea.id}</td>
-                            <td>${tarea.nombre}</td>
-                            <td>${tarea.descripcion}</td>
-                            <td><button class="btn-eliminar" data-id="${tarea.id}">Eliminar</button></td>
+                            <td>${actividad.id}</td>
+                            <td>${actividad.nombre}</td>
+                            <td><button class="btn-eliminar" data-id="${actividad.id}">Eliminar</button></td>
                         `;
-                        tablaTareasBody.appendChild(row);
+                        tablaActividadesBody.appendChild(row);
                     });
                 } else {
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td colspan="4">No se encontraron tareas.</td>
+                        <td colspan="3">No se encontraron actividades.</td>
                     `;
-                    tablaTareasBody.appendChild(row);
+                    tablaActividadesBody.appendChild(row);
                 }
             })
             .catch(error => {
-                console.error('Error al cargar tareas:', error);
-                tablaTareasBody.innerHTML = `
+                console.error('Error al cargar actividades:', error);
+                tablaActividadesBody.innerHTML = `
                     <tr>
-                        <td colspan="4">No se encontraron tareas.</td>
+                        <td colspan="3">No se encontraron actividades.</td>
                     </tr>
                 `;
             });
     }
 
-    function agregarTarea(areaId, nombreTarea, descripcionTarea) {
-        fetch(`../tareas`, {
+    function cargarActividadesSelect() {
+        fetch(`../actividades`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.data);
+                actividadSelect.innerHTML = '<option value="">Seleccione una actividad</option>';
+                data.data.forEach(actividad => {
+                    const option = document.createElement("option");
+                    option.value = actividad.id;
+                    option.textContent = actividad.nombre;
+                    actividadSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar actividades:', error));
+    }
+
+    /* function agregarActividad(areaId, nombreActividad, descripcionActividad) {
+        fetch(`../guardar-actividad`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ area_id: areaId, nombre: nombreTarea, descripcion: descripcionTarea })
+            body: JSON.stringify({ area_id: areaId, nombre: nombreActividad, descripcion: descripcionActividad })
         })
         .then(response => response.json())
         .then(data => {
-            cargarTareas(areaId);
-            nuevaTareaInput.value = '';
-            descripcionTareaInput.value = '';
+            cargarActividades(areaId);
+            nuevaActividadInput.value = '';
+            descripcionActividadInput.value = '';
         })
-        .catch(error => console.error('Error al agregar tarea:', error));
+        .catch(error => console.error('Error al agregar actividad:', error));
+    } */
+
+    function agregarActividad(areaId, actividadId) {
+        fetch(`../areas_actividades`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ area_id: areaId, actividad_id: actividadId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            cargarActividades(areaId);
+            actividadSelect.value = '';
+        })
+        .catch(error => console.error('Error al agregar actividad:', error));
     }
 
-    function eliminarTarea(id) {
-        fetch(`../tareas/${id}`, {
+    function eliminarActividad(id) {
+        fetch(`../actividades/${id}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -149,9 +183,9 @@
         })
         .then(response => response.json())
         .then(data => {
-            cargarTareas(areaId);
+            cargarActividades(areaId);
         })
-        .catch(error => console.error('Error al eliminar tarea:', error));
+        .catch(error => console.error('Error al eliminar actividad:', error));
     }
 
     function cargarDatos(page = 1) {
@@ -185,17 +219,18 @@
                     <td>${area.nombre}</td>
                     <td>${area.sede.cliente.nombre}</td>
                     <td>${area.sede.nombre}</td>
+                    <td>${area.actividades.length}</td>
                     <td><div class="${estadoClase}">${area.estado ? 'Activo' : 'Inactivo'}</div></td>
                     <td>${formatDate(area.updated_at)}</td>
                     <td>${area.actualizador?.nombres || 'N/A'}</td>
                     <td>${area.creador?.nombres || 'N/A'}</td>
                     <td>${formatDate(area.created_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${area.id}"></td>
+                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${area.id}"><img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${area.id}"></td>
                 `;
                     tablaAreasBody.appendChild(row);
                 });
                 console.log(data);
-                
+
 
                 // Mostrar total de registros
                 document.querySelector('.registros-encontrados').textContent = `Total: ${data.total}`;
@@ -281,6 +316,8 @@
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
         modal.style.display = "flex";
+        resetForm();
+        cargarActividadesSelect();
     });
 
     // Cerrar el modal al hacer clic fuera de él
@@ -321,12 +358,29 @@
                     document.getElementById("estadoToggle").checked = area.estado === 1;
                     document.querySelector("label[for='estadoToggle']").textContent = area.estado ? "Activo" : "Inactivo";
 
-                   /*  tareaSection.style.display = "block";
-                    cargarTareas(area.id); */
+                    document.getElementById("nombre").disabled = false; // Enable the input for the area name
                     modal.style.display = "flex";
 
+                    // Store the original name to exclude it from the verification
+                    document.getElementById("nombre").setAttribute("data-original-name", area.nombre);
+
+                    // Make actividadSection visible and load activities
+                    actividadSection.style.display = "block";
+                    cargarActividades(area.id);
+                    cargarActividadesSelect(); // Cargar actividades en el select
                 })
                 .catch((error) => console.error("Error al cargar los datos del área:", error));
+        }
+    });
+
+    document.addEventListener("click", function(event) {
+        if (event.target.classList.contains("icono-eliminar")) {
+            const areaId = event.target.getAttribute("data-id");
+            if (areaId) {
+                if (confirm("¿Estás seguro de que deseas eliminar esta área?")) {
+                    eliminarArea(areaId);
+                }
+            }
         }
     });
 
@@ -340,14 +394,18 @@
     modalActionBtn.addEventListener("click", function() {
         const url = editMode ? `../areas/actualizar/${areaId}` : `../areas/guardar`;
         const method = editMode ? "PUT" : "POST";
+        const nombreExistente = document.getElementById("nombreExistente");
+
+        if (nombreExistente.style.display === "block") {
+            showAlertModal(
+                "error.png", // Ruta del ícono de error
+                "El nombre del área ya existe" // Mensaje de error
+            );
+            return; // Do not proceed if the area name already exists
+        }
 
         const formData = new FormData(areaForm);
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
 
         fetch(url, {
                 method: 'POST',
@@ -372,8 +430,12 @@
                         "ok.png", // Ruta del ícono de éxito
                         data.message // Mensaje de éxito
                     );
-                    modal.style.display = "none";
-                    cargarDatos(1);
+                    /* modal.style.display = "none";
+                    cargarDatos(1); */
+                    if (!editMode) {
+                        areaId = data.area.id; // Establecer el areaId para el área recién creada
+                    }
+                    actividadSection.style.display = "block"; // Enable actividadSection
                 }
             })
             .catch((error) => {
@@ -390,23 +452,66 @@
         cargarSedes(clienteId);
     });
 
-    /* agregarTareaBtn.addEventListener("click", function() {
-        const nombreTarea = nuevaTareaInput.value;
-        const descripcionTarea = descripcionTareaInput.value;
-        if (nombreTarea && descripcionTarea && areaId) {
-            agregarTarea(areaId, nombreTarea, descripcionTarea);
-        }
-    }); */
+    // Deshabilita el input nombre si no se ha seleccionado una sede
+    document.getElementById("sede").addEventListener("change", function() {
+        const sedeId = this.value;
+        const nombreInput = document.getElementById("nombre");
 
+        if (sedeId) {
+            nombreInput.disabled = false;
+        } else {
+            nombreInput.disabled = true;
+            nombreInput.value = '';
+            document.getElementById("nombreExistente").style.display = "none";
+        }
+    });
+
+    // Agregar actividad
+    agregarActividadBtn.addEventListener("click", function() {
+        const actividadId = actividadSelect.value;
+        if (actividadId && areaId) {
+            agregarActividad(areaId, actividadId);
+        }
+    });
+
+    // Eliminar actividad
     document.addEventListener("click", function(event) {
         if (event.target.classList.contains("btn-eliminar")) {
-            const tareaId = event.target.getAttribute("data-id");
-            if (tareaId) {
-                eliminarTarea(tareaId);
+            const actividadId = event.target.getAttribute("data-id");
+            if (actividadId) {
+                eliminarActividad(actividadId);
             }
         }
     });
 
+    // Verificar si el nombre del área ya existe en la sede seleccionada
+    document.getElementById("nombre").addEventListener("input", function() {
+        const nombre = this.value;
+        const sedeId = document.getElementById("sede").value;
+        const nombreExistente = document.getElementById("nombreExistente");
+        const modalActionBtn = document.getElementById("modalActionBtn");
+        const originalName = this.getAttribute("data-original-name");
+
+        if (nombre && sedeId) {
+            fetch(`../areas/verificar-nombre?nombre=${nombre}&sede_id=${sedeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists && nombre !== originalName) {
+                        nombreExistente.style.display = "block";
+                        modalActionBtn.disabled = true;
+                    } else {
+                        nombreExistente.style.display = "none";
+                        modalActionBtn.disabled = false;
+                    }
+                })
+                .catch(error => console.error('Error al verificar el nombre del área:', error));
+        } else {
+            nombreExistente.style.display = "none";
+            modalActionBtn.disabled = true;
+        }
+    });
+
+    // Mostrar mensaje de éxito o error
     function showErrors(errors) {
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
         for (const [key, messages] of Object.entries(errors)) {
@@ -421,12 +526,17 @@
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
+    // resetea el formulario y cierra el modal
     function resetForm() {
         areaForm.reset();
         modalTitle.textContent = "Crear nueva área";
         modalActionBtn.textContent = "Crear Área";
+        document.getElementById("nombre").disabled = true;
+        document.getElementById("nombreExistente").style.display = "none";
+        modalActionBtn.disabled = true;
         editMode = false;
         areaId = null;
+        tablaActividadesBody.innerHTML = ''; // Clear the activities table
     }
 
     // Actualizar estado del toggle
@@ -452,8 +562,8 @@
     // Llama a la función al cargar la página para establecer el estilo inicial
     actualizarEstadoLabel();
 
-    /* const guardarFinalizarBtn = document.getElementById("guardarFinalizarBtn");
-
+    const guardarFinalizarBtn = document.getElementById("guardarFinalizarBtn");
+    // Guardar y finalizar (cerrar modal)
     guardarFinalizarBtn.addEventListener("click", function() {
         modal.style.display = "none";
         cargarDatos(1);
@@ -462,5 +572,29 @@
             "ok.png", // Ruta del ícono de éxito
             "Guardado con éxito" // Mensaje de éxito
         );
-    }); */
+    });
+
+    // Mostrar mensaje de éxito o error
+    function eliminarArea(id) {
+        fetch(`../areas/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al eliminar el área.');
+            }
+            return response.text(); // Use text() instead of json() for empty responses
+        })
+        .then(() => {
+            cargarDatos(1);
+            showAlertModal(
+                "ok.png", // Ruta del ícono de éxito
+                "Área eliminada con éxito" // Mensaje de éxito
+            );
+        })
+        .catch(error => console.error('Error al eliminar el área:', error));
+    }
 })();

@@ -64,7 +64,10 @@
                     <td>${formatDate(insumo.created_at)}</td>
                     <td>${insumo.actualizador?.nombres || 'N/A'}</td>
                     <td>${formatDate(insumo.updated_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${insumo.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${insumo.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${insumo.id}">
+                    </td>
                 `;
                     tablaInsumosBody.appendChild(row);
                 });
@@ -194,6 +197,34 @@
                     modal.style.display = "flex"; // Muestra el modal
                 })
                 .catch((error) => console.error("Error al cargar los datos del insumo:", error));
+        }
+
+        if (event.target.classList.contains("icono-eliminar")) {
+            const insumoId = event.target.getAttribute("data-id");
+            if (!insumoId) {
+                console.error("Error: No se encontró el ID del insumo en el botón.");
+                return;
+            }
+
+            if (confirm("¿Está seguro de que desea eliminar este insumo?")) {
+                fetch(`../insumos/${insumoId}`, {
+                    method: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Error al eliminar el insumo.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Insumo eliminado con éxito.");
+                    cargarDatos(1); // Reload the table
+                })
+                .catch(error => console.error("Error al eliminar el insumo:", error));
+            }
         }
     });
 
