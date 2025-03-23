@@ -64,8 +64,8 @@
         <table class="tabla" id="tablaTurnos">
             <thead>
                 <tr>
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Fin</th>
+                    {{-- <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th> --}}
                     <th>Identificación</th>
                     <th>Nombres y Apellidos</th>
                     <th>Turno</th>
@@ -87,7 +87,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="contenedor-titulo">
-                    <span id="asignarTurnoModalLabel" class="titulo-modal">Asignar Turno</span>
+                    <span id="asignarTurnoModalLabel" class="titulo-modal">Asignar supervisor a Cliente</span>
                     <span class="subtitulo-modal">- Todos los campos son obligatorios</span>
                 </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -112,7 +112,8 @@
                     </div>
                     <h5>Turno de supervisión</h5>
                     <div class="form-group flex-grow-1 row">
-                        <div class="col">
+
+                        {{-- <div class="col">
                             <label for="fechaInicioInput">Fecha Inicio:</label>
                             <input type="date" id="fechaInicioInput" class="form-control">
                             <span class="error-message" id="errorFechaInicioInput"></span>
@@ -121,7 +122,8 @@
                             <label for="fechaFinInput">Fecha Fin:</label>
                             <input type="date" id="fechaFinInput" class="form-control">
                             <span class="error-message" id="errorFechaFinInput"></span>
-                        </div>
+                        </div> --}}
+
                         <div class="col">
                             <label for="turnoSelect">Turno:</label>
                             <select id="turnoSelect" class="form-control">

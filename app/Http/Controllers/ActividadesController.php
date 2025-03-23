@@ -12,7 +12,7 @@ class ActividadesController extends Controller
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
 
-        $query = Actividades::query();
+        $query = Actividades::with(['frecuencia']);
 
         if ($buscar) {
             $query->where('nombre', 'like', "%{$buscar}%");
@@ -27,11 +27,13 @@ class ActividadesController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
+            'frecuencia' => 'required|exists:frecuencias,id',
             'estado' => 'required|boolean',
         ]);
 
         $actividad = Actividades::create([
             'nombre' => $validated['nombre'],
+            'frecuencia_id' => $validated['frecuencia'], // Corregido
             'estado' => $request->input('estado', 0)
         ]);
 
@@ -41,7 +43,7 @@ class ActividadesController extends Controller
     public function show(Request $request)
     {
         $id = $request->input('id');
-        $actividad = Actividades::query()->findOrFail($id);
+        $actividad = Actividades::with(['frecuencia'])->findOrFail($id);
         //dd($actividad);
         if (!$actividad) {
             return response()->json(['error' => 'Actividad no encontrada'], 404);
@@ -53,12 +55,14 @@ class ActividadesController extends Controller
     {
         $validated = $request->validate([
             'nombre' => 'sometimes|required|string|max:255',
+            'frecuencia' => 'required|exists:frecuencias,id',
             'estado' => 'required|boolean',
         ]);
 
         $actividad = Actividades::findOrFail($id);
         $actividad->update([
             'nombre' => $validated['nombre'],
+            'frecuencia_id' => $validated['frecuencia'], // Corregido
             'estado' => $validated['estado']
         ]);
 

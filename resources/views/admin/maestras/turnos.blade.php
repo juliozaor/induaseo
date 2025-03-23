@@ -77,11 +77,13 @@
                         <select id="frecuencia" name="frecuencia" class="form-control" required></select>
                         <span class="error-message" id="errorFrecuencia"></span>
                     </div>
+                    @if(false)
                     <div class="col-12">
                         <label for="detalleFrecuencia">Detalle Frecuencia:</label>
                         <textarea type="text" id="detalleFrecuencia" name="detalleFrecuencia" class="form-control" required></textarea>
                         <span class="error-message" id="errorDetalleFrecuencia"></span>
                     </div>
+                    @endif
                 </div>
             </form>
         </div>

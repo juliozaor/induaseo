@@ -31,7 +31,7 @@ class GestionarActivosController extends Controller
         $query = SedesActivos::with(['sede.cliente', 'activo', 'estados', 'creador', 'actualizador']);
 
         if ($buscar) {
-            $query->whereHas('activo', function($q) use ($buscar) {
+            $query->whereHas('activo', function ($q) use ($buscar) {
                 $q->where('nombre_elemento', 'like', "%{$buscar}%");
             });
         }
@@ -73,7 +73,11 @@ class GestionarActivosController extends Controller
             if ($request->hasFile('imagenesInput')) {
                 $file = $request->file('imagenesInput');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('imagenes', $filename, 'public');
+                $path = $file->move(public_path('imagenes'), $filename);
+                // Asegúrate de que la ruta no esté vacía
+                if (empty($path)) {
+                    return back()->withErrors(['file' => 'Error al subir el archivo.']);
+                }
                 ImagenSedeActivo::create([
                     'sede_activo_id' => $activo->id,
                     'imagen' => 'imagenes/' . $filename,

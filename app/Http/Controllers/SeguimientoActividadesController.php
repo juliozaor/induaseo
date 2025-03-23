@@ -21,6 +21,7 @@ use App\Models\Sede; // Importar el modelo Sede
 use App\Models\Area;
 use App\Models\AreaActividad;
 use App\Models\Cliente; // Importar el modelo Cliente
+use App\Models\SupervisorTurnosFechas; // Import the model
 
 class SeguimientoActividadesController extends Controller
 {
@@ -105,18 +106,38 @@ class SeguimientoActividadesController extends Controller
         $userId = Auth::id();
         $turnoId = $request->input('id') ?? "<script>document.write(localStorage.getItem('turno_id'))</script>";
         $sedeId = $request->input('sede_id') ?? "<script>document.write(localStorage.getItem('sede_id'))</script>";
+        $fechaInicial = $request->input('fecha_inicial');
 
         if (!$turnoId || !$sedeId) {
             return redirect()->route('seguimiento.actividades.index');
         }
 
-        // Validate and store in localStorage if not exist
+        // Validar y almacenar en localStorage si no existe
         echo "<script>
             if (!localStorage.getItem('turno_id') || !localStorage.getItem('sede_id')) {
                 localStorage.setItem('turno_id', '$turnoId');
                 localStorage.setItem('sede_id', '$sedeId');
             }
         </script>";
+
+        // Actualizar la fecha inicial del turno
+        SupervisorTurno::where('supervisor_id', $userId)
+            ->where('turno_id', $turnoId)
+            ->where('sede_id', $sedeId)
+            ->update(['fecha_inicio' => $fechaInicial]);
+
+        $turnoAsignado = SupervisorTurno::where('supervisor_id', $userId)
+        ->where('turno_id', $turnoId)
+        ->where('sede_id', $sedeId)
+        ->get();
+        $turnoAsignadoId = $turnoAsignado->first()->id;
+        //dd($turnoAsignadoId);
+        // Guardar la fecha inicial en la tabla supervisor_turnos_fechas
+        SupervisorTurnosFechas::create([
+            'supervisor_turno_id' => $turnoAsignadoId, // Usar el ID correcto
+            'fecha_inicio' => $fechaInicial,
+            'fecha_fin' => null // Asumiendo que fecha_fin es nulo inicialmente
+        ]);
 
         $supervisorTurno = SupervisorTurno::with(['supervisor', 'sede', 'turno', 'areas'])
             ->where('supervisor_id', $userId)
@@ -154,10 +175,12 @@ class SeguimientoActividadesController extends Controller
 
         if ($request->hasFile('evidencias')) {
             foreach ($request->file('evidencias') as $file) {
-                $path = $file->store('evidencias', 'public');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->move(public_path('evidencias'), $filename);
+                $imagePath = 'evidencias/' . $filename;
                 ImagenesActividades::create([
                     'actividad_id' => $actividad->id,
-                    'imagen' => $path
+                    'imagen' => $imagePath
                 ]);
             }
         }
@@ -220,7 +243,37 @@ class SeguimientoActividadesController extends Controller
     public function finalizarTurno(Request $request)
     {
         $userId = Auth::id();
-        $turno = SupervisorTurno::where('supervisor_id', $userId)->latest()->first();
+        $turnoId = $request->input('id');
+        $sedeId = $request->input('sede_id');
+        $fechaFinal = $request->input('fecha_final');
+
+        // Actualizar la fecha final del turno
+        SupervisorTurno::where('supervisor_id', $userId)
+            ->where('turno_id', $turnoId)
+            ->where('sede_id', $sedeId)
+            ->update(['fecha_fin' => $fechaFinal]);
+
+        $turnoAsignado = SupervisorTurno::where('supervisor_id', $userId)
+            ->where('turno_id', $turnoId)
+            ->where('sede_id', $sedeId)
+            ->first();
+        $turnoAsignadoId = $turnoAsignado->id;
+
+        // Verificar si existe un registro con fecha_fin nulo
+        $registroFecha = SupervisorTurnosFechas::where('supervisor_turno_id', $turnoAsignadoId)
+            ->whereNull('fecha_fin')
+            ->first();
+
+        if ($registroFecha) {
+            // Actualizar la fecha_fin del registro existente
+            $registroFecha->update(['fecha_fin' => $fechaFinal]);
+        }
+
+        $turno = SupervisorTurno::where('supervisor_id', $userId)
+            ->where('turno_id', $turnoId)
+            ->where('sede_id', $sedeId)
+            ->latest()
+            ->first();
 
         if ($turno) {
             $turno->turno->observacion = $request->input('observaciones');

@@ -13,28 +13,29 @@
         <span class="rectangle-text">Turnos asignados</span>
     </div>
 
-    @foreach($turnos as $turno)
+    @foreach ($turnos as $turno)
         {{-- @if ($turno->turno->estado) --}}
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Turno de supervisión</h5>
-                    <div class="card-info">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Turno de supervisión</h5>
+                <div class="card-info">
                     {{--  <img src="{{ asset('assets/icons/reloj.svg') }}" alt="Supervisión" class="card-icon">
                         <span>13:00 - 18:00</span> --}}
-                        <img src="{{ asset('assets/icons/calendar.svg') }}" alt="Fecha" class="card-icon">
-                        <span>{{$turno->fecha_inicio}} al {{$turno->fecha_fin}}</span>
-                    </div>
-                    <h5 class="card-title">Sede</h5>
-                    <div class="card-info">
-                        <img src="{{ asset('assets/icons/location.svg') }}" alt="Ubicación" class="card-icon">
-                        <span>{{$turno->sede->nombre}} <br> {{$turno->sede->direccion}}</span>
-                    </div>
-                    <a href="{{ route('actividades.turno', ['id' => $turno->turno->id, 'sede_id' => $turno->sede->id]) }}"
-                        class="btn boton-secundario" onclick="setTurnoData({{ $turno->turno->id }}, {{ $turno->sede->id }})">
-                        Iniciar turno
-                    </a>
+                    <img src="{{ asset('assets/icons/calendar.svg') }}" alt="Fecha" class="card-icon">
+                    <span>{{ $turno->fecha_inicio }} al {{ $turno->fecha_fin }}</span>
                 </div>
+                <h5 class="card-title">Sede</h5>
+                <div class="card-info">
+                    <img src="{{ asset('assets/icons/location.svg') }}" alt="Ubicación" class="card-icon">
+                    <span>{{ $turno->sede->nombre }} <br> {{ $turno->sede->direccion }}</span>
+                </div>
+                <a href="{{ route('actividades.turno', ['id' => $turno->turno->id, 'sede_id' => $turno->sede->id, 'fecha_inicial' => now()->format('Y-m-d')]) }}"
+                    class="btn boton-secundario"
+                    onclick="setTurnoData({{ $turno->turno->id }}, {{ $turno->sede->id }}, '{{ now()->format('Y-m-d') }}')">
+                    Iniciar turno
+                </a>
             </div>
+        </div>
         {{-- @else
             <p style="margin-left: 15px">No se ha asignado ningún turno o ya han sido finalizados todos los turnos.</p>
         @endif --}}
@@ -54,7 +55,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <iframe id="fileFrame" src="" width="100%" height="500px"></iframe>
+                    <iframe id="fileFrame" src="" width="100%" height="100%"></iframe>
                 </div>
             </div>
         </div>
@@ -73,10 +74,33 @@
                         card.style.cursor = 'pointer';
                         card.onclick = function() {
                             const fileFrame = document.getElementById('fileFrame');
-                            fileFrame.src = `{{ asset('storage') }}/${novedad.url}`;
+                            const modalBody = document.querySelector('.modal-body');
+                            fileFrame.src = novedad.url;
                             const fileModalLabel = document.getElementById('fileModalLabel');
-                            fileModalLabel.textContent = novedad.url.split('/').pop(); // Mostrar el nombre del archivo
-                            const fileModal = new bootstrap.Modal(document.getElementById('fileModal'));
+                            fileModalLabel.textContent = novedad.url.split('/')
+                                .pop(); // Mostrar el nombre del archivo
+                            const fileModal = new bootstrap.Modal(document.getElementById(
+                                'fileModal'));
+
+                            // Ajustar el tamaño del iframe según el tipo de archivo
+                            switch (item.tipo_multimedia.nombre) {
+                                case 'Documento':
+                                    fileFrame.style.height = '800px';
+                                    modalBody.style.height = '800px';
+                                    break;
+                                case 'Video':
+                                    fileFrame.style.height = '400px';
+                                    modalBody.style.height = '400px';
+                                    break;
+                                case 'Imagen':
+                                    fileFrame.style.height = '500px';
+                                    modalBody.style.height = '530px';
+                                    break;
+                                default:
+                                    fileFrame.style.height = 'auto';
+                                    modalBody.style.height = 'auto';
+                            }
+
                             fileModal.show();
                         };
 
@@ -138,8 +162,10 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             margin-bottom: 10px;
-            max-width: 200px; /* Ajustar el ancho máximo de la tarjeta */
-            margin: 0 auto; /* Centrar la tarjeta horizontalmente */
+            max-width: 200px;
+            /* Ajustar el ancho máximo de la tarjeta */
+            margin: 0 auto;
+            /* Centrar la tarjeta horizontalmente */
         }
 
         .novedad-info {

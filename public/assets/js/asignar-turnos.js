@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const turnosTableBody = document.getElementById('turnosTableBody');
     const supervisorSelect = document.getElementById('supervisorSelect');
     const sedeInput = document.getElementById('sedeInput');
-    const fechaInicioInput = document.getElementById('fechaInicioInput');
+    //const fechaInicioInput = document.getElementById('fechaInicioInput');
     const fechaFinInput = document.getElementById('fechaFinInput');
     const turnoSelect = document.getElementById('turnoSelect');
     const guardarTurnoBtn = document.getElementById('guardarTurnoBtn');
@@ -97,8 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 data.data.forEach(turno => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${turno.fecha_inicio}</td>
-                        <td>${turno.fecha_fin}</td>
                         <td>${turno.supervisor.numero_documento}</td>
                         <td>${turno.supervisor.nombres} ${turno.supervisor.apellidos}</td>
                         <td>${turno.turno.nombre}</td>
@@ -110,6 +108,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     `;
                     turnosTableBody.appendChild(row);
                 });
+                /* <td>${turno.fecha_inicio}</td>
+                        <td>${turno.fecha_fin}</td> */
 
                 // Mostrar total de registros
                 const registrosEncontrados = document.querySelector('.registros-encontrados');
@@ -171,8 +171,8 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('supervisor_id', supervisorSelect.value);
         formData.append('sede_id', sedeSelect.value);
         formData.append('turno_id', turnoSelect.value);
-        formData.append('fecha_inicio', fechaInicioInput.value);
-        formData.append('fecha_fin', fechaFinInput.value);
+        /* formData.append('fecha_inicio', fechaInicioInput.value);
+        formData.append('fecha_fin', fechaFinInput.value); */
 
         const url = editMode ? `asignar-turnos/actualizar/${turnoId}` : `asignar-turnos/guardar`;
         const method = editMode ? 'PUT' : 'POST';
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
     nuevaAsignacionBtn.addEventListener('click', function () {
         editMode = false;
         turnoId = null;
-        asignarTurnoModalLabel.textContent = "Asignar Turno";
+        asignarTurnoModalLabel.textContent = "Asignar supervisor a Cliente";
         document.getElementById('asignarTurnoForm').reset();
         sedeInput.value = sedeSelect.options[sedeSelect.selectedIndex].textContent; // Set the sede input value
         nuevaAreaSelect.value = '';
@@ -308,8 +308,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(turno => {
                     document.getElementById('supervisorSelect').value = turno.supervisor_id;
                     document.getElementById('sedeInput').value = turno.sede.nombre;
-                    document.getElementById('fechaInicioInput').value = turno.fecha_inicio;
-                    document.getElementById('fechaFinInput').value = turno.fecha_fin;
+                    /* document.getElementById('fechaInicioInput').value = turno.fecha_inicio;
+                    document.getElementById('fechaFinInput').value = turno.fecha_fin; */
                     document.getElementById('turnoSelect').value = turno.turno_id;
 
                     // Mostrar areaSection

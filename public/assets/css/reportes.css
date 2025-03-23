@@ -57,7 +57,13 @@
     background: #000000;
     box-shadow: 0px 3px 10px #00000040;
     font: normal normal normal 12px/16px 'Neo Sans Std', Arial, sans-serif;
+    /* transition: background-color 0.2s ease-in-out; */
 }
+
+/* .btn-consultar:hover {
+    background: #EC6F35;
+    transition: background-color 0.2s ease-in-out;
+} */
 
 .btn-consultar svg {
     margin-right: 5px;

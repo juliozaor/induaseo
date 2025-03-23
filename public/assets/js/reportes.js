@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const clienteSelect = document.getElementById('clienteSelect');
     const sedeSelect = document.getElementById('sedeSelect');
     const consultarBtn = document.getElementById('consultarBtn');
@@ -9,8 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const fechaInicio = document.getElementById('fechaInicio');
     const fechaFin = document.getElementById('fechaFin');
     const turnoMenu = document.getElementById('turnoMenu');
+    const exportarBtn = document.getElementById('exportarBtn');
+    const exportarActivosBtn = document.getElementById('exportarActivosBtn');
+    const actividadesMensaje = document.getElementById('actividadesMensaje');
+    const activosMensaje = document.getElementById('activosMensaje');
 
-    clienteSelect.addEventListener('change', function() {
+    clienteSelect.addEventListener('change', function () {
         const clienteId = this.value;
         fetch(`sedes?cliente_id=${clienteId}`)
             .then(response => response.json())
@@ -26,24 +30,101 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching sedes:', error));
     });
 
-    consultarBtn.addEventListener('click', function() {
+    let actividadesData = [];
+    let activosData = [];
+
+    function renderTable(data, page = 1, rowsPerPage = 5) {
+        actividadesMensaje.textContent = '';
+        if (data.length === 0) {
+            actividadesMensaje.textContent = 'No hay registros para mostrar.';
+            actividadesTableBody.innerHTML = '';
+            return;
+        }
+
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedData = data.slice(start, end);
+
+        actividadesTableBody.innerHTML = '';
+        paginatedData.forEach(turno => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${turno.fecha}</td>
+                <td>${turno.area}</td>
+                <td>${turno.actividad}</td>
+                <td>${turno.estado}</td>
+            `;
+            actividadesTableBody.appendChild(row);
+        });
+
+        renderPagination(data.length, page, rowsPerPage, 'actividadesPaginacion', renderTable, actividadesData);
+    }
+
+    function renderActivosTable(data, page = 1, rowsPerPage = 5) {
+        activosMensaje.textContent = '';
+        if (data.length === 0) {
+            activosMensaje.textContent = 'No hay registros para mostrar.';
+            activosTableBody.innerHTML = '';
+            return;
+        }
+
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedData = data.slice(start, end);
+
+        activosTableBody.innerHTML = '';
+        paginatedData.forEach(activo => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${activo.activo}</td>
+                <td>${activo.cantidad}</td>
+                <td>${activo.estado}</td>
+                <td>${activo.observacion}</td>
+            `;
+            activosTableBody.appendChild(row);
+        });
+
+        renderPagination(data.length, page, rowsPerPage, 'activosPaginacion', renderActivosTable, activosData);
+    }
+
+    function renderPagination(totalItems, currentPage, rowsPerPage, paginationId, renderFunction, data) {
+        const totalPages = Math.ceil(totalItems / rowsPerPage);
+        const paginationContainer = document.getElementById(paginationId);
+        paginationContainer.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.classList.add('page-button');
+            if (i === currentPage) {
+                pageButton.classList.add('active');
+            }
+            pageButton.addEventListener('click', () => renderFunction(data, i, rowsPerPage));
+            paginationContainer.appendChild(pageButton);
+        }
+    }
+
+    consultarBtn.addEventListener('click', function () {
         const sedeId = sedeSelect.value;
+
+        actividadesMensaje.textContent = 'Cargando...';
+        activosMensaje.textContent = 'Cargando...';
 
         fetch(`reportes/consultar?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {
-                actividadesTableBody.innerHTML = '';
-                data.forEach(turno => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${turno.fecha}</td>
-                        <td>${turno.actividades_completadas}</td>
-                        <td>${turno.actividades_incompletadas}</td>
-                    `;
-                    actividadesTableBody.appendChild(row);
-                });
+                actividadesData = data;
+                if (actividadesData.length > 0) {
+                    renderTable(actividadesData);
+                } else {
+                    actividadesMensaje.textContent = 'No hay registros para mostrar.';
+                    actividadesTableBody.innerHTML = '';
+                }
             })
-            .catch(error => console.error('Error fetching actividades:', error));
+            .catch(error => {
+                console.error('Error fetching actividades:', error);
+                actividadesMensaje.textContent = 'Error al cargar los datos.';
+            });
 
         fetch(`reportes/consultar-turnos?sede_id=${sedeId}`)
             .then(response => response.json())
@@ -62,22 +143,16 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`reportes/activos?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {
-                activosTableBody.innerHTML = '';
-                data.forEach(activo => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${activo.activo}</td>
-                        <td>${activo.cantidad}</td>
-                        <td>${activo.estado}</td>
-                        <td>${activo.observacion}</td>
-                    `;
-                    activosTableBody.appendChild(row);
-                });
+                activosData = data;
+                renderActivosTable(activosData);
             })
-            .catch(error => console.error('Error fetching activos:', error));
+            .catch(error => {
+                console.error('Error fetching activos:', error);
+                activosMensaje.textContent = 'Error al cargar los datos.';
+            });
     });
 
-    turnoMenu.addEventListener('click', function(event) {
+    turnoMenu.addEventListener('click', function (event) {
         if (event.target.classList.contains('menu-item')) {
             const turnoId = event.target.dataset.id;
             const submenu = event.target.nextElementSibling;
@@ -130,47 +205,87 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    aplicarFiltroBtn.addEventListener('click', function() {
+    aplicarFiltroBtn.addEventListener('click', function () {
         const sedeId = sedeSelect.value;
         const fechaInicioVal = fechaInicio.value;
         const fechaFinVal = fechaFin.value;
 
+        actividadesMensaje.textContent = 'Cargando...';
+        /* activosMensaje.textContent = 'Cargando...'; */
+
         fetch(`reportes/consultar?sede_id=${sedeId}&fecha_inicio=${fechaInicioVal}&fecha_fin=${fechaFinVal}`)
             .then(response => response.json())
             .then(data => {
-                actividadesTableBody.innerHTML = '';
-                data.forEach(turno => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${turno.fecha}</td>
-                        <td>${turno.actividades_completadas}</td>
-                        <td>${turno.actividades_incompletadas}</td>
-                    `;
-                    actividadesTableBody.appendChild(row);
-                });
+                actividadesData = data;
+                if (actividadesData.length > 0) {
+                    renderTable(actividadesData);
+                    actividadesMensaje.textContent = '';
+                } else {
+                    actividadesMensaje.textContent = 'No hay registros para mostrar.';
+                    actividadesTableBody.innerHTML = '';
+                }
             })
-            .catch(error => console.error('Error fetching actividades:', error));
+            .catch(error => {
+                console.error('Error fetching actividades:', error);
+                actividadesMensaje.textContent = 'Error al cargar los datos.';
+            });
+
+        /* fetch(`reportes/activos?sede_id=${sedeId}`)
+            .then(response => response.json())
+            .then(data => {
+                activosData = data;
+                renderActivosTable(activosData);
+            })
+            .catch(error => {
+                console.error('Error fetching activos:', error);
+                activosMensaje.textContent = 'Error al cargar los datos.';
+            }); */
     });
 
-    limpiarFiltroBtn.addEventListener('click', function() {
+    limpiarFiltroBtn.addEventListener('click', function () {
         fechaInicio.value = '';
         fechaFin.value = '';
         const sedeId = sedeSelect.value;
 
+        actividadesMensaje.textContent = 'Cargando...';
+        activosMensaje.textContent = 'Cargando...';
+
         fetch(`reportes/consultar?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {
-                actividadesTableBody.innerHTML = '';
-                data.forEach(turno => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${turno.fecha}</td>
-                        <td>${turno.actividades_completadas}</td>
-                        <td>${turno.actividades_incompletadas}</td>
-                    `;
-                    actividadesTableBody.appendChild(row);
-                });
+                actividadesData = data;
+                renderTable(actividadesData);
             })
-            .catch(error => console.error('Error fetching actividades:', error));
+            .catch(error => {
+                console.error('Error fetching actividades:', error);
+                actividadesMensaje.textContent = 'Error al cargar los datos.';
+            });
+
+        fetch(`reportes/activos?sede_id=${sedeId}`)
+            .then(response => response.json())
+            .then(data => {
+                activosData = data;
+                renderActivosTable(activosData);
+            })
+            .catch(error => {
+                console.error('Error fetching activos:', error);
+                activosMensaje.textContent = 'Error al cargar los datos.';
+            });
+    });
+
+    exportarBtn.addEventListener('click', function () {
+        const sedeId = sedeSelect.value;
+        const fechaInicioVal = fechaInicio.value;
+        const fechaFinVal = fechaFin.value;
+
+        const url = `reportes/exportar-actividades?sede_id=${sedeId}&fecha_inicio=${fechaInicioVal}&fecha_fin=${fechaFinVal}`;
+        window.location.href = url;
+    });
+
+    exportarActivosBtn.addEventListener('click', function() {
+        const sedeId = sedeSelect.value;
+
+        const url = `reportes/exportar-activos?sede_id=${sedeId}`;
+        window.location.href = url;
     });
 });

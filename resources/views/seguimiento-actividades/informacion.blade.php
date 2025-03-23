@@ -38,7 +38,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <iframe id="fileFrame" src="" width="100%" height="500px" frameborder="0"></iframe>
+                    <iframe id="fileFrame" src="" width="100%" height="100%"></iframe>
                 </div>
             </div>
         </div>
@@ -75,7 +75,8 @@
                         button.onclick = function() {
                             selectedCategory = category.id;
                             fetchNovedades();
-                            document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('selected'));
+                            document.querySelectorAll('.category-button').forEach(btn => btn
+                                .classList.remove('selected'));
                             button.classList.add('selected');
                         };
                         categoriesContainer.appendChild(button);
@@ -98,75 +99,99 @@
                 }
 
                 fetch(url, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    resultsContainer.innerHTML = '';
-                    novedadesContainer.innerHTML = '';
-                    data.forEach(item => {
-                        if (!selectedCategory || item.categoria_id === selectedCategory) {
-                            const card = document.createElement('div');
-                            card.classList.add('novedad-card');
-                            card.style.cursor = 'pointer';
-                            card.onclick = function() {
-                                const fileFrame = document.getElementById('fileFrame');
-                                fileFrame.src = `{{ asset('storage') }}/${item.url}`;
-                                const fileModalLabel = document.getElementById('fileModalLabel');
-                                fileModalLabel.textContent = item.url.split('/').pop(); // Mostrar el nombre del archivo
-                                const fileModal = new bootstrap.Modal(document.getElementById('fileModal'));
-                                fileModal.show();
-                            };
-
-                            const info = document.createElement('div');
-                            info.classList.add('novedad-info');
-
-                            const title = document.createElement('h6');
-                            title.classList.add('novedad-title');
-                            title.textContent = item.titulo;
-
-                            const date = document.createElement('span');
-                            date.classList.add('novedad-date');
-                            date.textContent = new Date(item.fecha).toLocaleDateString();
-
-                            const text = document.createElement('p');
-                            text.classList.add('novedad-text');
-                            text.textContent = item.descripcion;
-
-                            const icon = document.createElement('img');
-                            if (item.tipo_multimedia && item.tipo_multimedia.nombre) {
-                                switch (item.tipo_multimedia.nombre) {
-                                    case 'Documento':
-                                        icon.src = `{{ asset('assets/icons/pdf-icon.png') }}`;
-                                        break;
-                                    case 'Video':
-                                        icon.src = `{{ asset('assets/icons/video-icon.png') }}`;
-                                        break;
-                                    case 'Imagen':
-                                        icon.src = `{{ asset('assets/icons/image-icon.png') }}`;
-                                        break;
-                                    default:
-                                        icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
-                                }
-                            } else {
-                                icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
-                            }
-                            icon.alt = 'Novedad';
-                            icon.classList.add('novedad-icon');
-
-                            info.appendChild(title);
-                            info.appendChild(date);
-                            info.appendChild(text);
-
-                            card.appendChild(info);
-                            card.appendChild(icon);
-                            novedadesContainer.appendChild(card);
+                        headers: {
+                            'Accept': 'application/json'
                         }
-                    });
-                })
-                .catch(error => console.error('Error:', error));
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsContainer.innerHTML = '';
+                        novedadesContainer.innerHTML = '';
+                        data.forEach(item => {
+                            if (!selectedCategory || item.categoria_id === selectedCategory) {
+                                const card = document.createElement('div');
+                                card.classList.add('novedad-card');
+                                card.style.cursor = 'pointer';
+                                card.onclick = function() {
+                                    const fileFrame = document.getElementById('fileFrame');
+                                    const modalBody = document.querySelector('.modal-body');
+                                    fileFrame.src = item.url;
+                                    const fileModalLabel = document.getElementById(
+                                    'fileModalLabel');
+                                    fileModalLabel.textContent = item.url.split('/')
+                                .pop(); // Mostrar el nombre del archivo
+                                    const fileModal = new bootstrap.Modal(document.getElementById(
+                                        'fileModal'));
+
+                                    // Ajustar el tamaño del iframe según el tipo de archivo
+                                    switch (item.tipo_multimedia.nombre) {
+                                        case 'Documento':
+                                            fileFrame.style.height = '800px';
+                                            modalBody.style.height = '800px';
+                                            break;
+                                        case 'Video':
+                                            fileFrame.style.height = '400px';
+                                            modalBody.style.height = '400px';
+                                            break;
+                                        case 'Imagen':
+                                            fileFrame.style.height = '500px';
+                                            modalBody.style.height = '530px';
+                                            break;
+                                        default:
+                                            fileFrame.style.height = 'auto';
+                                            modalBody.style.height = 'auto';
+                                    }
+
+                                    fileModal.show();
+                                };
+
+                                const info = document.createElement('div');
+                                info.classList.add('novedad-info');
+
+                                const title = document.createElement('h6');
+                                title.classList.add('novedad-title');
+                                title.textContent = item.titulo;
+
+                                const date = document.createElement('span');
+                                date.classList.add('novedad-date');
+                                date.textContent = new Date(item.fecha).toLocaleDateString();
+
+                                const text = document.createElement('p');
+                                text.classList.add('novedad-text');
+                                text.textContent = item.descripcion;
+
+                                const icon = document.createElement('img');
+                                if (item.tipo_multimedia && item.tipo_multimedia.nombre) {
+                                    switch (item.tipo_multimedia.nombre) {
+                                        case 'Documento':
+                                            icon.src = `{{ asset('assets/icons/pdf-icon.png') }}`;
+                                            break;
+                                        case 'Video':
+                                            icon.src = `{{ asset('assets/icons/video-icon.png') }}`;
+                                            break;
+                                        case 'Imagen':
+                                            icon.src = `{{ asset('assets/icons/image-icon.png') }}`;
+                                            break;
+                                        default:
+                                            icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
+                                    }
+                                } else {
+                                    icon.src = `{{ asset('assets/icons/default-icon.png') }}`;
+                                }
+                                icon.alt = 'Novedad';
+                                icon.classList.add('novedad-icon');
+
+                                info.appendChild(title);
+                                info.appendChild(date);
+                                info.appendChild(text);
+
+                                card.appendChild(info);
+                                card.appendChild(icon);
+                                novedadesContainer.appendChild(card);
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
             }
 
             // Fetch and display all novedades
@@ -184,8 +209,10 @@
                                 const fileFrame = document.getElementById('fileFrame');
                                 fileFrame.src = `{{ asset('storage') }}/${novedad.url}`;
                                 const fileModalLabel = document.getElementById('fileModalLabel');
-                                fileModalLabel.textContent = novedad.url.split('/').pop(); // Mostrar el nombre del archivo
-                                const fileModal = new bootstrap.Modal(document.getElementById('fileModal'));
+                                fileModalLabel.textContent = novedad.url.split('/')
+                            .pop(); // Mostrar el nombre del archivo
+                                const fileModal = new bootstrap.Modal(document.getElementById(
+                                    'fileModal'));
                                 fileModal.show();
                             };
 

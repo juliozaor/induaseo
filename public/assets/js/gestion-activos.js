@@ -280,6 +280,7 @@
 
         // Append only the first image to formData
         if (imagenesInput.files.length > 0) {
+            console.log(imagenesInput.files[0]);
             formData.append('imagenesInput', imagenesInput.files[0]);
         }
 

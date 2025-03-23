@@ -41,7 +41,7 @@ class MenuSeeder extends Seeder
                             </g>
                           </svg>'
             ],[
-                'name' => 'Asignar turnos',
+                'name' => 'Asignar supervisor a Cliente',
                 'route' => 'asignar-turnos',
                 'route_name' => 'asignar.turnos',
                 'icon' => '<svg id="Grupo_23030" data-name="Grupo 23030" xmlns="http://www.w3.org/2000/svg" width="19.962" height="25.375" viewBox="0 0 19.962 25.375">

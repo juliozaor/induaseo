@@ -48,8 +48,10 @@ class InformacionController extends Controller
 
             if ($request->hasFile('url')) {
                 $file = $request->file('url');
-                $path = $file->storeAs('recursos', $file->getClientOriginalName(), 'public');
-                $validatedData['url'] = $path;
+                $filename = time() . '_' . $file->getClientOriginalName();
+                /* $path = $file->storeAs('recursos', $file->getClientOriginalName(), 'public'); */
+                $path = $file->move(public_path('recursos'), $filename);
+                $validatedData['url'] = 'recursos/' . $filename;
             }
 
             $validatedData['fecha'] = now(); // Set current date
@@ -85,8 +87,9 @@ class InformacionController extends Controller
 
             if ($request->hasFile('url')) {
                 $file = $request->file('url');
-                $path = $file->storeAs('recursos', $file->getClientOriginalName(), 'public');
-                $validatedData['url'] = $path;
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->move(public_path('recursos'), $filename);
+                $validatedData['url'] = 'recursos/' . $filename;
             }
 
             $informacion->update($validatedData);

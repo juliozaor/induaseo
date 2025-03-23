@@ -15,6 +15,27 @@
     let editMode = false;
     let actividadId = null;
 
+    const frecuenciaSelect = document.getElementById("frecuencia");
+
+    let frecuenciaArr = [];
+
+    function cargarFrecuencias() {
+        fetch(`../frecuencias`)
+            .then(response => response.json())
+            .then(frecuencias => {
+                frecuenciaArr = frecuencias;
+
+                frecuenciaSelect.innerHTML = '<option value="">Seleccione</option>';
+                frecuencias.forEach(frecuencia => {
+                    const option = document.createElement("option");
+                    option.value = frecuencia.id;
+                    option.textContent = frecuencia.nombre;
+                    frecuenciaSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar frecuencias:', error));
+    }
+
     function cargarDatos(page = 1) {
         resetForm();
         const buscar = busquedaInput.value;
@@ -31,7 +52,7 @@
                 return response.json();
             })
             .then(data => {
-                //console.log(data);
+                console.log(data);
                 // Limpiar la tabla y la paginación
                 tablaActividadesBody.innerHTML = '';
                 paginacionContainer.innerHTML = '';
@@ -43,6 +64,7 @@
                     row.innerHTML = `
                     <td>${actividad.id}</td>
                     <td>${actividad.nombre}</td>
+                    <td>${actividad.frecuencia.nombre}</td>
                     <td><div class="${estadoClase}">${actividad.estado ? 'Activo' : 'Inactivo'}</div></td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${actividad.id}">
@@ -108,6 +130,7 @@
     }
 
     cargarDatos(1);
+    cargarFrecuencias();
 
     // Eventos
     consultarBtn.addEventListener("click", () => cargarDatos(1));
@@ -151,6 +174,7 @@
                 })
                 .then((actividad) => {
                     document.getElementById("nombre").value = actividad.nombre;
+                    document.getElementById("frecuencia").value = actividad.frecuencia_id; // Corregido
                     document.getElementById("estadoToggle").checked = actividad.estado === 1;
                     document.querySelector("label[for='estadoToggle']").textContent = actividad.estado ? "Activo" : "Inactivo";
 

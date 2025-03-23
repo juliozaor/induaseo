@@ -26,7 +26,7 @@
     </div>
 
     <div class="container-body mt-3">
-        {{-- <div class="listado-container">
+        <div class="listado-container">
             <h2 class="listado-titulo">Actividades</h2>
             <div class="filter-container">
                 <div class="d-flex">
@@ -40,8 +40,10 @@
                     </div>
                 </div>
                 <div class="btn-container">
+                    <button id="aplicarFiltroBtn" class="btn-consultar">Filtrar</button>
                     <button id="limpiarFiltroBtn" class="btn-consultar">Limpiar Filtro</button>
-                    <button id="limpiarFiltroBtn" class="btn-consultar">Limpiar Filtro</button>
+                    <button id="exportarBtn" class="btn-consultar">Exportar Actividades</button>
+                    {{-- <a href="#" id="exportarActivosBtn" class="btn-consultar">Exportar Activos</a> --}}
                 </div>
             </div>
             <div class="tabla-container">
@@ -49,20 +51,26 @@
                     <thead>
                         <tr>
                             <th>Fecha</th>
-                            <th>Actividades finalizadas</th>
-                            <th>Actividades sin finalizar</th>
+                            <th>Área</th>
+                            <th>Actividad</th>
+                            <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody id="actividadesTableBody">
                         <!-- Datos de turnos -->
                     </tbody>
                 </table>
+                <div id="actividadesPaginacion" class="paginacion"></div>
+                <div id="actividadesMensaje" class="mensaje">No hay registros para mostrar.</div>
             </div>
             <div class="activos-paginacion"></div>
-        </div> --}}
+        </div>
 
         <div class="listado-container">
             <h2 class="listado-titulo">Activos</h2>
+            <div class="d-flex justify-content-end mb-2">
+                <button id="exportarActivosBtn" class="btn-consultar">Exportar Activos</button>
+            </div>
             <div class="tabla-container">
                 <table class="tabla" id="tablaActivos">
                     <thead>
@@ -77,6 +85,8 @@
                         <!-- Datos de turnos -->
                     </tbody>
                 </table>
+                <div id="activosPaginacion" class="paginacion"></div>
+                <div id="activosMensaje" class="mensaje">No hay registros para mostrar.</div>
             </div>
             <div class="activos-paginacion"></div>
         </div>

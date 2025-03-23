@@ -118,7 +118,7 @@
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(informacionForm);
-
+        console.log('formData:', ...formData);
         if (editMode) {
             formData.append("_method", "PUT");
         }

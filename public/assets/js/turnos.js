@@ -254,7 +254,7 @@
 
                     document.getElementById("nombre").value = turno.nombre;
                     document.getElementById("frecuencia").value = turno.frecuencia_id;
-                    document.getElementById("detalleFrecuencia").value = turno.frecuencia_detalle;
+                    //document.getElementById("detalleFrecuencia").value = turno.frecuencia_detalle;
                     document.getElementById("estadoToggle").checked = turno.estado === 1;
                     document.querySelector("label[for='estadoToggle']").textContent = turno.estado ? "Activo" : "Inactivo";
 

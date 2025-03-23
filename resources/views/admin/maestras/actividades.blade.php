@@ -38,6 +38,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Frecuencia</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -64,11 +65,16 @@
         <div class="modal-body">
             <form id="actividadForm">
                 <div class="form-group flex-grow-1 row">
-                    <div class="col-12">
+                    <div class="col-6">
                         <label for="nombre">Nombre:</label>
                         <input type="text" id="nombre" name="nombre" class="form-control" required>
                         <span class="error-message" id="errorNombre"></span>
                         <span class="error-message" id="errorNombreDuplicado"></span> <!-- Nuevo span para error de nombre duplicado -->
+                    </div>
+                    <div class="col-6">
+                        <label for="frecuencia">Frecuencia:</label>
+                        <select id="frecuencia" name="frecuencia" class="form-control" required></select>
+                        <span class="error-message" id="errorFrecuencia"></span>
                     </div>
                 </div>
             </form>

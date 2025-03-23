@@ -154,7 +154,8 @@
                 ></textarea>
             <div class="porcentaje-actividad">
                 <span>Actividades finalizadas
-                    <span>{{ $actividadesFalse->count() }}/{{ $actividadesTrue->count() + $actividadesFalse->count() }}</span></span>
+                    <span>{{ $actividadesFalse->count() }}/{{ $actividadesTrue->count() + $actividadesFalse->count() }}</span>
+                </span>
             </div>
             <button type="submit" class="btn boton-secundario" >
                 {{-- @if ($supervisorTurno->turno->estado) --}}

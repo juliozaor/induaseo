@@ -14,6 +14,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.0",
+        "maatwebsite/excel": "3.1.47",
         "spatie/laravel-permission": "^6.10"
     },
     "require-dev": {

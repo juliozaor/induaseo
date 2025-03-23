@@ -50,8 +50,8 @@ class SupervisorTurnoController extends Controller
             'supervisor_id' => 'required|exists:usuarios,id',
             'sede_id' => 'required|exists:sedes,id',
             'turno_id' => 'required|exists:turnos,id',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            /* 'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio', */
         ]);
 
         $turno = SupervisorTurno::create($validatedData);
@@ -65,8 +65,8 @@ class SupervisorTurnoController extends Controller
             'supervisor_id' => 'required|exists:usuarios,id',
             'sede_id' => 'required|exists:sedes,id',
             'turno_id' => 'required|exists:turnos,id',
-            'fecha_inicio' => 'required|date',
-            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
+            /* 'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after_or_equal:fecha_inicio', */
         ]);
 
         $turno = SupervisorTurno::findOrFail($id);

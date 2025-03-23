@@ -9,6 +9,7 @@ use App\Http\Controllers\ClientesController;
 use App\Http\Controllers\MaestrasController;
 use App\Http\Controllers\SedeController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\TurnoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\SupervisorTurnoController;
@@ -87,6 +88,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/actividades-evidencias', [ActividadesEvidenciasController::class, 'index'])->name('actividades.evidencias.index');
     Route::get('/actividades-evidencias/consultar', [ActividadesEvidenciasController::class, 'consultar'])->name('actividades.evidencias.consultar');
     Route::get('/actividades-evidencias/detalle/{id}', [ActividadesEvidenciasController::class, 'getTurnoDetalle'])->name('actividades.evidencias.detalle');
+    Route::get('actividades-evidencias/exportar-actividades', [ActividadesEvidenciasController::class, 'exportarActividades'])->name('actividades.evidencias.exportarActividades');
+    Route::get('actividades-evidencias/consolidado', [ActividadesEvidenciasController::class, 'obtenerConsolidado'])->name('actividades.evidencias.consolidado');
+    Route::get('/actividades-evidencias/consultar-paginado', [ActividadesEvidenciasController::class, 'consultarPaginado'])->name('actividades.evidencias.consultarPaginado');
+    Route::get('/actividades-evidencias/detalle-actividad/{id}', [ActividadesEvidenciasController::class, 'getActividadDetalle'])->name('actividades.evidencias.detalleActividad');
 
     Route::get('/novedades', [InformacionController::class, 'obtenerNovedades'])->name('novedades.obtener');
     Route::get('/informacion', [SeguimientoActividadesController::class, 'informacion'])->name('informacion');
@@ -283,3 +288,10 @@ Route::delete('/turnos_areas/eliminar/{turnoId}/{areaId}', [TurnoAreaController:
 
 // Add route to fetch areas by sede
 Route::get('/areas-por-sede/{sedeId}', [AreaController::class, 'obtenerAreasPorSede'])->name('areas.por.sede');
+
+// Add route for exporting activities
+Route::get('reportes/exportar-actividades', [ReporteController::class, 'exportarActividades'])->name('reportes.exportarActividades');
+
+// Add route for exporting assets
+Route::get('reportes/exportar-activos', [ReporteController::class, 'exportarActivos'])->name('reportes.exportarActivos');
+

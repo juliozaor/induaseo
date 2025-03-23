@@ -10,6 +10,9 @@ use App\Models\TurnoArea;
 use App\Models\AreaActividad;
 use App\Models\Area;
 use App\Models\Usuario;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ActividadesExport;
+use App\Exports\ActivosExport;
 
 class ReporteController extends Controller
 {
@@ -25,34 +28,41 @@ class ReporteController extends Controller
         $fecha_inicio = $request->fecha_inicio;
         $fecha_fin = $request->fecha_fin;
 
-        $areaSede = Area::with(['actividades'])->where('sede_id',$sede_id);
-
-        $actividades = $areaSede->get()->map(function ($area) {
-            $actividadesCompletadas = $area->actividades->where('estado', false)->count();
-            $actividadesIncompletas = $area->actividades->where('estado', true)->count();
-            return [
-                'Area' => $area->nombre,
-                'actividades_completadas' => $actividadesCompletadas,
-                'actividades_incompletadas' => $actividadesIncompletas,
-            ];
-        });
-        dd($actividades);
-        $query = SupervisorTurno::with(['supervisor', 'sede', 'areas', 'turno'])
+        // Obtener los turnos asignados con sus relaciones
+        $turnosAsignados = SupervisorTurno::with(['turno', 'supervisor', 'areas.area.actividades'])
             ->where('sede_id', $sede_id);
 
+        // Filtrar por rango de fechas si se proporcionan
         if ($fecha_inicio && $fecha_fin) {
-            $query->whereBetween('fecha_inicio', [$fecha_inicio, $fecha_fin]);
+            $turnosAsignados->whereBetween('fecha_inicio', [$fecha_inicio, $fecha_fin]);
         }
 
-        $turnos = $query->get()->map(function ($turno) {
-            $actividadesCompletadas = $turno->turno->actividades->where('estado', false)->count();
-            $actividadesIncompletas = $turno->turno->actividades->where('estado', true)->count();
-            return [
-                'fecha' => $turno->fecha_inicio,
-                'actividades_completadas' => $actividadesCompletadas,
-                'actividades_incompletadas' => $actividadesIncompletas,
-            ];
-        });
+        // Mapear los turnos asignados para devolver la estructura deseada
+        $turnos = $turnosAsignados->get()->map(function ($turnoAsignado) {
+            $actividadesCompletadas = $turnoAsignado->areas->map(function ($area) use ($turnoAsignado) {
+                return $area->area->actividades->where('estado', false)->map(function ($actividad) use ($turnoAsignado, $area) {
+                    return [
+                        'fecha' => $turnoAsignado->fecha_inicio,
+                        'area' => $area->area->nombre,
+                        'actividad' => $actividad->nombre,
+                        'estado' => 'completada'
+                    ];
+                });
+            })->flatten(1);
+
+            $actividadesIncompletadas = $turnoAsignado->areas->map(function ($area) use ($turnoAsignado) {
+                return $area->area->actividades->where('estado', true)->map(function ($actividad) use ($turnoAsignado, $area) {
+                    return [
+                        'fecha' => $turnoAsignado->fecha_inicio,
+                        'area' => $area->area->nombre,
+                        'actividad' => $actividad->nombre,
+                        'estado' => 'incompleta'
+                    ];
+                });
+            })->flatten(1);
+
+            return $actividadesCompletadas->merge($actividadesIncompletadas);
+        })->flatten(1);
 
         return response()->json($turnos);
     }
@@ -131,5 +141,21 @@ class ReporteController extends Controller
         });
 
         return response()->json($activos);
+    }
+
+    public function exportarActividades(Request $request)
+    {
+        $sede_id = $request->sede_id;
+        $fecha_inicio = $request->fecha_inicio;
+        $fecha_fin = $request->fecha_fin;
+
+        return Excel::download(new ActividadesExport($sede_id, $fecha_inicio, $fecha_fin), 'actividades.xlsx');
+    }
+
+    public function exportarActivos(Request $request)
+    {
+        $sede_id = $request->sede_id;
+
+        return Excel::download(new ActivosExport($sede_id), 'activos.xlsx');
     }
 }
