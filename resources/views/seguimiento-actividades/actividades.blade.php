@@ -29,7 +29,7 @@
                 @if ($actividadesTrue->isNotEmpty())
                     @foreach ($supervisorTurno->areas as $area)
                         <h3 style="margin-left: 10px">{{ $area->area->nombre }}</h3>
-                        @foreach ($area->area->areasActividades as $index => $areaActividad)
+                        @foreach ($area->actividades as $index => $areaActividad)
                             @if ($areaActividad->estado)
                                 <a class="item-actividad" href="#" data-toggle="modal"
                                     data-target="#actividadModal{{ $areaActividad->actividad->id }}">
@@ -57,12 +57,10 @@
                                             </div>
                                             <div class="modal-body">
                                                 <p>{{ $areaActividad->actividad->descripcion }}</p>
-                                                <form
-                                                    action="{{ route('guardarCalificacion', $areaActividad->actividad->id) }}"
-                                                    method="POST" enctype="multipart/form-data">
+                                                <form action="{{ route('guardarCalificacion', $areaActividad->actividad->id) }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
-                                                    <input id="area_id" name="area_id" type="text"
-                                                        value="{{ $area->area_id }}" style="display: none">
+                                                    <input id="area_id" name="area_id" type="text" value="{{ $area->area_id }}" style="display: none">
+                                                    <input id="turnos_areas_id" name="turnos_areas_id" type="text" value="{{ $areaActividad->turnos_areas_id }}" style="display: none">
                                                     <button class="btn boton-secundario" type="button"
                                                         onclick="document.getElementById('evidenciaInput{{ $areaActividad->actividad->id }}').click()">Agregar
                                                         Evidencia <svg xmlns="http://www.w3.org/2000/svg" width="24.953"
@@ -127,7 +125,7 @@
                 @if ($actividadesFalse->isNotEmpty())
                     @foreach ($supervisorTurno->areas as $area)
                         <h3 style="margin-left: 10px">{{ $area->area->nombre }}</h3>
-                        @foreach ($area->area->areasActividades as $index => $areaActividad)
+                        @foreach ($area->actividades as $index => $areaActividad)
                             @if (!$areaActividad->estado)
                                 <a class="item-actividad" href="#" disabled>
                                     <div class="contenedor-actividad">

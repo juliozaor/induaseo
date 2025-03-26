@@ -30,5 +30,9 @@ class TurnoArea extends Model
     {
         return $this->belongsTo(SupervisorTurno::class);
     }
+    public function actividades()
+    {
+        return $this->hasMany(TurnosAreasActividades::class, 'turnos_areas_id', 'id');
+    }
 
 }

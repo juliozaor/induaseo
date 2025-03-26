@@ -22,6 +22,7 @@ use App\Models\Area;
 use App\Models\AreaActividad;
 use App\Models\Cliente; // Importar el modelo Cliente
 use App\Models\SupervisorTurnosFechas; // Import the model
+use App\Models\TurnosAreasActividades; // Import the model TurnosAreasActividades
 
 class SeguimientoActividadesController extends Controller
 {
@@ -102,12 +103,12 @@ class SeguimientoActividadesController extends Controller
     }
 
     public function obtenerActividades(Request $request)
-    {
+    {   /* dd($request->all()); */
         $userId = Auth::id();
         $turnoId = $request->input('id') ?? "<script>document.write(localStorage.getItem('turno_id'))</script>";
         $sedeId = $request->input('sede_id') ?? "<script>document.write(localStorage.getItem('sede_id'))</script>";
         $fechaInicial = $request->input('fecha_inicial');
-
+        /* dd($turnoId, $sedeId, $fechaInicial); */
         if (!$turnoId || !$sedeId) {
             return redirect()->route('seguimiento.actividades.index');
         }
@@ -131,7 +132,7 @@ class SeguimientoActividadesController extends Controller
         ->where('sede_id', $sedeId)
         ->get();
         $turnoAsignadoId = $turnoAsignado->first()->id;
-        //dd($turnoAsignadoId);
+        /* dd($turnoId, $sedeId,$turnoAsignadoId); */
         // Guardar la fecha inicial en la tabla supervisor_turnos_fechas
         SupervisorTurnosFechas::create([
             'supervisor_turno_id' => $turnoAsignadoId, // Usar el ID correcto
@@ -141,13 +142,15 @@ class SeguimientoActividadesController extends Controller
 
         $supervisorTurno = SupervisorTurno::with(['supervisor', 'sede', 'turno', 'areas'])
             ->where('supervisor_id', $userId)
+            ->where('id', $turnoAsignadoId)
             ->first();
-
-        $actividadesTrue = collect();
-        $actividadesFalse = collect();
+        /* dd($turnoId, $sedeId,$turnoAsignadoId,$supervisorTurno); */
+        $actividadesTrue = collect();   // Actividades completadas
+        $actividadesFalse = collect();  // Actividades pendientes
 
         foreach ($supervisorTurno->areas as $area) {
-            foreach ($area->area->areasActividades as $areaActividad) {
+            /* dd($area->area->areasActividades, $area->actividades); */
+            foreach ($area->actividades as $areaActividad) {
                 if ($areaActividad->estado) {
                     $actividadesTrue->push($areaActividad->actividad);
                 } else {
@@ -161,13 +164,13 @@ class SeguimientoActividadesController extends Controller
 
     public function guardarCalificacion(Request $request, $actividadId)
     {
-        //dd($request->input('area_id'),$actividadId);
+        /* dd($request->input('turnos_areas_id'),$actividadId); */
         $actividad = Actividades::findOrFail($actividadId);
         //$actividad->calificacion = $request->input('calificacion');
         $actividad->save();
 
-        $actividadArea = AreaActividad::where('actividad_id', $actividadId)
-                                      ->where('area_id', $request->input('area_id'))
+        $actividadArea = TurnosAreasActividades::where('actividad_id', $actividadId)
+                                      ->where('turnos_areas_id', $request->input('turnos_areas_id'))
                                       ->firstOrFail();
         $actividadArea->estado = false;
         $actividadArea->calificacion = $request->input('calificacion');

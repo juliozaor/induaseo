@@ -22,7 +22,7 @@ class AlertasController extends Controller
         $clienteId = $request->input('cliente_id');
         $sedeId = $request->input('sede_id');
 
-        $query = SupervisorTurno::with(['supervisor', 'sede.cliente', 'turno.actividades']);
+        $query = SupervisorTurno::with(['supervisor', 'sede.cliente', 'turno', 'areas.area.actividades']);
 
         if ($buscar) {
             $query->whereHas('supervisor', function ($q) use ($buscar) {
@@ -42,16 +42,28 @@ class AlertasController extends Controller
         }
 
         $turnos = $query->get()->filter(function ($turno) {
-            $actividadesCompletadas = $turno->turno->actividades->where('estado', false)->count();
-            $totalActividades = $turno->turno->actividades->count();
+            $actividadesCompletadas = $turno->areas
+                ->map(function ($area) {
+                    return $area->area->actividades->where('estado', false)->count();
+                })->sum();
+            $totalActividades = $turno->areas
+                ->map(function ($area) {
+                    return $area->area->actividades->count();
+                })->sum();
             return $actividadesCompletadas != $totalActividades; // Only return tasks that are not completed
         });
 
         $paginatedTurnos = $turnos->forPage($request->page ?? 1, $registrosPorPagina);
-
+        // dd($paginatedTurnos);
         $paginatedTurnos->transform(function ($turno) {
-            $actividadesCompletadas = $turno->turno->actividades->where('estado', false)->count();
-            $totalActividades = $turno->turno->actividades->count();
+            $actividadesCompletadas = $turno->areas
+                ->map(function ($area) {
+                    return $area->area->actividades->where('estado', false)->count();
+                })->sum();
+            $totalActividades = $turno->areas
+                ->map(function ($area) {
+                    return $area->area->actividades->count();
+                })->sum();
             return [
                 'id' => $turno->id,
                 'alerta' => false,
