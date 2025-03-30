@@ -106,7 +106,82 @@
         </div>
     </div>
 
-
+    <!-- Modal for Survey -->
+    <div class="modal fade" id="encuestaModal" tabindex="-1" role="dialog" aria-labelledby="encuestaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="encuestaModalLabel" style="color: #EC6F35;">Encuesta de Satisfacción del Servicio de Limpieza Industrial</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="encuestaForm">
+                        <div class="form-group">
+                            <label>1. ¿Qué tan satisfecho está con el servicio de limpieza recibido?</label>
+                            <select class="form-control">
+                                <option>Muy satisfecho</option>
+                                <option>Satisfecho</option>
+                                <option>Neutral</option>
+                                <option>Insatisfecho</option>
+                                <option>Muy insatisfecho</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>2. ¿Cómo calificaría la puntualidad del equipo de limpieza?</label>
+                            <select class="form-control">
+                                <option>Excelente</option>
+                                <option>Buena</option>
+                                <option>Regular</option>
+                                <option>Mala</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>3. ¿El personal de limpieza fue profesional y respetuoso?</label>
+                            <select class="form-control">
+                                <option>Sí</option>
+                                <option>No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>4. ¿Se cumplieron sus expectativas en cuanto a la calidad de la limpieza?</label>
+                            <select class="form-control">
+                                <option>Superó expectativas</option>
+                                <option>Cumplió expectativas</option>
+                                <option>No cumplió expectativas</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>5. ¿Recomendaría nuestro servicio a otras empresas?</label>
+                            <select class="form-control">
+                                <option>Sí</option>
+                                <option>No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>6. ¿Hay algún aspecto en el que podamos mejorar?</label>
+                            <textarea class="form-control" rows="3" maxlength="500"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>7. Calificar desempeño general, siendo 0 malo y 10 muy bueno</label>
+                            <div class="d-flex justify-content-between">
+                                @for ($i = 0; $i <= 10; $i++)
+                                    <label>
+                                        <input type="radio" name="calificacion" value="{{ $i }}"> {{ $i }}
+                                    </label>
+                                @endfor
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-consultar" data-dismiss="modal">Cerrar</button>
+                    <button id='enviarEncuesta' type="submit" class="btn-consultar">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal for Turno Details -->
     <div class="modal fade" id="detalleTurnoModal" tabindex="-1" role="dialog" aria-labelledby="detalleTurnoModalLabel" aria-hidden="true">
@@ -204,62 +279,4 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/actividades-evidencias.js') }}?v={{ time() }}"></script>
-<script>
-    const registrosEncontrados = document.querySelector('.registros-encontrados');
-
-    function renderPagination(totalItems, currentPage, rowsPerPage, paginationId, renderFunction, data) {
-        const totalPages = Math.ceil(totalItems / rowsPerPage);
-        const paginationContainer = document.getElementById(paginationId);
-        paginationContainer.innerHTML = '';
-
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i;
-            pageButton.classList.add('page-button');
-            if (i === currentPage) {
-                pageButton.classList.add('active');
-            }
-            pageButton.addEventListener('click', () => renderFunction(data, i, rowsPerPage));
-            paginationContainer.appendChild(pageButton);
-        }
-    }
-
-    function renderTurnosTable(data, page = 1, rowsPerPage = 5) {
-        turnosTableBody.innerHTML = '';
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const paginatedData = data.slice(start, end);
-
-        paginatedData.forEach(turno => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${turno.fecha}</td>
-                <td>${turno.nombre_turno}</td>
-                <td>${turno.regional}</td>
-                <td>${turno.actividades_completadas}</td>
-                <td>${turno.supervisor}</td>
-                <td>${turno.observaciones ?? 'Sin observaciones'}</td>
-                <td><img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}"></td>
-            `;
-            turnosTableBody.appendChild(row);
-        });
-
-        renderPagination(data.length, page, rowsPerPage, 'turnosPaginacion', renderTurnosTable, data);
-    }
-
-    function fetchTurnos(sedeId) {
-        fetch(`actividades-evidencias/consultar?sede_id=${sedeId}`)
-            .then(response => response.json())
-            .then(data => {
-                renderTurnosTable(data, 1, 5);
-                registrosEncontrados.textContent = `Total: ${data.length}`;
-            })
-            .catch(error => console.error('Error fetching turnos:', error));
-    }
-
-    consultarBtn.addEventListener('click', function () {
-        const sedeId = sedeSelect.value;
-        fetchTurnos(sedeId);
-    });
-</script>
 @endpush

@@ -29,7 +29,7 @@
 
 .modal-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: 10px;
 }
 
@@ -241,6 +241,23 @@
     gap: 10px;
 }
 
+.modal-lg {
+    max-width: 800px;
+}
+
+#encuestaForm label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#encuestaForm .form-group {
+    margin-bottom: 15px;
+}
+
+#encuestaForm textarea {
+    resize: none;
+}
+
 .switch {
     position: relative;
     display: inline-block;
@@ -382,6 +399,7 @@ input:checked + .slider:before {
     margin-bottom: 5px;
     position: relative;
     transition: margin-bottom 0.3s;
+    padding-right: 60px; /* Add space for the button */
 }
 
 .menu-item:hover {
@@ -529,4 +547,23 @@ input:checked + .slider:before {
     height: 100px;
     object-fit: cover;
     margin: 5px;
+}
+
+/* Encuesta Turno Button */
+.encuesta-turno-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    background-color: #000000;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 3px 10px #00000040;
+    position: absolute;
+    right: 10px; /* Align close to the right edge */
+    top: 50%;
+    transform: translateY(-50%);
+}
+.encuesta-turno-btn:hover {
+    background-color: #333333;
 }

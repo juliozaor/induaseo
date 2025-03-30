@@ -132,7 +132,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 turnoMenu.innerHTML = '';
                 data.forEach(turno => {
                     const li = document.createElement('li');
-                    li.textContent = `Turno: ${turno.nombre}`;
+                    /* li.textContent = `Turno: ${turno.nombre}`; */
+                    li.innerHTML = `
+                        Turno: ${turno.nombre}
+                        <div class="datos-satisfaccion">
+                            <span>Satisfacción del cliente: ${turno.satisfaccion ?? 0}</span>
+                            <span>Encuestas enviadas: ${turno.total_encuestas ?? 0}</span>
+                        </div>
+                    `;
                     li.classList.add('menu-item');
                     li.dataset.id = turno.id;
                     turnoMenu.appendChild(li);
@@ -161,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submenu.remove();
                 event.target.classList.remove('expanded');
             } else {
-                fetch(`reportes/consultar-areas?turno_id=${turnoId}`)
+                fetch(`actividades-evidencias/consolidado?turno_id=${turnoId}`)
                     .then(response => response.json())
                     .then(data => {
                         const opciones = document.createElement('ul');
@@ -171,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             li.textContent = `Área: ${area.nombre}`;
                             li.classList.add('submenu-item');
                             li.dataset.id = area.id;
+                            li.dataset.turnoId = turnoId;
                             opciones.appendChild(li);
                         });
                         event.target.insertAdjacentElement('afterend', opciones);
@@ -180,23 +188,60 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         } else if (event.target.classList.contains('submenu-item')) {
             const areaId = event.target.dataset.id;
+            const turnoId = event.target.dataset.turnoId;
             const submenu = event.target.nextElementSibling;
 
             if (submenu && submenu.classList.contains('submenu')) {
                 submenu.remove();
                 event.target.classList.remove('expanded');
             } else {
-                fetch(`reportes/consultar-actividades?area_id=${areaId}`)
+                fetch(`actividades-evidencias/consolidado?area_id=${areaId}&turno_id=${turnoId}`)
                     .then(response => response.json())
                     .then(data => {
                         const opciones = document.createElement('ul');
                         opciones.classList.add('submenu');
-                        data.forEach(actividad => {
-                            const li = document.createElement('li');
-                            li.textContent = `Actividad: ${actividad.nombre}`;
-                            li.classList.add('submenu-item-act');
-                            opciones.appendChild(li);
-                        });
+                        const areaDetails = document.createElement('div');
+                        areaDetails.classList.add('area-details');
+                        areaDetails.style.marginBottom = '20px';
+                        areaDetails.innerHTML = `
+                            <h3>Detalles del Área</h3>
+                            <form>
+                                <div class="form-group">
+                                    <label for="detalleSupervisor">Supervisor:</label>
+                                    <input type="text" id="detalleSupervisor" class="form-control" value="${data.supervisor}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="detalleFecha">Fecha de Asignación:</label>
+                                    <input type="text" id="detalleFecha" class="form-control" value="${data.fecha}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="areaActividades">Actividades:</label>
+                                    <div class="tabla-container">
+                                        <table class="tabla">
+                                            <thead>
+                                                <tr>
+                                                    <th>Actividad</th>
+                                                    <th>Estado</th>
+                                                    <th>Calificación</th>
+                                                    <th>Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${data.actividades.map(actividad => `
+                                                    <tr>
+                                                        <td>${actividad.nombre}</td>
+                                                        <td>${actividad.estado ? 'Pendiente' : 'Completado'}</td>
+                                                        <td>${actividad.calificacion ?? 0}/5</td>
+                                                        <td><img src="assets/icons/editar.png" alt="Ver" class="icono-editar" data-id="${actividad.id}"></td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        `;
+                        opciones.appendChild(areaDetails);
                         event.target.insertAdjacentElement('afterend', opciones);
                         event.target.classList.add('expanded');
                     })
@@ -288,4 +333,32 @@ document.addEventListener('DOMContentLoaded', function () {
         const url = `reportes/exportar-activos?sede_id=${sedeId}`;
         window.location.href = url;
     });
+});
+
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('icono-editar')) {
+        const actividadId = event.target.getAttribute('data-id');
+        console.log('Actividad ID:', actividadId); // Debug statement
+        fetch(`actividades-evidencias/detalle-actividad/${actividadId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('detalleActividadNombre').value = data.nombre;
+                document.getElementById('detalleActividadEstado').value = data.estado ? 'Pendiente' : 'Completado';
+                document.getElementById('detalleActividadCalificacion').value = data.calificacion ? data.calificacion + '/5' : '0/5';
+
+                const imagenesContainer = document.getElementById('detalleActividadImagenes');
+                imagenesContainer.innerHTML = '';
+                data.imagenes.forEach(imagen => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imagen.url;
+                    imgElement.alt = 'Evidencia';
+                    imgElement.classList.add('img-thumbnail', 'm-2');
+                    imgElement.style.width = '100px';
+                    imagenesContainer.appendChild(imgElement);
+                });
+
+                $('#detalleActividadModal').modal('show');
+            })
+            .catch(error => console.error('Error fetching actividad details:', error));
+    }
 });

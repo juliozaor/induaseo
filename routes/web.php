@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('actividades-evidencias/consolidado', [ActividadesEvidenciasController::class, 'obtenerConsolidado'])->name('actividades.evidencias.consolidado');
     Route::get('/actividades-evidencias/consultar-paginado', [ActividadesEvidenciasController::class, 'consultarPaginado'])->name('actividades.evidencias.consultarPaginado');
     Route::get('/actividades-evidencias/detalle-actividad/{id}', [ActividadesEvidenciasController::class, 'getActividadDetalle'])->name('actividades.evidencias.detalleActividad');
+    Route::post('/satisfaccion-servicio/guardar', [ActividadesEvidenciasController::class, 'guardarSatisfaccion'])->name('satisfaccion-servicio.guardar');
 
     Route::get('/novedades', [InformacionController::class, 'obtenerNovedades'])->name('novedades.obtener');
     Route::get('/informacion', [SeguimientoActividadesController::class, 'informacion'])->name('informacion');

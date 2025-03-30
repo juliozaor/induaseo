@@ -10,6 +10,7 @@ use App\Models\TurnoArea;
 use App\Models\AreaActividad;
 use App\Models\Area;
 use App\Models\Usuario;
+use App\Models\SatisfaccionServicio;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ActividadesExport;
 use App\Exports\ActivosExport;
@@ -75,9 +76,13 @@ class ReporteController extends Controller
             ->where('sede_id', $sede_id)
             ->get()
             ->map(function ($supervisorTurno) {
+                $satisfaccion = SatisfaccionServicio::where('supervisor_turnos_id', $supervisorTurno->id)->first();
                 return [
+                    'supervisor_turno_id' => $supervisorTurno->id,
                     'id' => $supervisorTurno->turno->id,
                     'nombre' => $supervisorTurno->turno->nombre,
+                    'satisfaccion' => $satisfaccion ? $satisfaccion->promedio : null,
+                    'total_encuestas' => $satisfaccion ? $satisfaccion->total_encuestas : null,
                 ];
             });
 

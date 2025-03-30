@@ -14,6 +14,7 @@ use App\Models\Actividades;
 use App\Models\Turno;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use App\Models\SatisfaccionServicio; // Asegúrate de importar el modelo correspondiente
 
 class ActividadesEvidenciasController extends Controller
 {
@@ -168,5 +169,27 @@ class ActividadesEvidenciasController extends Controller
         }
 
         return response()->json(['error' => 'No data found for the given turno_id'], 404);
+    }
+
+    public function guardarSatisfaccion(Request $request)
+    {
+        // Validar los datos recibidos
+        $request->validate([
+            'supervisor_turnos_id' => 'required|exists:supervisor_turnos,id',
+            'total_puntos' => 'required|integer|min:0|max:100', // Ajusta el rango según sea necesario
+        ]);
+
+        // Buscar o crear un registro en la tabla satisfaccion_servicio
+        $satisfaccion = SatisfaccionServicio::firstOrNew([
+            'supervisor_turnos_id' => $request->supervisor_turnos_id,
+        ]);
+
+        // Incrementar el acumulador y actualizar los puntos
+        $satisfaccion->total_puntos += $request->total_puntos;
+        $satisfaccion->total_encuestas = ($satisfaccion->total_encuestas ?? 0) + 1;
+        $satisfaccion->save();
+
+        // Retornar una respuesta de éxito
+        return response()->json(['message' => 'Satisfacción guardada exitosamente.'], 200);
     }
 }

@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const actividadesTableBody = document.getElementById('actividadesTableBody');
     const actividadesMensaje = document.getElementById('actividadesMensaje');
     const turnoMenu = document.getElementById('turnoMenu');
-    const areaDetails = document.getElementById('areaDetails');
+    /* const areaDetails = document.getElementById('areaDetails');
     const areaNombre = document.getElementById('areaNombre');
     const areaDescripcion = document.getElementById('areaDescripcion');
-    const areaActividades = document.getElementById('areaActividades');
+    const areaActividades = document.getElementById('areaActividades'); */
 
     function renderPagination(totalItems, currentPage, rowsPerPage, paginationId, renderFunction, data) {
         const totalPages = Math.ceil(totalItems / rowsPerPage);
@@ -61,6 +61,21 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching turnos:', error));
     }
 
+    function renderTurnoMenu(data) {
+        turnoMenu.innerHTML = '';
+        data.forEach(turno => {
+            console.log('Turno:', turno.supervisor_turno_id); // Debug statement
+            const li = document.createElement('li');
+            li.classList.add('menu-item');
+            li.dataset.id = turno.id;
+            li.innerHTML = `
+                Turno: ${turno.nombre}
+                <button class="btn-consultar encuesta-turno-btn" data-supervisor-turno-id="${turno.supervisor_turno_id}" style="float: right;">Encuesta</button>
+            `;
+            turnoMenu.appendChild(li);
+        });
+    }
+
     consultarBtn.addEventListener('click', function () {
         const sedeId = sedeSelect.value;
         fetchTurnos(sedeId);
@@ -86,14 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`reportes/consultar-turnos?sede_id=${sedeId}`)
             .then(response => response.json())
             .then(data => {
-                turnoMenu.innerHTML = '';
-                data.forEach(turno => {
-                    const li = document.createElement('li');
-                    li.textContent = `Turno: ${turno.nombre}`;
-                    li.classList.add('menu-item');
-                    li.dataset.id = turno.id;
-                    turnoMenu.appendChild(li);
-                });
+                renderTurnoMenu(data);
             })
             .catch(error => console.error('Error fetching turnos:', error));
     });
@@ -323,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(data => {
                     document.getElementById('detalleActividadNombre').value = data.nombre;
                     document.getElementById('detalleActividadEstado').value = data.estado ? 'Pendiente' : 'Completado';
-                    document.getElementById('detalleActividadCalificacion').value = data.calificacion ? data.calificacion+'/5' : 0+'/5';
+                    document.getElementById('detalleActividadCalificacion').value = data.calificacion ? data.calificacion + '/5' : '0/5';
 
                     const imagenesContainer = document.getElementById('detalleActividadImagenes');
                     imagenesContainer.innerHTML = '';
@@ -339,6 +347,55 @@ document.addEventListener('DOMContentLoaded', function () {
                     $('#detalleActividadModal').modal('show');
                 })
                 .catch(error => console.error('Error fetching actividad details:', error));
+        } else if (event.target.classList.contains('encuesta-turno-btn')) {
+            const turnoId = event.target.dataset.turnoId;
+            console.log(`Abrir encuesta para el turno ID: ${turnoId}`);
+            $('#encuestaModal').modal('show');
         }
+    });
+
+    // Handle survey submission
+    document.getElementById('enviarEncuesta').addEventListener('click', function (event) {
+        event.preventDefault();
+
+        // Get the supervisor_turno_id from the active survey button
+        const supervisorTurnoId = document.querySelector('.encuesta-turno-btn[data-supervisor-turno-id]').dataset.supervisorTurnoId;
+
+        // Calculate total points from the survey
+        const totalPuntos = Array.from(document.querySelectorAll('input[name="calificacion"]:checked'))
+            .map(input => parseInt(input.value))
+            .reduce((acc, val) => acc + val, 0);
+
+        if (!supervisorTurnoId || totalPuntos === 0) {
+            alert('Por favor, complete la encuesta antes de enviarla.');
+            return;
+        }
+        console.log(`Enviar encuesta para el supervisor_turno_id: ${supervisorTurnoId}, total_puntos: ${totalPuntos}`);
+        // Send the survey data to the server
+        fetch('satisfaccion-servicio/guardar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                supervisor_turnos_id: supervisorTurnoId,
+                total_puntos: totalPuntos
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                $('#encuestaModal').modal('hide');
+                document.getElementById('encuestaForm').reset();
+            } else {
+                alert('2. Error al guardar la encuesta.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('1. Error al guardar la encuesta.');
+        });
     });
 });

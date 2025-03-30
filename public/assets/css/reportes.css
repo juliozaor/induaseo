@@ -484,3 +484,69 @@ input:checked + .slider:before {
         transform: translateY(0);
     }
 }
+
+/* Area Details Section */
+.area-details {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 20px #00000029;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 20px;
+}
+
+.area-details h3 {
+    font: normal normal bold 14px/20px "Neo Sans Std", sans-serif;
+    color: #0D0D0D;
+    margin-bottom: 10px;
+}
+
+.area-details .form-group {
+    margin-bottom: 15px;
+}
+
+.area-details .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #B7B7B7;
+    border-radius: 6px;
+}
+
+.area-details .tabla-container {
+    overflow-x: auto;
+}
+
+.area-details .tabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.area-details .tabla th,
+.area-details .tabla td {
+    padding: 10px;
+    text-align: center;
+    font: normal normal normal 12px / 15px 'Neo Sans Std', Arial, sans-serif;
+    letter-spacing: 0px;
+    border: 1px solid #B7B7B7;
+}
+
+.area-details .tabla th {
+    background: #F9F9F9;
+    font-weight: bold;
+}
+
+.area-details .tabla tbody tr:nth-child(odd) {
+    background: #F7F7F7;
+}
+
+.area-details .icono-editar {
+    width: 15px;
+    cursor: pointer;
+}
+
+.datos-satisfaccion {
+    position: absolute;
+    right: 10px; /* Align close to the right edge */
+}
+.datos-satisfaccion span {
+    margin-right: 10px;
+}
