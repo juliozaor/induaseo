@@ -430,12 +430,14 @@
                         "ok.png", // Ruta del ícono de éxito
                         data.message // Mensaje de éxito
                     );
-                    /* modal.style.display = "none";
-                    cargarDatos(1); */
+
                     if (!editMode) {
                         areaId = data.area.id; // Establecer el areaId para el área recién creada
                     }
-                    actividadSection.style.display = "block"; // Enable actividadSection
+                    //actividadSection.style.display = "block";  Enable actividadSection
+                    modal.style.display = "none";
+                    cargarDatos(1);
+                    resetForm();
                 }
             })
             .catch((error) => {

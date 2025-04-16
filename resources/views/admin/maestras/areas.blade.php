@@ -119,8 +119,8 @@
             <label for="estadoToggle">Activo</label>
             <button id="modalActionBtn" class="btn-consultar" disabled>Crear Área</button>
         </div>
-        {{-- Aquí puedes agregar actividades para la nueva área --}}
         <div id="actividadSection" style="display: none;">
+            {{-- Aquí puedes agregar actividades para la nueva área --}}
             <div class="form-group">
                 <label for="actividadSelect">Seleccionar Actividad:</label>
                 <div class="select-container2">
