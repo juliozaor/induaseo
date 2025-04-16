@@ -107,6 +107,7 @@ class SeguimientoActividadesController extends Controller
         $userId = Auth::id();
         $turnoId = $request->input('id') ?? "<script>document.write(localStorage.getItem('turno_id'))</script>";
         $sedeId = $request->input('sede_id') ?? "<script>document.write(localStorage.getItem('sede_id'))</script>";
+        $inicioTurno = $request->input('inicio_turno');
         $fechaInicial = $request->input('fecha_inicial');
         /* dd($turnoId, $sedeId, $fechaInicial); */
         if (!$turnoId || !$sedeId) {
@@ -128,10 +129,11 @@ class SeguimientoActividadesController extends Controller
             ->update(['fecha_inicio' => $fechaInicial]);
 
         $turnoAsignado = SupervisorTurno::where('supervisor_id', $userId)
-        ->where('turno_id', $turnoId)
-        ->where('sede_id', $sedeId)
-        ->get();
+            ->where('turno_id', $turnoId)
+            ->where('sede_id', $sedeId)
+            ->get();
         $turnoAsignadoId = $turnoAsignado->first()->id;
+        $estadoInicializado = $turnoAsignado->first()->inicializado;
         /* dd($turnoId, $sedeId,$turnoAsignadoId); */
         // Guardar la fecha inicial en la tabla supervisor_turnos_fechas
         SupervisorTurnosFechas::create([
@@ -145,8 +147,24 @@ class SeguimientoActividadesController extends Controller
             ->where('id', $turnoAsignadoId)
             ->first();
         /* dd($turnoId, $sedeId,$turnoAsignadoId,$supervisorTurno); */
-        $actividadesTrue = collect();   // Actividades completadas
-        $actividadesFalse = collect();  // Actividades pendientes
+        $actividadesTrue = collect();   // Actividades pendientes
+        $actividadesFalse = collect();  // Actividades finalizadas
+
+        if (!$estadoInicializado) {
+            foreach ($supervisorTurno->areas as $area) {
+                foreach ($area->actividades as $areaActividad) {
+                    if (!$areaActividad->estado) {
+                        $areaActividad->estado = true;
+                        $areaActividad->save();
+                    }
+                }
+            }
+            // Cambiar el estado a inicializado
+            SupervisorTurno::where('supervisor_id', $userId)
+                ->where('turno_id', $turnoId)
+                ->where('sede_id', $sedeId)
+                ->update(['inicializado' => true]);
+        }
 
         foreach ($supervisorTurno->areas as $area) {
             /* dd($area->area->areasActividades, $area->actividades); */
@@ -158,7 +176,7 @@ class SeguimientoActividadesController extends Controller
                 }
             }
         }
-        //dd($actividadesTrue, $actividadesFalse);
+        /* dd($actividadesTrue, $actividadesFalse); */
         return view('seguimiento-actividades.actividades', compact('supervisorTurno', 'actividadesTrue', 'actividadesFalse', 'sedeId', 'turnoId'));
     }
 
@@ -170,12 +188,12 @@ class SeguimientoActividadesController extends Controller
         $actividad->save();
 
         $actividadArea = TurnosAreasActividades::where('actividad_id', $actividadId)
-                                      ->where('turnos_areas_id', $request->input('turnos_areas_id'))
-                                      ->firstOrFail();
+            ->where('turnos_areas_id', $request->input('turnos_areas_id'))
+            ->firstOrFail();
         $actividadArea->estado = false;
         $actividadArea->calificacion = $request->input('calificacion');
         $actividadArea->save();
-
+        /* dd($actividadArea); */
         if ($request->hasFile('evidencias')) {
             foreach ($request->file('evidencias') as $file) {
                 $filename = time() . '_' . $file->getClientOriginalName();
@@ -250,11 +268,16 @@ class SeguimientoActividadesController extends Controller
         $sedeId = $request->input('sede_id');
         $fechaFinal = $request->input('fecha_final');
 
+        /* dd($turnoId, $sedeId, $fechaFinal); */
+
         // Actualizar la fecha final del turno
         SupervisorTurno::where('supervisor_id', $userId)
             ->where('turno_id', $turnoId)
             ->where('sede_id', $sedeId)
-            ->update(['fecha_fin' => $fechaFinal]);
+            ->update([
+                'fecha_fin' => $fechaFinal,
+                'inicializado' => false,
+            ]);
 
         $turnoAsignado = SupervisorTurno::where('supervisor_id', $userId)
             ->where('turno_id', $turnoId)

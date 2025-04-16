@@ -29,8 +29,8 @@
                     <img src="{{ asset('assets/icons/location.svg') }}" alt="Ubicación" class="card-icon">
                     <span>{{ $turno->sede->nombre }} <br> {{ $turno->sede->direccion }}</span>
                 </div>
-                {{$turno->turno->id}},{{$turno->sede->id}}
-                <a href="{{ route('actividades.turno', ['id' => $turno->turno->id, 'sede_id' => $turno->sede->id, 'fecha_inicial' => now()->format('Y-m-d')]) }}"
+                {{-- {{$turno->turno->id}},{{$turno->sede->id}} --}}
+                <a href="{{ route('actividades.turno', ['id' => $turno->turno->id, 'sede_id' => $turno->sede->id, 'fecha_inicial' => now()->format('Y-m-d'), 'inicio_turno' => 'true']) }}"
                     class="btn boton-secundario"
                     onclick="setTurnoData({{ $turno->turno->id }}, {{ $turno->sede->id }}, '{{ now()->format('Y-m-d') }}')">
                     Iniciar turno

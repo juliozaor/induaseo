@@ -40,7 +40,7 @@
                                 </a>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="actividadModal{{ $areaActividad->actividad->id }}"
+                                <div class="modal fade" id="actividadModal{{ $areaActividad->id }}"
                                     tabindex="-1" role="dialog"
                                     aria-labelledby="actividadModalLabel{{ $areaActividad->actividad->id }}"
                                     aria-hidden="true">
@@ -48,8 +48,8 @@
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title"
-                                                    id="actividadModalLabel{{ $areaActividad->actividad->id }}">
-                                                    {{ $areaActividad->actividad->nombre }}</h5>
+                                                    id="actividadModalLabel{{ $areaActividad->id }}">
+                                                    {{ $areaActividad->actividad->nombre }} - {{ $area->area->nombre }}</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -62,7 +62,7 @@
                                                     <input id="area_id" name="area_id" type="text" value="{{ $area->area_id }}" style="display: none">
                                                     <input id="turnos_areas_id" name="turnos_areas_id" type="text" value="{{ $areaActividad->turnos_areas_id }}" style="display: none">
                                                     <button class="btn boton-secundario" type="button"
-                                                        onclick="document.getElementById('evidenciaInput{{ $areaActividad->actividad->id }}').click()">Agregar
+                                                        onclick="document.getElementById('evidenciaInput{{ $areaActividad->id }}').click()">Agregar
                                                         Evidencia <svg xmlns="http://www.w3.org/2000/svg" width="24.953"
                                                             height="19.677" viewBox="0 0 24.953 19.677">
                                                             <g id="Grupo_23192" data-name="Grupo 23192"
@@ -80,25 +80,25 @@
                                                         </svg>
                                                     </button>
                                                     <input type="file"
-                                                        id="evidenciaInput{{ $areaActividad->actividad->id }}"
+                                                        id="evidenciaInput{{ $areaActividad->id }}"
                                                         name="evidencias[]" accept="image/jpeg, image/png"
                                                         style="display: none;" multiple
                                                         onchange="handleFileSelect(event, {{ $areaActividad->actividad->id }})">
                                                     <div class="evidencias"
-                                                        id="evidenciasContainer{{ $areaActividad->actividad->id }}">
+                                                        id="evidenciasContainer{{ $areaActividad->id }}">
                                                         <!-- Miniaturas de las evidencias cargadas -->
                                                     </div>
                                                     <span class="mt-3">Calificar</span>
                                                     <div class="calificacion"
-                                                        id="calificacion{{ $areaActividad->actividad->id }}">
+                                                        id="calificacion{{ $areaActividad->id }}">
                                                         <!-- Cinco estrellas para calificar -->
                                                         <div class="rating">
                                                             @for ($i = 5; $i >= 1; $i--)
                                                                 <input type="radio"
-                                                                    id="star{{ $i }}-{{ $areaActividad->actividad->id }}"
+                                                                    id="star{{ $i }}-{{ $areaActividad->id }}"
                                                                     name="calificacion" value="{{ $i }}" />
                                                                 <label
-                                                                    for="star{{ $i }}-{{ $areaActividad->actividad->id }}"
+                                                                    for="star{{ $i }}-{{ $areaActividad->id }}"
                                                                     class="fa fa-star"></label>
                                                             @endfor
                                                         </div>
@@ -146,21 +146,19 @@
     <div class="footer-actividades">
         <form action="{{ route('finalizarTurno') }}" method="POST">
             @csrf
+            <input type="hidden" name="id" value="{{ $turnoId }}">
+            <input type="hidden" name="sede_id" value="{{ $sedeId }}">
+            <input type="hidden" name="fecha_final" value="{{ now()->format('Y-m-d H:i:s') }}">
             <span>Observaciones</span>
             <textarea class="form-control is-invalid" id="validationTextarea" name="observaciones"
-                placeholder="Escribe en este espacio las observaciones generales..."
-                ></textarea>
+                placeholder="Escribe en este espacio las observaciones generales..."></textarea>
             <div class="porcentaje-actividad">
                 <span>Actividades finalizadas
                     <span>{{ $actividadesFalse->count() }}/{{ $actividadesTrue->count() + $actividadesFalse->count() }}</span>
                 </span>
             </div>
-            <button type="submit" class="btn boton-secundario" >
-                {{-- @if ($supervisorTurno->turno->estado) --}}
-                    Finalizar turno
-                {{-- @else
-                    Turno finalizado
-                @endif --}}
+            <button type="submit" class="btn boton-secundario">
+                Finalizar turno
             </button>
         </form>
     </div>
