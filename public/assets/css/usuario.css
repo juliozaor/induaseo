@@ -290,6 +290,11 @@ input:checked + .slider:before {
     width: 15px;
     cursor: pointer;
 }
+.icono-eliminar{
+    margin-left: 15px;
+    width: 17px;
+    cursor: pointer;
+}
 
 .estado-activo {
     color: green;

@@ -109,6 +109,34 @@
                 })
                 .catch((error) => console.error("Error al cargar los datos del usuario:", error));
         }
+        // Eliminar usuario
+        if (event.target.classList.contains("icono-eliminar")) {
+            const userId = event.target.getAttribute("data-id");
+            if (!userId) {
+            console.error("Error: No se encontró el ID del usuario en el botón.");
+            return;
+            }
+
+            if (confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+            fetch(`../usuarios/${userId}`, {
+                method: "DELETE",
+                headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                throw new Error("Error al eliminar el usuario.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message);
+                cargarUsuarios(1); // Reload the table after deletion
+            })
+            .catch(error => console.error("Error al eliminar el usuario:", error));
+            }
+        }
     });
 
     // Cerrar modal
@@ -287,7 +315,10 @@
                     <td>${usuario.email}</td>
                     <td>${usuario.telefono}</td>
                     <td><div class="${estadoClase}">${usuario.estado ? 'Activo' : 'Inactivo'}</div></td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${usuario.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${usuario.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${usuario.id}">
+                    </td>
                 `;
                     tablaUsuariosBody.appendChild(row);
                 });

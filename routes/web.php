@@ -158,6 +158,7 @@ Route::post('/admin/usuarios', [UsuarioController::class, 'cargarUsuarios'])->na
 Route::post('/usuarios/guardar', [UsuarioController::class, 'guardar'])->name('usuarios.guardar');
 Route::get('/usuarios', [UsuarioController::class, 'obtenerUsuario'])->name('usuarios.obtener');
 Route::put('/usuarios/actualizar/{id}', [UsuarioController::class, 'actualizarUsuario'])->name('usuarios.actualizar');
+Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
 
 Route::get('/roles', [UsuarioController::class, 'obtenerRoles'])->name('roles.obtener');
 Route::get('/tipos-documentos', [UsuarioController::class, 'obtenerTiposDocumentos'])->name('tipos.documentos.obtener');

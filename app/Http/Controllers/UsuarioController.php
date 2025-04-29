@@ -201,7 +201,7 @@ class UsuarioController extends Controller
         ]);
 
         if ($request->email !== $user->email) {
-            
+
         }
 
         $user->nombres = $request->nombres; // Cambiar 'name' a 'nombres'
@@ -214,6 +214,19 @@ class UsuarioController extends Controller
         $user->save();
 
         return redirect()->route('profile.edit')->with('success', 'Cuenta configurada correctamente.');
+    }
+
+    public function destroy($id)
+    {
+        $usuario = Usuario::findOrFail($id);
+
+        // Eliminar relaciones con roles y clientes antes de eliminar el usuario
+        $usuario->roles()->detach();
+        $usuario->clientes()->detach();
+
+        $usuario->delete();
+
+        return response()->json(['message' => 'Usuario eliminado correctamente.']);
     }
 
 }

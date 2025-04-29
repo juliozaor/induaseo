@@ -2,7 +2,7 @@
 @section('content')
 <div class="container mt-3">
     <div class="table-container">
-        <h2>Edit Profile</h2>
+        <h2>Editar Perfil</h2>
 
         @if (session('success'))
             <div class="alert alert-success">
@@ -15,7 +15,7 @@
             @method('PUT')
 
             <div class="mb-3">
-                <label for="nombres" class="form-label">Nombre completo</label>
+                <label for="nombres" class="form-label">Nombre Completo</label>
                 <input type="text" name="nombres" class="form-control @error('nombres') is-invalid @enderror" id="nombres" value="{{ old('nombres', Auth::user()->nombres) }}" required>
                 @error('nombres')
                     <span class="invalid-feedback" role="alert">{{ $message }}</span>
