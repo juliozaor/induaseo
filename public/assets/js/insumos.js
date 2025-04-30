@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaInsumosBody = document.querySelector("#tablaInsumos tbody");
@@ -31,12 +31,12 @@
         formData.append('estado', estado);
 
         fetch(`../insumos/consultar?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}&clasificacion=${clasificacion}&estado=${estado}`, {
-                method: 'GET', // Change method back to POST
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-                /* body: formData */
-            })
+            method: 'GET', // Change method back to POST
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+            /* body: formData */
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -66,7 +66,7 @@
                     <td>${formatDate(insumo.updated_at)}</td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${insumo.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${insumo.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${insumo.id}" data-tipo="insumo">
                     </td>
                 `;
                     tablaInsumosBody.appendChild(row);
@@ -148,12 +148,12 @@
     let insumoId = null;
 
     // Abrir el modal
-    openModalBtn.addEventListener("click", function() {
+    openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex";
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
@@ -161,7 +161,7 @@
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             insumoId = event.target.getAttribute("data-id");
             if (!insumoId) {
@@ -201,42 +201,45 @@
 
         if (event.target.classList.contains("icono-eliminar")) {
             const insumoId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!insumoId) {
                 console.error("Error: No se encontró el ID del insumo en el botón.");
                 return;
             }
-
-            if (confirm("¿Está seguro de que desea eliminar este insumo?")) {
-                fetch(`../insumos/${insumoId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar el insumo.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("Insumo eliminado con éxito.");
-                    cargarDatos(1); // Reload the table
-                })
-                .catch(error => console.error("Error al eliminar el insumo:", error));
+            if (tipo !== "insumo") {
+                if (confirm("¿Está seguro de que desea eliminar este insumo?")) {
+                    fetch(`../insumos/${insumoId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar el insumo.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert("Insumo eliminado con éxito.");
+                            cargarDatos(1); // Reload the table
+                        })
+                        .catch(error => console.error("Error al eliminar el insumo:", error));
+                }
             }
+
         }
     });
 
     // Cerrar modal
-    document.getElementById("closeInsumo").addEventListener("click", function() {
+    document.getElementById("closeInsumo").addEventListener("click", function () {
         modal.style.display = "none";
         resetForm();
         clearErrorMessages(); // Limpiar mensajes de error
     });
 
     // Guardar cambios
-    modalActionBtn.addEventListener("click", function() {
+    modalActionBtn.addEventListener("click", function () {
         const url = editMode ? `../insumos/actualizar/${insumoId}` : `../insumos/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -248,12 +251,12 @@
         }
 
         fetch(url, {
-                method: "POST", // Always use POST for FormData
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST", // Always use POST for FormData
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -362,12 +365,12 @@
     actualizarEstadoLabel();
 
     const cantidadInsumo = document.getElementById("cantidadInsumo");
-    cantidadInsumo.addEventListener("input", function() {
+    cantidadInsumo.addEventListener("input", function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 
     const telefonoProveedorInsumo = document.getElementById("telefonoProveedorInsumo");
-    telefonoProveedorInsumo.addEventListener("input", function() {
+    telefonoProveedorInsumo.addEventListener("input", function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 

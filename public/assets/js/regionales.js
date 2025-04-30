@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaRegionalesBody = document.querySelector("#tablaRegionales tbody");
@@ -16,11 +16,11 @@
         const estado = estadoFiltro.value;
 
         fetch(`../regionales?page=${page}&buscar=${buscar}&estado=${estado}&registros_por_pagina=${registrosPorPagina}`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -42,7 +42,7 @@
                     <td>${formatDate(regional.created_at)}</td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${regional.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${regional.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${regional.id}" data-tipo="regional">
                     </td>
                 `;
                     tablaRegionalesBody.appendChild(row);
@@ -122,19 +122,19 @@
     let regionalId = null;
 
     // Abrir el modal
-    openModalBtn.addEventListener("click", function() {
+    openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex";
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             regionalId = event.target.getAttribute("data-id");
             if (!regionalId) {
@@ -169,44 +169,47 @@
 
         if (event.target.classList.contains("icono-eliminar")) {
             const regionalId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!regionalId) {
                 console.error("Error: No se encontró el ID de la regional en el botón.");
                 return;
             }
-
-            if (confirm("¿Estás seguro de que deseas eliminar esta regional?")) {
-                fetch(`../regionales/${regionalId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar la regional.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    showAlertModal(
-                        "ok.png", // Ruta del ícono de éxito
-                        data.message // Mensaje de éxito
-                    );
-                    cargarDatos(1);
-                })
-                .catch(error => console.error("Error al eliminar la regional:", error));
+            if (tipo === "regional") {
+                if (confirm("¿Estás seguro de que deseas eliminar esta regional?")) {
+                    fetch(`../regionales/${regionalId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar la regional.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                data.message // Mensaje de éxito
+                            );
+                            cargarDatos(1);
+                        })
+                        .catch(error => console.error("Error al eliminar la regional:", error));
+                }
             }
+
         }
     });
 
     // Cerrar modal
-    document.getElementById("close").addEventListener("click", function() {
+    document.getElementById("close").addEventListener("click", function () {
         modal.style.display = "none";
         resetForm();
     });
 
     // Guardar cambios
-    modalActionBtn.addEventListener("click", function() {
+    modalActionBtn.addEventListener("click", function () {
         const nombre = document.getElementById("nombre").value.trim();
         const urlVerificar = `../regionales/verificar-nombre?nombre=${encodeURIComponent(nombre)}&id=${editMode ? regionalId : ''}`;
 
@@ -216,15 +219,15 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.exists) {
-                document.getElementById("errorNombreDuplicado").textContent = "La regional que intenta ingresar ya existe.";
-            } else {
-                guardarRegional();
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    document.getElementById("errorNombreDuplicado").textContent = "La regional que intenta ingresar ya existe.";
+                } else {
+                    guardarRegional();
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 
     function guardarRegional() {
@@ -235,12 +238,12 @@
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
 
         fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {

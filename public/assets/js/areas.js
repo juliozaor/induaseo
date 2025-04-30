@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaAreasBody = document.querySelector("#tablaAreas tbody");
@@ -166,12 +166,12 @@
             },
             body: JSON.stringify({ area_id: areaId, actividad_id: actividadId })
         })
-        .then(response => response.json())
-        .then(data => {
-            cargarActividades(areaId);
-            actividadSelect.value = '';
-        })
-        .catch(error => console.error('Error al agregar actividad:', error));
+            .then(response => response.json())
+            .then(data => {
+                cargarActividades(areaId);
+                actividadSelect.value = '';
+            })
+            .catch(error => console.error('Error al agregar actividad:', error));
     }
 
     function eliminarActividad(id) {
@@ -181,11 +181,11 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            cargarActividades(areaId);
-        })
-        .catch(error => console.error('Error al eliminar actividad:', error));
+            .then(response => response.json())
+            .then(data => {
+                cargarActividades(areaId);
+            })
+            .catch(error => console.error('Error al eliminar actividad:', error));
     }
 
     function cargarDatos(page = 1) {
@@ -196,11 +196,11 @@
         const estado = estadoFiltro.value;
 
         fetch(`../areas?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}&cliente_id=${clienteId}&sede_id=${sedeId}&estado=${estado}`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -225,7 +225,10 @@
                     <td>${area.actualizador?.nombres || 'N/A'}</td>
                     <td>${area.creador?.nombres || 'N/A'}</td>
                     <td>${formatDate(area.created_at)}</td>
-                    <td><img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${area.id}"><img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${area.id}"></td>
+                    <td>
+                        <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${area.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${area.id}" data-tipo="area">
+                    </td>
                 `;
                     tablaAreasBody.appendChild(row);
                 });
@@ -314,21 +317,21 @@
     let areaId = null;
 
     // Abrir el modal
-    openModalBtn.addEventListener("click", function() {
+    openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex";
         resetForm();
         cargarActividadesSelect();
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             areaId = event.target.getAttribute("data-id");
             if (!areaId) {
@@ -373,25 +376,29 @@
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-eliminar")) {
             const areaId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (areaId) {
-                if (confirm("¿Estás seguro de que deseas eliminar esta área?")) {
-                    eliminarArea(areaId);
+                if (tipo === "area") {
+                    if (confirm("¿Estás seguro de que deseas eliminar esta área?")) {
+                        eliminarArea(areaId);
+                    }
                 }
+
             }
         }
     });
 
     // Cerrar modal
-    document.getElementById("close").addEventListener("click", function() {
+    document.getElementById("close").addEventListener("click", function () {
         modal.style.display = "none";
         resetForm();
     });
 
     // Guardar cambios
-    modalActionBtn.addEventListener("click", function() {
+    modalActionBtn.addEventListener("click", function () {
         const url = editMode ? `../areas/actualizar/${areaId}` : `../areas/guardar`;
         const method = editMode ? "PUT" : "POST";
         const nombreExistente = document.getElementById("nombreExistente");
@@ -408,12 +415,12 @@
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
 
         fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -449,13 +456,13 @@
             });
     });
 
-    clienteSelect.addEventListener("change", function() {
+    clienteSelect.addEventListener("change", function () {
         const clienteId = parseInt(clienteSelect.value);
         cargarSedes(clienteId);
     });
 
     // Deshabilita el input nombre si no se ha seleccionado una sede
-    document.getElementById("sede").addEventListener("change", function() {
+    document.getElementById("sede").addEventListener("change", function () {
         const sedeId = this.value;
         const nombreInput = document.getElementById("nombre");
 
@@ -469,7 +476,7 @@
     });
 
     // Agregar actividad
-    agregarActividadBtn.addEventListener("click", function() {
+    agregarActividadBtn.addEventListener("click", function () {
         const actividadId = actividadSelect.value;
         if (actividadId && areaId) {
             agregarActividad(areaId, actividadId);
@@ -477,7 +484,7 @@
     });
 
     // Eliminar actividad
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("btn-eliminar")) {
             const actividadId = event.target.getAttribute("data-id");
             if (actividadId) {
@@ -487,7 +494,7 @@
     });
 
     // Verificar si el nombre del área ya existe en la sede seleccionada
-    document.getElementById("nombre").addEventListener("input", function() {
+    document.getElementById("nombre").addEventListener("input", function () {
         const nombre = this.value;
         const sedeId = document.getElementById("sede").value;
         const nombreExistente = document.getElementById("nombreExistente");
@@ -566,7 +573,7 @@
 
     const guardarFinalizarBtn = document.getElementById("guardarFinalizarBtn");
     // Guardar y finalizar (cerrar modal)
-    guardarFinalizarBtn.addEventListener("click", function() {
+    guardarFinalizarBtn.addEventListener("click", function () {
         modal.style.display = "none";
         cargarDatos(1);
         resetForm();
@@ -584,19 +591,19 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error al eliminar el área.');
-            }
-            return response.text(); // Use text() instead of json() for empty responses
-        })
-        .then(() => {
-            cargarDatos(1);
-            showAlertModal(
-                "ok.png", // Ruta del ícono de éxito
-                "Área eliminada con éxito" // Mensaje de éxito
-            );
-        })
-        .catch(error => console.error('Error al eliminar el área:', error));
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al eliminar el área.');
+                }
+                return response.text(); // Use text() instead of json() for empty responses
+            })
+            .then(() => {
+                cargarDatos(1);
+                showAlertModal(
+                    "ok.png", // Ruta del ícono de éxito
+                    "Área eliminada con éxito" // Mensaje de éxito
+                );
+            })
+            .catch(error => console.error('Error al eliminar el área:', error));
     }
 })();

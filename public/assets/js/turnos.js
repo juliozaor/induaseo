@@ -139,7 +139,7 @@
                     <td>${formatDate(turno.created_at)}</td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${turno.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${turno.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${turno.id}" data-tipo="turno">
                     </td>
                 `;
                     tablaTurnosBody.appendChild(row);
@@ -268,30 +268,33 @@
 
         if (event.target.classList.contains("icono-eliminar")) {
             const turnoId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!turnoId) {
                 console.error("Error: No se encontró el ID del turno en el botón.");
                 return;
             }
-
-            if (confirm("¿Está seguro de que desea eliminar este turno?")) {
-                fetch(`../turnos/${turnoId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar el turno.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("Turno eliminado con éxito.");
-                    cargarDatos(1); // Reload the table
-                })
-                .catch(error => console.error("Error al eliminar el turno:", error));
+            if (tipo === "turno") {
+                if (confirm("¿Está seguro de que desea eliminar este turno?")) {
+                    fetch(`../turnos/${turnoId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar el turno.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert("Turno eliminado con éxito.");
+                            cargarDatos(1); // Reload the table
+                        })
+                        .catch(error => console.error("Error al eliminar el turno:", error));
+                }
             }
+
         }
     });
 

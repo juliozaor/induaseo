@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const consultarBtn = document.getElementById("consultarBtn");
     const openModalBtn = document.getElementById("openModalBtn");
     const modal = document.getElementById("createActividadModal");
@@ -42,11 +42,11 @@
         const registrosPorPagina = registrosPorPaginaSelect.value;
 
         fetch(`../actividades?page=${page}&buscar=${buscar}&registros_por_pagina=${registrosPorPagina}`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -68,7 +68,7 @@
                     <td><div class="${estadoClase}">${actividad.estado ? 'Activo' : 'Inactivo'}</div></td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${actividad.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${actividad.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${actividad.id}" data-tipo="actividad">
                     </td>
                 `;
                     tablaActividadesBody.appendChild(row);
@@ -139,19 +139,19 @@
 
     // Modal functionality
     // Abrir el modal
-    openModalBtn.addEventListener("click", function() {
+    openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex";
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             actividadId = event.target.getAttribute("data-id");
             if (!actividadId) {
@@ -186,44 +186,47 @@
 
         if (event.target.classList.contains("icono-eliminar")) {
             const actividadId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!actividadId) {
                 console.error("Error: No se encontró el ID de la actividad en el botón.");
                 return;
             }
-
-            if (confirm("¿Estás seguro de que deseas eliminar esta actividad?")) {
-                fetch(`../actividades/${actividadId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar la actividad.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    showAlertModal(
-                        "ok.png", // Ruta del ícono de éxito
-                        data.message // Mensaje de éxito
-                    );
-                    cargarDatos(1)
-                })
-                .catch(error => console.error("Error al eliminar la actividad:", error));
+            if (tipo === "actividad") {
+                if (confirm("¿Estás seguro de que deseas eliminar esta actividad?")) {
+                    fetch(`../actividades/${actividadId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar la actividad.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                data.message // Mensaje de éxito
+                            );
+                            cargarDatos(1)
+                        })
+                        .catch(error => console.error("Error al eliminar la actividad:", error));
+                }
             }
+
         }
     });
 
     // Cerrar modal
-    document.getElementById("close").addEventListener("click", function() {
+    document.getElementById("close").addEventListener("click", function () {
         modal.style.display = "none";
         resetForm();
     });
 
     // Guardar cambios
-    modalActionBtn.addEventListener("click", function() {
+    modalActionBtn.addEventListener("click", function () {
         const nombre = document.getElementById("nombre").value.trim();
         const urlVerificar = `../actividades/verificar-nombre?nombre=${encodeURIComponent(nombre)}&id=${editMode ? actividadId : ''}`;
 
@@ -233,19 +236,19 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data.exists, actividadId)
-            if (data.exists) {
-                document.getElementById("errorNombreDuplicado").textContent = "La actividad que intenta ingresar ya existe.";
-            } else {
-                guardarActividad();
-            }
-        })
-        .catch(error => console.error('Error:', error));
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.exists, actividadId)
+                if (data.exists) {
+                    document.getElementById("errorNombreDuplicado").textContent = "La actividad que intenta ingresar ya existe.";
+                } else {
+                    guardarActividad();
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 
-    function guardarActividad(){
+    function guardarActividad() {
         const url = editMode ? `../actividades/actualizar/${actividadId}` : `../actividades/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -253,12 +256,12 @@
         formData.append("estado", document.getElementById("estadoToggle").checked ? 1 : 0);
 
         fetch(url, {
-                method: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST",
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {

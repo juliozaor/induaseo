@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <td>${inventario.editado_por ?? ''}</td>
                         <td>
                             <img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${inventario.id}">
-                            <img src="assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${inventario.id}">
+                            <img src="assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${inventario.id}" data-tipo="eliminar-inventario">
                         </td>
                     `;
                     inventariosTableBody.appendChild(row);
@@ -234,30 +234,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (event.target.classList.contains('icono-eliminar')) {
             const inventarioId = event.target.getAttribute('data-id');
+            const tipo = event.target.getAttribute("data-tipo");
             if (!inventarioId) {
                 console.error("Error: No se encontró el ID del inventario en el botón.");
                 return;
             }
-
-            if (confirm("¿Está seguro de que desea eliminar este inventario?")) {
-                fetch(`gestionar-inventario/eliminar/${inventarioId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar el inventario.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("Inventario eliminado con éxito.");
-                    consultarInventarios(); // Reload the table
-                })
-                .catch(error => console.error("Error al eliminar el inventario:", error));
+            if (tipo === "eliminar-inventario") {
+                if (confirm("¿Está seguro de que desea eliminar este inventario?")) {
+                    fetch(`gestionar-inventario/eliminar/${inventarioId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar el inventario.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert("Inventario eliminado con éxito.");
+                            consultarInventarios(); // Reload the table
+                        })
+                        .catch(error => console.error("Error al eliminar el inventario:", error));
+                }
             }
+
         }
     });
 

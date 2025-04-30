@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const openUserModalBtn = document.getElementById("openUserModalBtn");
     const userModal = document.getElementById("createUserModal");
     const userModalTitle = document.getElementById("userModalTitle");
@@ -15,14 +15,14 @@
     let userId = null;
 
     // Abrir el modal
-    openUserModalBtn.addEventListener("click", function() {
+    openUserModalBtn.addEventListener("click", function () {
         userModal.style.display = "flex";
         estadoToggle.checked = true; // Estado por defecto true
         setMaxDate(); // Set the maximum date for fechaNacimiento
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === userModal) {
             userModal.style.display = "none";
             resetUserForm();
@@ -54,7 +54,7 @@
     // Añadir evento para cambiar el label cuando se cambia el estado del checkbox
     estadoToggle.addEventListener("change", actualizarEstadoLabel);
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             userId = event.target.getAttribute("data-id");
             if (!userId) {
@@ -112,42 +112,45 @@
         // Eliminar usuario
         if (event.target.classList.contains("icono-eliminar")) {
             const userId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!userId) {
-            console.error("Error: No se encontró el ID del usuario en el botón.");
-            return;
+                console.error("Error: No se encontró el ID del usuario en el botón.");
+                return;
+            }
+            if (tipo === "usuario") {
+                if (confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+                    fetch(`../usuarios/${userId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar el usuario.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert(data.message);
+                            cargarUsuarios(1); // Reload the table after deletion
+                        })
+                        .catch(error => console.error("Error al eliminar el usuario:", error));
+                }
             }
 
-            if (confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
-            fetch(`../usuarios/${userId}`, {
-                method: "DELETE",
-                headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                throw new Error("Error al eliminar el usuario.");
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert(data.message);
-                cargarUsuarios(1); // Reload the table after deletion
-            })
-            .catch(error => console.error("Error al eliminar el usuario:", error));
-            }
         }
     });
 
     // Cerrar modal
-    document.getElementById("closeUserModal").addEventListener("click", function() {
+    document.getElementById("closeUserModal").addEventListener("click", function () {
         userModal.style.display = "none";
         resetUserForm();
         resetErrorMessages(); // Reset error messages
     });
 
     // Guardar cambios
-    userModalActionBtn.addEventListener("click", function() {
+    userModalActionBtn.addEventListener("click", function () {
         const url = editMode ? `../usuarios/actualizar/${userId}` : `../usuarios/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -160,12 +163,12 @@
         formData.append('estado', estadoToggle.checked ? 1 : 0); // Añadir estado al formData
 
         fetch(url, {
-                method: "POST", // Always use POST for FormData
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST", // Always use POST for FormData
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -288,12 +291,12 @@
         formData.append('filtro_perfil', filtroPerfil); // Añadir el filtro por perfil
 
         fetch(`../admin/usuarios?page=${page}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData
-            })
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -395,7 +398,7 @@
 
     const perfilSelect = document.getElementById("perfil");
 
-    perfilSelect.addEventListener("change", function() {
+    perfilSelect.addEventListener("change", function () {
         const clienteSelectContainer = document.getElementById("clienteSelectContainer");
 
         if (this.value === '3') {
@@ -423,11 +426,11 @@
     }
 
     // Add input validation for numeroIdentificacion and telefono
-    document.getElementById("numeroIdentificacion").addEventListener("input", function() {
+    document.getElementById("numeroIdentificacion").addEventListener("input", function () {
         this.value = this.value.replace(/\D/g, '').slice(0, 10);
     });
 
-    document.getElementById("telefono").addEventListener("input", function() {
+    document.getElementById("telefono").addEventListener("input", function () {
         this.value = this.value.replace(/\D/g, '').slice(0, 10);
     });
 })();

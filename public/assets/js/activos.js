@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaActivosBody = document.querySelector("#tablaActivos tbody");
@@ -31,12 +31,12 @@
         formData.append('estado', estado);
 
         fetch(`../admin/maestras/consultar?page=${page}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData
-            })
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -65,7 +65,7 @@
                     <td>${formatDate(activo.updated_at)}</td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${activo.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${activo.id}" data-tipo="activo">
                     </td>
                 `;
                     tablaActivosBody.appendChild(row);
@@ -146,20 +146,20 @@
     let activoId = null;
 
     // Abrir el modal
-    openModalBtn.addEventListener("click", function() {
+    openModalBtn.addEventListener("click", function () {
         console.log("Abriendo modal para crear nuevo activo");
         modal.style.display = "flex";
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             activoId = event.target.getAttribute("data-id");
             if (!activoId) {
@@ -197,41 +197,44 @@
 
         if (event.target.classList.contains("icono-eliminar")) {
             const activoId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!activoId) {
                 console.error("Error: No se encontró el ID del activo en el botón.");
                 return;
             }
-
-            if (confirm("¿Está seguro de que desea eliminar este activo?")) {
-                fetch(`../activos/${activoId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar el activo.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("Activo eliminado con éxito.");
-                    cargarDatos(1); // Reload the table
-                })
-                .catch(error => console.error("Error al eliminar el activo:", error));
+            if (tipo !== "activo") {
+                if (confirm("¿Está seguro de que desea eliminar este activo?")) {
+                    fetch(`../activos/${activoId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar el activo.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert("Activo eliminado con éxito.");
+                            cargarDatos(1); // Reload the table
+                        })
+                        .catch(error => console.error("Error al eliminar el activo:", error));
+                }
             }
+
         }
     });
 
     // Cerrar modal
-    document.getElementById("closeActivo").addEventListener("click", function() {
+    document.getElementById("closeActivo").addEventListener("click", function () {
         modal.style.display = "none";
         resetForm();
     });
 
     // Guardar cambios
-    modalActionBtn.addEventListener("click", function() {
+    modalActionBtn.addEventListener("click", function () {
         const url = editMode ? `../activos/actualizar/${activoId}` : `../activos/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -243,12 +246,12 @@
         }
 
         fetch(url, {
-                method: "POST", // Always use POST for FormData
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST", // Always use POST for FormData
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -354,7 +357,7 @@
     estadoToggle.addEventListener("change", actualizarEstadoLabel);
 
     const cantidad = document.getElementById("cantidad");
-    cantidad.addEventListener("input", function() {
+    cantidad.addEventListener("input", function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 

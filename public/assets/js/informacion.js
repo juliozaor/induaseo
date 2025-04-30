@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const openInformacionModalBtn = document.getElementById("openInformacionModalBtn");
     const informacionModal = document.getElementById("createInformacionModal");
     const informacionModalTitle = document.getElementById("informacionModalTitle");
@@ -15,7 +15,7 @@
     const sedeSelect = document.getElementById("sede_id");
 
     // Abrir el modal
-    openInformacionModalBtn.addEventListener("click", function() {
+    openInformacionModalBtn.addEventListener("click", function () {
         informacionModal.style.display = "flex";
 
         cargarTiposMultimedia();
@@ -24,14 +24,14 @@
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === informacionModal) {
             informacionModal.style.display = "none";
             resetInformacionForm();
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             informacionId = event.target.getAttribute("data-id");
             if (!informacionId) {
@@ -78,42 +78,45 @@
 
         if (event.target.classList.contains("icono-eliminar")) {
             const informacionId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!informacionId) {
                 console.error("Error: No se encontró el ID de la información en el botón.");
                 return;
             }
-
-            if (confirm("¿Está seguro de que desea eliminar esta información?")) {
-                fetch(`../informacion/eliminar/${informacionId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar la información.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("Información eliminada con éxito.");
-                    cargarInformacion(1); // Reload the table
-                })
-                .catch(error => console.error("Error al eliminar la información:", error));
+            if (tipo === "informacion") {
+                if (confirm("¿Está seguro de que desea eliminar esta información?")) {
+                    fetch(`../informacion/eliminar/${informacionId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar la información.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert("Información eliminada con éxito.");
+                            cargarInformacion(1); // Reload the table
+                        })
+                        .catch(error => console.error("Error al eliminar la información:", error));
+                }
             }
+
         }
     });
 
     // Cerrar modal
-    document.getElementById("closeInformacionModal").addEventListener("click", function() {
+    document.getElementById("closeInformacionModal").addEventListener("click", function () {
         informacionModal.style.display = "none";
         resetInformacionForm();
         document.getElementById("fileLabel").textContent = ''; // Clear the file label
     });
 
     // Guardar cambios
-    informacionModalActionBtn.addEventListener("click", function() {
+    informacionModalActionBtn.addEventListener("click", function () {
         const url = editMode ? `../informacion/actualizar/${informacionId}` : `../informacion/guardar`;
         const method = editMode ? "PUT" : "POST";
 
@@ -124,12 +127,12 @@
         }
 
         fetch(url, {
-                method: "POST", // Always use POST for FormData
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST", // Always use POST for FormData
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -258,12 +261,12 @@
         formData.append('registros_por_pagina', registrosPorPagina);
 
         fetch(`../admin/informacion?page=${page}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData
-            })
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -286,7 +289,7 @@
                     <td>${formatDate(informacion.fecha)}</td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${informacion.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${informacion.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${informacion.id}" data-tipo="informacion">
                     </td>
                 `;
                     tablaInformacionBody.appendChild(row);
@@ -356,7 +359,7 @@
     document.getElementById("busquedaInformacionInput").addEventListener("input", () => cargarInformacion(1));
     document.getElementById("registrosInformacionPorPagina").addEventListener("change", () => cargarInformacion(1));
 
-    clienteSelect.addEventListener("change", function() {
+    clienteSelect.addEventListener("change", function () {
         const clienteId = clienteSelect.value;
         cargarSedes(clienteId);
     });

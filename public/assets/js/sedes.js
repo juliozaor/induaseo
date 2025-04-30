@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaSedesBody = document.querySelector("#tablaSedes tbody");
@@ -28,12 +28,12 @@
         formData.append('estadoSede', estado);
 
         fetch(`../admin/maestras/consultar?page=${page}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData
-            })
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -65,7 +65,7 @@
                     <td>${sede.regional?.nombre || 'N/A'}</td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${sede.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${sede.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${sede.id}" data-tipo="sede">
                     </td>
                 `;
                     tablaSedesBody.appendChild(row);
@@ -148,13 +148,13 @@
     let originalNombre = '';
 
     // Abrir el modal
-    openModalBtn.addEventListener("click", function() {
+    openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex";
         resetNombreExists();
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
@@ -162,7 +162,7 @@
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             sedeId = event.target.getAttribute("data-id");
             if (!sedeId) {
@@ -204,42 +204,45 @@
 
         if (event.target.classList.contains("icono-eliminar")) {
             const sedeId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!sedeId) {
                 console.error("Error: No se encontró el ID de la sede en el botón.");
                 return;
             }
-
-            if (confirm("¿Está seguro de que desea eliminar esta sede?")) {
-                fetch(`../sedes/${sedeId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar la sede.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert("Sede eliminada con éxito.");
-                    cargarDatos(1); // Reload the table
-                })
-                .catch(error => console.error("Error al eliminar la sede:", error));
+            if (tipo === "sede") {
+                if (confirm("¿Está seguro de que desea eliminar esta sede?")) {
+                    fetch(`../sedes/${sedeId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar la sede.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert("Sede eliminada con éxito.");
+                            cargarDatos(1); // Reload the table
+                        })
+                        .catch(error => console.error("Error al eliminar la sede:", error));
+                }
             }
+
         }
     });
 
     // Cerrar modal
-    document.getElementById("close").addEventListener("click", function() {
+    document.getElementById("close").addEventListener("click", function () {
         modal.style.display = "none";
         resetForm();
         resetNombreExists();
     });
 
     // Guardar cambios
-    modalActionBtn.addEventListener("click", function() {
+    modalActionBtn.addEventListener("click", function () {
         if (nombreExists) {
             alert("El nombre de la sede ya existe. Por favor, elija otro nombre.");
             return;
@@ -257,12 +260,12 @@
         }
 
         fetch(url, {
-                method: "POST", // Always use POST for FormData
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST", // Always use POST for FormData
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -390,7 +393,7 @@
     }
 
     // Escucha los cambios en el select de país
-    document.getElementById("pais").addEventListener("change", function() {
+    document.getElementById("pais").addEventListener("change", function () {
         const paisId = this.value;
         cargarCiudades(paisId);
     });
@@ -433,7 +436,7 @@
     actualizarEstadoLabel();
 
     const telefono = document.getElementById("telefono");
-    telefono.addEventListener("input", function() {
+    telefono.addEventListener("input", function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 
@@ -441,7 +444,7 @@
     const nombreExistsError = document.getElementById("nombreExistsError");
     let nombreExists = false;
 
-    nombreInput.addEventListener("input", function() {
+    nombreInput.addEventListener("input", function () {
         const nombre = nombreInput.value.trim();
         if (nombre && nombre !== originalNombre) {
             fetch(`../sedes/verificar-nombre?nombre=${nombre}`)

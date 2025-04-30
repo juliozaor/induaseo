@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaClientesBody = document.querySelector("#tablaClientes tbody");
@@ -28,12 +28,12 @@
         formData.append('estado', estado);
 
         fetch(`../admin/maestras/consultar?page=${page}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData
-            })
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData
+        })
             .then(response => {
                 if (!response.ok) throw new Error(`Error en la solicitud: ${response.statusText}`);
                 return response.json();
@@ -65,7 +65,7 @@
                     <td>${formatDate(cliente.updated_at)}</td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${cliente.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${cliente.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${cliente.id}" data-tipo="cliente">
                     </td>
                 `;
                     tablaClientesBody.appendChild(row);
@@ -146,14 +146,14 @@
     let originalId = '';
 
     // Abrir el modal
-    openModalBtn.addEventListener("click", function() {
+    openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex";
         errorNumeroIdentificacion.textContent = ''; // Clear error message when opening the modal
         identificacionValida = true; // Reset identificacionValida when opening the modal
     });
 
     // Cerrar el modal al hacer clic fuera de él
-    window.addEventListener("click", function(e) {
+    window.addEventListener("click", function (e) {
         if (e.target === modal) {
             modal.style.display = "none";
             resetForm();
@@ -162,7 +162,7 @@
         }
     });
 
-    document.addEventListener("click", function(event) {
+    document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             clientId = event.target.getAttribute("data-id");
             if (!clientId) {
@@ -204,35 +204,38 @@
 
         if (event.target.classList.contains("icono-eliminar")) {
             const clientId = event.target.getAttribute("data-id");
+            const tipo = event.target.getAttribute("data-tipo");
             if (!clientId) {
                 console.error("Error: No se encontró el ID del cliente en el botón.");
                 return;
             }
-
-            if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
-                fetch(`../clientes/${clientId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error al eliminar el cliente.");
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert(data.message);
-                    cargarDatos(1); // Reload the table after deletion
-                })
-                .catch(error => console.error("Error al eliminar el cliente:", error));
+            if (tipo === "cliente") {
+                if (confirm("¿Estás seguro de que deseas eliminar este cliente?")) {
+                    fetch(`../clientes/${clientId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar el cliente.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert(data.message);
+                            cargarDatos(1); // Reload the table after deletion
+                        })
+                        .catch(error => console.error("Error al eliminar el cliente:", error));
+                }
             }
+
         }
     });
 
     // Cerrar modal
-    document.getElementById("close").addEventListener("click", function() {
+    document.getElementById("close").addEventListener("click", function () {
         modal.style.display = "none";
         resetForm();
         errorNumeroIdentificacion.textContent = ''; // Clear error message when closing the modal
@@ -240,7 +243,7 @@
     });
 
     // Guardar cambios
-    modalActionBtn.addEventListener("click", function() {
+    modalActionBtn.addEventListener("click", function () {
         if (!identificacionValida) {
             alert('¡La identificación ya existe, por favor, ingrese una diferente!');
             return; // No permitir crear cliente si la identificación no es válida
@@ -257,12 +260,12 @@
         }
 
         fetch(url, {
-                method: "POST", // Always use POST for FormData
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            })
+            method: "POST", // Always use POST for FormData
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: formData,
+        })
             .then((response) => {
                 if (!response.ok) {
                     return response.json().then((data) => {
@@ -378,7 +381,7 @@
     const ciudadSelect = document.getElementById("ciudad");
 
     // Escucha los cambios en el select de país
-    paisSelect.addEventListener("change", function() {
+    paisSelect.addEventListener("change", function () {
         const paisId = paisSelect.value;
 
         // Limpia el select de ciudad al cambiar de país
@@ -428,7 +431,7 @@
     const errorNumeroIdentificacion = document.getElementById("errorNumeroIdentificacion");
     let identificacionValida = true;
 
-    numeroIdentificacionInput.addEventListener("input", function() {
+    numeroIdentificacionInput.addEventListener("input", function () {
         this.value = this.value.replace(/[^0-9]/g, '');
         checkNumeroIdentificacion(this.value);
     });
@@ -454,11 +457,11 @@
     }
 
     const celular = document.getElementById("celular");
-    celular.addEventListener("input", function() {
+    celular.addEventListener("input", function () {
         this.value = this.value.replace(/[^0-9]/g, '');
     });
 
-    document.getElementById('correo').addEventListener('input', function() {
+    document.getElementById('correo').addEventListener('input', function () {
         const emailInput = this;
         const emailValue = emailInput.value;
         const errorCorreo = document.getElementById('errorCorreo');

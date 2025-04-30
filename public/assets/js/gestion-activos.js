@@ -95,7 +95,7 @@
                             <td>${formatDate(activo.updated_at)}</td>
                             <td>
                                 <img src="assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${activo.id}">
-                                <img src="assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${activo.id}">
+                                <img src="assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${activo.id}" data-tipo="gestionar-activos">
                             </td>
                         `;
                     activosTableBody.appendChild(row);
@@ -242,31 +242,34 @@
 
         if (event.target.classList.contains('icono-eliminar')) {
             const activoId = event.target.getAttribute('data-id');
+            const tipo = event.target.getAttribute("data-tipo");
             const sedeId = sedeSelect.value; // Obtener el ID de la sede seleccionada
             if (!activoId) {
                 console.error("Error: No se encontró el ID del activo en el botón.");
                 return;
             }
-
-            if (confirm("¿Está seguro de que desea eliminar este activo?")) {
-                fetch(`gestionar-activos/eliminar/${activoId}?sede_id=${sedeId}`, {
-                    method: "DELETE",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Error al eliminar el activo.");
+            if (tipo === "gestionar-activos") {
+                if (confirm("¿Está seguro de que desea eliminar este activo?")) {
+                    fetch(`gestionar-activos/eliminar/${activoId}?sede_id=${sedeId}`, {
+                        method: "DELETE",
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
-                        return response.json();
                     })
-                    .then(data => {
-                        alert(data.message);
-                        consultarActivos(); // Reload the table
-                    })
-                    .catch(error => console.error("Error al eliminar el activo:", error));
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al eliminar el activo.");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert(data.message);
+                            consultarActivos(); // Reload the table
+                        })
+                        .catch(error => console.error("Error al eliminar el activo:", error));
+                }
             }
+
         }
     });
 
