@@ -89,6 +89,29 @@
                 <div id="activosMensaje" class="mensaje">No hay registros para mostrar.</div>
             </div>
             <div class="activos-paginacion"></div>
+            <hr>
+            <h2 class="listado-titulo">Insumos</h2>
+            <div class="d-flex justify-content-end mb-2">
+                <button id="exportarInsumosBtn" class="btn-consultar">Exportar Insumos</button>
+            </div>
+            <div class="tabla-container">
+                <table class="tabla" id="tablaInsumos">
+                    <thead>
+                        <tr>
+                            <th>Insumo</th>
+                            <th>Cantidad</th>
+                            {{-- <th>Estado</th>
+                            <th>Observación</th> --}}
+                        </tr>
+                    </thead>
+                    <tbody id="insumosTableBody">
+                        <!-- Datos de insumos -->
+                    </tbody>
+                </table>
+                <div id="insumosPaginacion" class="paginacion"></div>
+                <div id="insumosMensaje" class="mensaje">No hay registros para mostrar.</div>
+            </div>
+            <div class="insumos-paginacion"></div>
         </div>
 
         <div class="listado-container2">

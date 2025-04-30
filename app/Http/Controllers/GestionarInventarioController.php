@@ -30,10 +30,12 @@ class GestionarInventarioController extends Controller
         $buscar = $request->input('buscar');
         $registrosPorPagina = $request->input('registros_por_pagina', 10);
 
-        $query = Inventario::with(['sede.cliente', 'item', 'estados', 'creador', 'actualizador']);
+        $inventarioQuery = Inventario::with(['sede.cliente', 'item', 'estados', 'creador', 'actualizador']);
 
         if ($buscar) {
-            $query->where('nombre', 'like', "%{$buscar}%")
+            $inventarioQuery->whereHas('item', function ($q) use ($buscar) {
+                    $q->where('nombre_elemento', 'like', "%{$buscar}%");
+                })
                 ->orWhereHas('sede', function ($q) use ($buscar) {
                     $q->where('nombre', 'like', "%{$buscar}%");
                 })
@@ -42,7 +44,7 @@ class GestionarInventarioController extends Controller
                 });
         }
 
-        $inventarios = $query->paginate($registrosPorPagina);
+        $inventarios = $inventarioQuery->paginate($registrosPorPagina);
 
         // Obtener los elementos de la paginación
         $inventariosData = $inventarios->items();

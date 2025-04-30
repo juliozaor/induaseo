@@ -4,8 +4,8 @@ function handleFileSelect(event, actividadId) {
     const evidenciasContainer = document.getElementById(`evidenciasContainer${actividadId}`);
 
     // Verifica si se excede el límite de 3 imágenes
-    if (evidenciasContainer.children.length + files.length > 3) {
-        alert('Solo puedes agregar un máximo de 3 imágenes.');
+    if (evidenciasContainer.children.length + files.length > 5) {
+        alert('Solo puedes agregar un máximo de 5 imágenes.');
         return;
     }
 

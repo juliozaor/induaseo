@@ -8,9 +8,9 @@
 
     const busquedaInput = document.getElementById("busquedaActivoInput");
     const registrosPorPaginaSelect = document.getElementById("registrosPorPaginaActivo");
-    const openModalBtn = document.getElementById("openModalActivoBtn");
+    const openModalBtn = document.getElementById("openModalBtn");
     const filtroClasificacion = document.getElementById("filtroClasificacion");
-    const filtroEstado = document.getElementById("filtroEstadoActivo");
+    /* const filtroEstado = document.getElementById("filtroEstadoActivo"); */
 
     function cargarDatos(page = 1) {
         const tablaSeleccionada = tablaMaestraSelect.value;
@@ -135,7 +135,7 @@
     registrosPorPaginaSelect.addEventListener("change", () => cargarDatos(1));
     busquedaInput.addEventListener("input", () => cargarDatos(1));
     //filtroClasificacion.addEventListener("change", () => cargarDatos(1));
-    filtroEstado.addEventListener("change", () => cargarDatos(1));
+    /* filtroEstado.addEventListener("change", () => cargarDatos(1)); */
 
     // Modal functionality
     const modal = document.getElementById("createActivoModal");
@@ -147,6 +147,7 @@
 
     // Abrir el modal
     openModalBtn.addEventListener("click", function() {
+        console.log("Abriendo modal para crear nuevo activo");
         modal.style.display = "flex";
     });
 

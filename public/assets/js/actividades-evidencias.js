@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
             li.classList.add('menu-item');
             li.dataset.id = turno.id;
             li.innerHTML = `
-                Turno: ${turno.nombre}
+                Listado de áreas del turno: ${turno.nombre}
                 <button class="btn-consultar encuesta-turno-btn" data-supervisor-turno-id="${turno.supervisor_turno_id}" style="float: right;">Encuesta</button>
             `;
             turnoMenu.appendChild(li);
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
         paginatedData.forEach(turno => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${turno.fecha}</td>
+                <td>${turno.fecha ?? '-'}</td>
                 <td>${turno.area}</td>
                 <td>${turno.actividad}</td>
                 <td>${turno.estado}</td>
@@ -230,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     turnoMenu.addEventListener('click', function (event) {
+        const sedeId = sedeSelect.value; // Get the selected sede ID
         if (event.target.classList.contains('menu-item')) {
             const turnoId = event.target.dataset.id;
             const submenu = event.target.nextElementSibling;
@@ -238,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submenu.remove();
                 event.target.classList.remove('expanded');
             } else {
-                fetch(`actividades-evidencias/consolidado?turno_id=${turnoId}`)
+                fetch(`actividades-evidencias/consolidado?turno_id=${turnoId}&sede_id=${sedeId}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log('Turno data:', data); // Debug statement
@@ -266,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submenu.remove();
                 event.target.classList.remove('expanded');
             } else {
-                fetch(`actividades-evidencias/consolidado?area_id=${areaId}&turno_id=${turnoId}`)
+                fetch(`actividades-evidencias/consolidado?area_id=${areaId}&turno_id=${turnoId}&sede_id=${sedeId}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log('Area data:', data); // Debug statement
@@ -281,6 +282,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <div class="form-group">
                                     <label for="detalleSupervisor">Supervisor:</label>
                                     <input type="text" id="detalleSupervisor" class="form-control" value="${data.supervisor}" readonly>
+                                    <input type="hidden" id="turnoIdHidden" value="${turnoId}">
+                                    <input type="hidden" id="areaIdHidden" value="${areaId}">
                                 </div>
                                 <div class="form-group">
                                     <label for="detalleFecha">Fecha de Asignación:</label>
@@ -304,7 +307,10 @@ document.addEventListener('DOMContentLoaded', function () {
                                                         <td>${actividad.nombre}</td>
                                                         <td>${actividad.estado ? 'Pendiente' : 'Completado'}</td>
                                                         <td>${actividad.calificacion ?? 0}/5</td>
-                                                        <td><img src="assets/icons/editar.png" alt="Ver" class="icono-editar" data-id="${actividad.id}"></td>
+                                                        <td>
+                                                            <img src="assets/icons/editar.png" alt="Ver" class="icono-editar"
+                                                            data-id="${actividad.id}" data-turno-id="${turnoId}" data-area-id="${areaId}">
+                                                        </td>
                                                     </tr>
                                                 `).join('')}
                                             </tbody>
@@ -325,8 +331,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (event) {
         if (event.target.classList.contains('icono-editar')) {
             const actividadId = event.target.getAttribute('data-id');
+            const areaId = event.target.getAttribute('data-area-id'); /* document.getElementById('areaIdHidden').value; */
+            const turnoId = event.target.getAttribute('data-turno-id'); /* document.getElementById('turnoIdHidden').value; */
+            const sedeId = document.getElementById('sedeSelect').value;
             console.log('Actividad ID:', actividadId); // Debug statement
-            fetch(`actividades-evidencias/detalle-actividad/${actividadId}`)
+            fetch(`actividades-evidencias/detalle-actividad?sede_id=${sedeId}&turno_id=${turnoId}&area_id=${areaId}&actividad_id=${actividadId}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('detalleActividadNombre').value = data.nombre;
@@ -335,14 +344,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const imagenesContainer = document.getElementById('detalleActividadImagenes');
                     imagenesContainer.innerHTML = '';
-                    data.imagenes.forEach(imagen => {
-                        const imgElement = document.createElement('img');
-                        imgElement.src = imagen.url;
-                        imgElement.alt = 'Evidencia';
-                        imgElement.classList.add('img-thumbnail', 'm-2');
-                        imgElement.style.width = '100px';
-                        imagenesContainer.appendChild(imgElement);
-                    });
+                    if (data.imagenes.length > 0) {
+                        data.imagenes.forEach(imagen => {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = imagen.url;
+                            imgElement.alt = 'Evidencia';
+                            imgElement.classList.add('img-thumbnail', 'm-2');
+                            imgElement.style.width = '100px';
+                            imagenesContainer.appendChild(imgElement);
+                        });
+                    }
 
                     $('#detalleActividadModal').modal('show');
                 })
@@ -383,19 +394,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 total_puntos: totalPuntos
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                alert(data.message);
-                $('#encuestaModal').modal('hide');
-                document.getElementById('encuestaForm').reset();
-            } else {
-                alert('2. Error al guardar la encuesta.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('1. Error al guardar la encuesta.');
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    $('#encuestaModal').modal('hide');
+                    document.getElementById('encuestaForm').reset();
+                } else {
+                    alert('2. Error al guardar la encuesta.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('1. Error al guardar la encuesta.');
+            });
     });
 });

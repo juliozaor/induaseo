@@ -40,112 +40,113 @@
             <div class="contenedor-actividades">
                 @if ($sedesInsumos->isNotEmpty())
                     <h3 style="margin-left: 10px;">Insumos</h3>
-                    @foreach ($sedesInsumos as $index => $sedesInsumo)
-                        <!-- Enlace para abrir el modal de insumo -->
-                        <a class="item-actividad" href="#" data-toggle="modal"
-                            data-target="#actividadModal{{ $sedesInsumo->id }}">
-                            <div class="contenedor-actividad">
-                                <span><img src="{{ $sedesInsumo->insumo->imagen }}"
-                                        alt="{{ $sedesInsumo->insumo->nombre_elemento }}"
-                                        class="imagen-insumo">{{ $sedesInsumo->insumo->nombre_elemento }}</span> <span
-                                    class="flecha">></span>
-                            </div>
-                        </a>
-                        <!-- Modal de insumo -->
-                        <div class="modal fade" id="actividadModal{{ $sedesInsumo->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="actividadModalLabel{{ $sedesInsumo->id }}" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="actividadModalLabel{{ $sedesInsumo->id }}">
-                                            {{ $sedesInsumo->insumo->nombre_elemento }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="contenedor-imagen-modal">
-                                            <img src="{{ $sedesInsumo->insumo->imagen }}"
-                                                alt="{{ $sedesInsumo->insumo->nombre_elemento }}" class="img-fluid">
+                    @foreach ($sedesInsumos as $sedesInsumo)
+                        @foreach ($sedesInsumo['insumos'] as $insumo)
+                            <!-- Enlace para abrir el modal de insumo -->
+                            <a class="item-actividad" href="#" data-toggle="modal"
+                                data-target="#actividadModal{{ $sedesInsumo['id'] }}">
+
+                                <div class="contenedor-actividad">
+                                    <span><img src="{{ $insumo->imagen }}" alt="{{ $insumo->nombre_elemento }}"
+                                            class="imagen-insumo">{{ $insumo->nombre_elemento }}</span> <span
+                                        class="flecha">></span>
+                                </div>
+
+                            </a>
+                            <!-- Modal de insumo -->
+                            <div class="modal fade" id="actividadModal{{ $sedesInsumo['id']}}" tabindex="-1" role="dialog"
+                                aria-labelledby="actividadModalLabel{{ $sedesInsumo['id'] }}" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="actividadModalLabel{{ $sedesInsumo['id'] }}">
+                                                {{ $insumo->nombre_elemento }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
                                         </div>
-                                        <p>Estado: {{ optional($sedesInsumo->insumo->estados)->nombre }}</p>
-                                        <p>Cantidad: {{ $sedesInsumo->cantidad }}</p>
-                                        <div class="form-group">
-                                            <label for="novedades{{ $sedesInsumo->id }}">Novedades</label>
-                                            <select class="form-control" id="novedades{{ $sedesInsumo->id }}">
-                                                <!-- Opciones se llenarán dinámicamente -->
-                                            </select>{{-- onchange="toggleButton(this, {{ $sedesInsumo->id }})" --}}
+                                        <div class="modal-body">
+                                            <div class="contenedor-imagen-modal">
+                                                <img src="{{ $insumo->imagen }}"
+                                                    alt="{{ $insumo->nombre_elemento }}" class="img-fluid">
+                                            </div>
+                                            {{-- <p>Estado: {{ optional($insumo->estados)->nombre }}</p> --}}
+                                            <h4>Cantidad: {{ $sedesInsumo['cantidad']}}</h4>
+                                            {{-- <div class="form-group">
+                                                <label for="novedades{{ $sedesInsumo['id'] }}">Novedades</label>
+                                                <select class="form-control" id="novedades{{ $sedesInsumo['id'] }}"></select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="observaciones{{ $sedesInsumo['id'] }}">Observaciones</label>
+                                                <textarea class="form-control" id="observaciones{{ $sedesInsumo['id'] }}" rows="3"></textarea>
+                                            </div> --}}
                                         </div>
-                                        <div class="form-group">
-                                            <label for="observaciones{{ $sedesInsumo->id }}">Observaciones</label>
-                                            <textarea class="form-control" id="observaciones{{ $sedesInsumo->id }}" rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" id="guardarBtnInicial"
-                                            onclick="actualizarInsumo({{ $sedesInsumo->id }})">Guardar</button>
-                                        <button type="button" class="btn btn-danger"
-                                            id="reportarBtn{{ $sedesInsumo->id }}"
-                                            style="display: none;">Reportar</button>
+                                        {{-- <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" id="guardarBtnInicial"
+                                                onclick="actualizarInsumo({{ $sedesInsumo['id'] }})">Guardar</button>
+                                            <button type="button" class="btn btn-danger"
+                                                id="reportarBtn{{ $sedesInsumo['id'] }}"
+                                                style="display: none;">Reportar</button>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endforeach
                     @endforeach
                 @endif
 
                 @if ($sedesActivos->isNotEmpty())
                     <h3 style="margin-left: 10px;">Activos</h3>
-                    @foreach ($sedesActivos as $index => $sedesActivo)
+                    @foreach ($sedesActivos as $sedesActivo)
                         <!-- Enlace para abrir el modal de activo -->
                         <a class="item-actividad" href="#" data-toggle="modal"
-                            data-target="#activoModal{{ $sedesActivo->id }}">
+                            data-target="#activoModal{{ $sedesActivo['id'] }}">
                             <div class="contenedor-actividad">
-                                <span><img src="{{ $sedesActivo->activo->imagen }}"
-                                        alt="{{ $sedesActivo->activo->nombre_elemento }}" class="imagen-insumo">
-                                    {{ $sedesActivo->activo->nombre_elemento }} - {{ $sedesActivo->activo->serie }}
+                                <span><img src="{{ $sedesActivo['imagen'] }}"
+                                        alt="{{ $sedesActivo['nombre'] }}" class="imagen-insumo">
+                                    {{ $sedesActivo['nombre'] }} - {{ $sedesActivo['serie'] }}
                                 </span> <span class="flecha">></span>
                             </div>
                         </a>
                         <!-- Modal de activo -->
-                        <div class="modal fade" id="activoModal{{ $sedesActivo->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="activoModalLabel{{ $sedesActivo->id }}" aria-hidden="true">
+                        <div class="modal fade" id="activoModal{{ $sedesActivo['id'] }}" tabindex="-1" role="dialog"
+                            aria-labelledby="activoModalLabel{{ $sedesActivo['id'] }}" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="activoModalLabel{{ $sedesActivo->id }}">
-                                            {{ $sedesActivo->activo->nombre_elemento }}</h5>
+                                        <h5 class="modal-title" id="activoModalLabel{{ $sedesActivo['id']}}">
+                                            {{ $sedesActivo['nombre'] }}</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="contenedor-imagen-modal">
-                                            <img src="{{ $sedesActivo->activo->imagen }}"
-                                                alt="{{ $sedesActivo->activo->nombre_elemento }}" class="img-fluid">
+                                            <img src="{{ $sedesActivo['imagen'] }}"
+                                                alt="{{ $sedesActivo['nombre'] }}" class="img-fluid">
                                         </div>
-                                        <p>Estado: {{ optional($sedesActivo->estados)->nombre }}</p>
-                                        <p>Serie: {{ $sedesActivo->activo->serie }}</p>
+                                        <p>Estado: {{ $sedesActivo['estado'] }}</p>
+                                        <p>Serie: {{ $sedesActivo['serie'] }}</p>
                                         {{-- <p>Cantidad: {{ $sedesActivo->cantidad }}</p> --}}
                                         <div class="form-group">
-                                            <label for="novedades{{ $sedesActivo->id }}">Novedades</label>
-                                            <select class="form-control" id="novedades{{ $sedesActivo->id }}"
-                                                onchange="toggleButton(this, {{ $sedesActivo->id }})">
+                                            <label for="novedades{{ $sedesActivo['id'] }}">Novedades</label>
+                                            <select class="form-control" id="novedades{{ $sedesActivo['id'] }}"
+                                                onchange="toggleButton(this, {{ $sedesActivo['id'] }})">
                                                 <!-- Opciones se llenarán dinámicamente -->
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label for="observaciones{{ $sedesActivo->id }}">Observaciones</label>
-                                            <textarea class="form-control" id="observaciones{{ $sedesActivo->id }}" rows="3"></textarea>
+                                            <label for="observaciones{{ $sedesActivo['id'] }}">Observaciones</label>
+                                            <textarea class="form-control" id="observaciones{{ $sedesActivo['id'] }}" rows="3"></textarea>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-primary"
-                                            id="guardarBtn{{ $sedesActivo->id }}"
-                                            onclick="actualizarActivo({{ $sedesActivo->id }})">Guardar</button>
+                                            id="guardarBtn{{ $sedesActivo['id'] }}"
+                                            onclick="actualizarActivo({{ $sedesActivo['id'] }})">Guardar</button>
                                         <button type="button" class="btn btn-danger"
-                                            id="reportarBtn{{ $sedesActivo->id }}" style="display: none;"
-                                            onclick="reportarActivo({{ $sedesActivo->id }})" disabled="true">
+                                            id="reportarBtn{{ $sedesActivo['id'] }}" style="display: none;"
+                                            onclick="reportarActivo({{ $sedesActivo['id'] }})" disabled="true">
                                             Reportar
                                         </button>
                                     </div>
@@ -230,30 +231,32 @@
             //cargarInventario();
             setMinDate();
         });
+
         function cargarInventario() {
             fetch(`inventario-turno`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(text)
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al cargar el inventario: ' + error.message);
-            });
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(text)
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar el inventario: ' + error.message);
+                });
         }
+
         function toggleButton(selectElement, id) {
             //console.log(`Valor del select: ${selectElement.value}`);
             const guardarBtn = document.getElementById(`guardarBtn${id}`);
@@ -698,7 +701,7 @@
                 })
                 .then(estados => {
                     console.log(estados);
-                    const select = document.getElementById('novedadesF'+id);
+                    const select = document.getElementById('novedadesF' + id);
                     select.innerHTML = '<option value="">Seleccione</option>';
                     estados.forEach(estado => {
                         const option = document.createElement('option');

@@ -91,7 +91,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('actividades-evidencias/exportar-actividades', [ActividadesEvidenciasController::class, 'exportarActividades'])->name('actividades.evidencias.exportarActividades');
     Route::get('actividades-evidencias/consolidado', [ActividadesEvidenciasController::class, 'obtenerConsolidado'])->name('actividades.evidencias.consolidado');
     Route::get('/actividades-evidencias/consultar-paginado', [ActividadesEvidenciasController::class, 'consultarPaginado'])->name('actividades.evidencias.consultarPaginado');
-    Route::get('/actividades-evidencias/detalle-actividad/{id}', [ActividadesEvidenciasController::class, 'getActividadDetalle'])->name('actividades.evidencias.detalleActividad');
+    Route::get('/actividades-evidencias/detalle-actividad', [ActividadesEvidenciasController::class, 'getActividadDetalle'])->name('actividades.evidencias.detalleActividad');
     Route::post('/satisfaccion-servicio/guardar', [ActividadesEvidenciasController::class, 'guardarSatisfaccion'])->name('satisfaccion-servicio.guardar');
 
     Route::get('/novedades', [InformacionController::class, 'obtenerNovedades'])->name('novedades.obtener');
@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reportes/consultar-areas', [ReporteController::class, 'consultarAreas'])->name('reportes.consultar-areas');
     Route::get('/reportes/consultar-actividades', [ReporteController::class, 'consultarActividades'])->name('reportes.consultar-actividades');
     Route::get('/reportes/activos', [ReporteController::class, 'activos'])->name('reportes.activos');
+    Route::get('/reportes/insumos', [ReporteController::class, 'insumos'])->name('reportes.insumos');
     Route::get('/admin/maestras/regionales', [MaestrasController::class, 'clientes'])->name('maestras.regionales');
 
     Route::get('/regionales', [RegionalesController::class, 'index'])->name('regionales.index');
@@ -224,7 +225,7 @@ Route::get('/inventario-turno', [SeguimientoActividadesController::class, 'obten
 Route::get('/informacion-novedades', [InformacionNovedadesController::class, 'index'])->name('informacion.novedades.index');
 Route::get('/informacion-novedades/buscar', [InformacionNovedadesController::class, 'buscarInformacion'])->name('informacion.novedades.buscar');
 
-Route::post('/guardar-calificacion/{actividad}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
+Route::post('/guardar-calificacion/{turnos_areas_id}/{actividad_id}', [SeguimientoActividadesController::class, 'guardarCalificacion'])->name('guardarCalificacion');
 
 Route::post('/finalizar-turno', [SeguimientoActividadesController::class, 'finalizarTurno'])->name('finalizarTurno');
 
@@ -296,4 +297,5 @@ Route::get('reportes/exportar-actividades', [ReporteController::class, 'exportar
 
 // Add route for exporting assets
 Route::get('reportes/exportar-activos', [ReporteController::class, 'exportarActivos'])->name('reportes.exportarActivos');
+Route::get('reportes/exportar-insumos', [ReporteController::class, 'exportarInsumos'])->name('reportes.exportarInsumos');
 

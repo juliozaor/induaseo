@@ -14,7 +14,7 @@
 
 <!-- Listado de Actividades -->
 <div class="listado-container">
-    <h2 class="listado-titulo">Listado de Actividades</h2>
+    <h2 class="listado-titulo">Listado de actividades</h2>
     <!-- Línea divisoria -->
     <div class="divider"></div>
 

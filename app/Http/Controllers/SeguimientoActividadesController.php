@@ -21,6 +21,7 @@ use App\Models\Sede; // Importar el modelo Sede
 use App\Models\Area;
 use App\Models\AreaActividad;
 use App\Models\Cliente; // Importar el modelo Cliente
+use App\Models\Inventario;
 use App\Models\SupervisorTurnosFechas; // Import the model
 use App\Models\TurnosAreasActividades; // Import the model TurnosAreasActividades
 
@@ -180,27 +181,26 @@ class SeguimientoActividadesController extends Controller
         return view('seguimiento-actividades.actividades', compact('supervisorTurno', 'actividadesTrue', 'actividadesFalse', 'sedeId', 'turnoId'));
     }
 
-    public function guardarCalificacion(Request $request, $actividadId)
+    public function guardarCalificacion(Request $request,$turnosAreasId, $actividadId)
     {
-        /* dd($request->input('turnos_areas_id'),$actividadId); */
         $actividad = Actividades::findOrFail($actividadId);
         //$actividad->calificacion = $request->input('calificacion');
         $actividad->save();
 
         $actividadArea = TurnosAreasActividades::where('actividad_id', $actividadId)
-            ->where('turnos_areas_id', $request->input('turnos_areas_id'))
+            ->where('turnos_areas_id',$turnosAreasId)
             ->firstOrFail();
         $actividadArea->estado = false;
         $actividadArea->calificacion = $request->input('calificacion');
         $actividadArea->save();
-        /* dd($actividadArea); */
+
         if ($request->hasFile('evidencias')) {
             foreach ($request->file('evidencias') as $file) {
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path = $file->move(public_path('evidencias'), $filename);
                 $imagePath = 'evidencias/' . $filename;
                 ImagenesActividades::create([
-                    'actividad_id' => $actividad->id,
+                    'actividad_id' => $actividadArea->id,
                     'imagen' => $imagePath
                 ]);
             }
@@ -215,20 +215,45 @@ class SeguimientoActividadesController extends Controller
         if (!$sedeId) {
             return redirect()->route('seguimiento.actividades.index');
         }
+        // Obtener todos los insumos de la sede
+        $inventario = Inventario::with(['item', 'item.estados', 'sede'])
+            ->where('sede_id', $sedeId)
+            ->get();
 
-        $sedesInsumos = SedesInsumos::with(['insumo.estados', 'sede'])
+        $sedesInsumos = $inventario->groupBy('id')->map(function ($items, $id) {
+            return [
+            'id' => $id,
+            'cantidad' => $items->first()->cantidad, // Obtiene el campo 'cantidad' directamente del inventario
+            'insumos' => $items->pluck('item')
+            ];
+        });
+        /* dd($sedeId, $sedesInsumos); */
+
+        // Obtener todos los activos de la sede
+        $activos = SedesActivos::with(['activo','activo.estados', 'sede', 'imagenes'])
             ->where('sede_id', $sedeId)
             ->get();
-        // dd($sedeId,$sedesInsumos);
-        $sedesActivos = SedesActivos::with(['activo.estados', 'sede'])
-            ->where('sede_id', $sedeId)
-            ->get();
+
+            $sedesActivos = $activos->map(function ($activo) {
+                $imagen = $activo->imagenes->first(); // Obtener la primera imagen asociada al activo
+                return [
+                    'id' => $activo->id,
+                    'nombre' => $activo->activo->nombre_elemento,
+                    'serie' => $activo->activo->serie,
+                    'estado_id' => $activo->estado_id,
+                    'estado' => $activo->activo->estados->nombre,
+                    'observacion' => $activo->observacion,
+                    'imagen' => $imagen ? $imagen->imagen : null, // Agregar el campo 'imagen'
+                ];
+            });
         /* dd($sedesActivos); */
+
         // Obtiene los mantenimientos con estado_id = 3
         $mantenimientos = Mantenimiento::with('sedeActivo.activo')
             ->where('estado_id', 3)
             ->get();
         /* dd($mantenimientos); */
+
         // Obtiene todos los insumos
         $insumos = Insumos::all();
 
@@ -332,11 +357,12 @@ class SeguimientoActividadesController extends Controller
     // Obtener detalles de un insumo
     public function obtenerInsumo($id)
     {
-        $sedesInsumo = SedesInsumos::with('insumo.estados')->findOrFail($id);
+        $sedesInsumo = Inventario::with('item.estados')->findOrFail($id);
+        /* dd($sedesInsumo); */
         return response()->json([
             'insumo' => [
-                'estado_id' => $sedesInsumo->insumo->estado_id,
-                'observacion' => $sedesInsumo->observacion
+                'estado_id' => $sedesInsumo->estado_id,
+                'observacion' => $sedesInsumo->item->observacion
             ]
         ]);
     }

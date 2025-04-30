@@ -15,6 +15,8 @@ use App\Models\Turno;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SatisfaccionServicio; // Asegúrate de importar el modelo correspondiente
+use App\Models\AreaActividad; // Import the AreaActividad model
+use App\Models\TurnosAreasActividades; // Import the TurnosAreasActividades model
 
 class ActividadesEvidenciasController extends Controller
 {
@@ -99,9 +101,38 @@ class ActividadesEvidenciasController extends Controller
         ]);
     }
 
-    public function getActividadDetalle($id)
+    public function getActividadDetalle(Request $request)
     {
-        $actividad = Actividades::with('imagenes')->findOrFail($id);
+        $turno_id = $request->turno_id;
+        $area_id = $request->area_id;
+        $sede_id = $request->sede_id;
+        $actividad_id = $request->actividad_id;
+        /* dd($turno_id, $area_id, $sede_id); */
+        $supervisorTurno = SupervisorTurno::where('turno_id', $turno_id)
+            ->where('sede_id', $sede_id)
+            ->first();
+        $area = TurnoArea::with(['area', 'area.actividades', 'area.areasActividades', 'turno.supervisor', 'supervisorTurno'])
+            ->where('area_id', $area_id)
+            ->where('turno_id', $supervisorTurno->id)
+            ->first();
+        $areaActividades = TurnosAreasActividades::with(['actividad'])->where('turnos_areas_id', $area->id)->get();
+        $actividadDetalles = $areaActividades->firstWhere('actividad.id', $actividad_id);
+
+        if ($actividadDetalles) {
+            $actividadDetalles = [
+            'nombre' => $actividadDetalles->actividad->nombre,
+            'estado' => $actividadDetalles->estado,
+            'calificacion' => $actividadDetalles->calificacion,
+            'imagenes' => $actividadDetalles->imagenes->map(function ($imagen) {
+                return [
+                'url' => $imagen->imagen,
+                ];
+            }),
+            ];
+        }
+
+        return response()->json($actividadDetalles);
+        /* $actividad = Actividades::with('imagenes')->findOrFail($id);
         return response()->json([
             'nombre' => $actividad->nombre,
             'estado' => $actividad->estado,
@@ -111,7 +142,7 @@ class ActividadesEvidenciasController extends Controller
                     'url' => $imagen->imagen,
                 ];
             }),
-        ]);
+        ]); */
     }
 
     public function exportarActividades(Request $request)
@@ -127,25 +158,28 @@ class ActividadesEvidenciasController extends Controller
     {
         $turno_id = $request->turno_id;
         $area_id = $request->area_id;
+        $sede_id = $request->sede_id;
 
-        $supervisorTurno = SupervisorTurno::where('turno_id', $turno_id)->first();
+        $supervisorTurno = SupervisorTurno::where('turno_id', $turno_id)
+            ->where('sede_id', $sede_id)
+            ->first();
 
         if ($area_id) {
-            $area = TurnoArea::with(['area', 'area.actividades', 'turno.supervisor', 'supervisorTurno'])
+            $area = TurnoArea::with(['area', 'area.actividades','area.areasActividades', 'turno.supervisor', 'supervisorTurno'])
                 ->where('area_id', $area_id)
                 ->where('turno_id', $supervisorTurno->id)
                 ->first();
-            //dd($supervisorTurno->supervisor->nombres);
-            if ($area && $area->area->actividades) {
+            $areaActividades = TurnosAreasActividades::with(['actividad'])->where('turnos_areas_id', $area->id)->get();
+            if ($area && $areaActividades) {
                 return response()->json([
                     'supervisor' => $supervisorTurno->supervisor->nombres . ' ' . $supervisorTurno->supervisor->apellidos,
                     'fecha' => $supervisorTurno->created_at->format('d/m/Y'),
-                    'actividades' => $area->area->actividades->map(function ($actividad) {
+                    'actividades' => $areaActividades->map(function ($areaActividad) {
                         return [
-                            'id' => $actividad->id,
-                            'nombre' => $actividad->nombre,
-                            'estado' => $actividad->estado,
-                            'calificacion' => $actividad->calificacion,
+                            'id' => $areaActividad->actividad->id,
+                            'nombre' => $areaActividad->actividad->nombre,
+                            'estado' => $areaActividad->estado,
+                            'calificacion' => $areaActividad->calificacion,
                         ];
                     }),
                 ]);
@@ -155,6 +189,7 @@ class ActividadesEvidenciasController extends Controller
         }
 
         if ($supervisorTurno) {
+            /* dd($supervisorTurno->id); */
             $areas = TurnoArea::with(['area'])
                 ->where('turno_id', $supervisorTurno->id)
                 ->get()

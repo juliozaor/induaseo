@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const exportarActivosBtn = document.getElementById('exportarActivosBtn');
     const actividadesMensaje = document.getElementById('actividadesMensaje');
     const activosMensaje = document.getElementById('activosMensaje');
+    const insumosTableBody = document.getElementById('insumosTableBody');
+    const insumosMensaje = document.getElementById('insumosMensaje');
+    const exportarInsumosBtn = document.getElementById('exportarInsumosBtn');
 
     clienteSelect.addEventListener('change', function () {
         const clienteId = this.value;
@@ -32,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let actividadesData = [];
     let activosData = [];
+    let insumosData = [];
 
     function renderTable(data, page = 1, rowsPerPage = 5) {
         actividadesMensaje.textContent = '';
@@ -49,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
         paginatedData.forEach(turno => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${turno.fecha}</td>
+                <td>${turno.fecha ?? '-'}</td>
                 <td>${turno.area}</td>
                 <td>${turno.actividad}</td>
                 <td>${turno.estado}</td>
@@ -60,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderPagination(data.length, page, rowsPerPage, 'actividadesPaginacion', renderTable, actividadesData);
     }
 
-    function renderActivosTable(data, page = 1, rowsPerPage = 5) {
+    function renderActivosTable(data, page = 1, rowsPerPage = 3) {
         activosMensaje.textContent = '';
         if (data.length === 0) {
             activosMensaje.textContent = 'No hay registros para mostrar.';
@@ -76,15 +80,41 @@ document.addEventListener('DOMContentLoaded', function () {
         paginatedData.forEach(activo => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${activo.activo}</td>
-                <td>${activo.cantidad}</td>
-                <td>${activo.estado}</td>
-                <td>${activo.observacion}</td>
+                <td>${activo.activo ?? '-'}</td>
+                <td>${activo.cantidad ?? '-'}</td>
+                <td>${activo.estado ?? '-'}</td>
+                <td>${activo.observacion ?? '-'}</td>
             `;
             activosTableBody.appendChild(row);
         });
 
         renderPagination(data.length, page, rowsPerPage, 'activosPaginacion', renderActivosTable, activosData);
+    }
+
+    function renderInsumosTable(data, page = 1, rowsPerPage = 3) {
+        console.log('Insumos Data:', data); // Debug statement
+        insumosMensaje.textContent = '';
+        if (data.length === 0) {
+            insumosMensaje.textContent = 'No hay registros para mostrar.';
+            insumosTableBody.innerHTML = '';
+            return;
+        }
+
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedData = data.slice(start, end);
+
+        insumosTableBody.innerHTML = '';
+        paginatedData.forEach(insumo => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td>${insumo.insumo ?? '-'}</td>
+            <td>${insumo.cantidad ?? '-'}</td>
+            `;
+            insumosTableBody.appendChild(row);
+        });
+
+        renderPagination(data.length, page, rowsPerPage, 'activosPaginacion', renderInsumosTable, data);
     }
 
     function renderPagination(totalItems, currentPage, rowsPerPage, paginationId, renderFunction, data) {
@@ -157,9 +187,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Error fetching activos:', error);
                 activosMensaje.textContent = 'Error al cargar los datos.';
             });
+
+        fetch(`reportes/insumos?sede_id=${sedeId}`)
+            .then(response => response.json())
+            .then(data => {
+                insumosData = data;
+                renderInsumosTable(insumosData);
+            })
+            .catch(error => {
+                console.error('Error fetching insumos:', error);
+                insumosMensaje.textContent = 'Error al cargar los datos.';
+            });
     });
 
     turnoMenu.addEventListener('click', function (event) {
+        const sedeId = sedeSelect.value;
         if (event.target.classList.contains('menu-item')) {
             const turnoId = event.target.dataset.id;
             const submenu = event.target.nextElementSibling;
@@ -168,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submenu.remove();
                 event.target.classList.remove('expanded');
             } else {
-                fetch(`actividades-evidencias/consolidado?turno_id=${turnoId}`)
+                fetch(`actividades-evidencias/consolidado?turno_id=${turnoId}&sede_id=${sedeId}`)
                     .then(response => response.json())
                     .then(data => {
                         const opciones = document.createElement('ul');
@@ -195,9 +237,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 submenu.remove();
                 event.target.classList.remove('expanded');
             } else {
-                fetch(`actividades-evidencias/consolidado?area_id=${areaId}&turno_id=${turnoId}`)
+                fetch(`actividades-evidencias/consolidado?area_id=${areaId}&turno_id=${turnoId}&sede_id=${sedeId}`)
                     .then(response => response.json())
                     .then(data => {
+                        console.log('Data:', data); // Debug statement
                         const opciones = document.createElement('ul');
                         opciones.classList.add('submenu');
                         const areaDetails = document.createElement('div');
@@ -207,8 +250,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             <h3>Detalles del Área</h3>
                             <form>
                                 <div class="form-group">
-                                    <label for="detalleSupervisor">Supervisor:</label>
+                                    <label for="detalleSupervisor">Supervisor:</label>${turnoId}
                                     <input type="text" id="detalleSupervisor" class="form-control" value="${data.supervisor}" readonly>
+                                    <input type="hidden" id="turnoIdHidden" value="${turnoId}">
+                                    <input type="hidden" id="areaIdHidden" value="${areaId}">
                                 </div>
                                 <div class="form-group">
                                     <label for="detalleFecha">Fecha de Asignación:</label>
@@ -232,7 +277,10 @@ document.addEventListener('DOMContentLoaded', function () {
                                                         <td>${actividad.nombre}</td>
                                                         <td>${actividad.estado ? 'Pendiente' : 'Completado'}</td>
                                                         <td>${actividad.calificacion ?? 0}/5</td>
-                                                        <td><img src="assets/icons/editar.png" alt="Ver" class="icono-editar" data-id="${actividad.id}"></td>
+                                                        <td>
+                                                            <img src="assets/icons/editar.png" alt="Ver" class="icono-editar"
+                                                            data-id="${actividad.id}" data-turno-id="${turnoId}" data-area-id="${areaId}">
+                                                        </td>
                                                     </tr>
                                                 `).join('')}
                                             </tbody>
@@ -327,10 +375,16 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = url;
     });
 
-    exportarActivosBtn.addEventListener('click', function() {
+    exportarActivosBtn.addEventListener('click', function () {
         const sedeId = sedeSelect.value;
 
         const url = `reportes/exportar-activos?sede_id=${sedeId}`;
+        window.location.href = url;
+    });
+    exportarInsumosBtn.addEventListener('click', function () {
+        const sedeId = sedeSelect.value;
+
+        const url = `reportes/exportar-insumos?sede_id=${sedeId}`;
         window.location.href = url;
     });
 });
@@ -338,8 +392,11 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('click', function (event) {
     if (event.target.classList.contains('icono-editar')) {
         const actividadId = event.target.getAttribute('data-id');
-        console.log('Actividad ID:', actividadId); // Debug statement
-        fetch(`actividades-evidencias/detalle-actividad/${actividadId}`)
+        const areaId = event.target.getAttribute('data-area-id'); /* document.getElementById('areaIdHidden').value; */
+        const turnoId = event.target.getAttribute('data-turno-id'); /* document.getElementById('turnoIdHidden').value; */
+        const sedeId = document.getElementById('sedeSelect').value;
+        console.log(areaId, turnoId, sedeId); // Debug statement
+        fetch(`actividades-evidencias/detalle-actividad?sede_id=${sedeId}&turno_id=${turnoId}&area_id=${areaId}&actividad_id=${actividadId}`)
             .then(response => response.json())
             .then(data => {
                 document.getElementById('detalleActividadNombre').value = data.nombre;
@@ -348,14 +405,18 @@ document.addEventListener('click', function (event) {
 
                 const imagenesContainer = document.getElementById('detalleActividadImagenes');
                 imagenesContainer.innerHTML = '';
-                data.imagenes.forEach(imagen => {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = imagen.url;
-                    imgElement.alt = 'Evidencia';
-                    imgElement.classList.add('img-thumbnail', 'm-2');
-                    imgElement.style.width = '100px';
-                    imagenesContainer.appendChild(imgElement);
-                });
+                console.log('Imagenes:', data.imagenes); // Debug statement
+                if (data.imagenes.length > 0) {
+                    data.imagenes.forEach(imagen => {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = imagen.url;
+                        imgElement.alt = 'Evidencia';
+                        imgElement.classList.add('img-thumbnail', 'm-2');
+                        imgElement.style.width = '100px';
+                        imagenesContainer.appendChild(imgElement);
+                    });
+                }
+
 
                 $('#detalleActividadModal').modal('show');
             })

@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(data => {
                 codigoInput.value = data.codigo;
-                cantidadDisponibleSpan.textContent = `Disponible: ${data.cantidad}`;
+                /* cantidadDisponibleSpan.textContent = `Disponible: ${data.cantidad}`; */
             })
             .catch(error => console.error('Error fetching items:', error));
     });

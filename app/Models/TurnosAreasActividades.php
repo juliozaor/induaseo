@@ -27,4 +27,9 @@ class TurnosAreasActividades extends Model
     {
         return $this->belongsTo(Actividades::class, 'actividad_id');
     }
+
+    public function imagenes()
+    {
+        return $this->hasMany(ImagenesActividades::class, 'actividad_id', 'id');
+    }
 }

@@ -1,5 +1,5 @@
 <div class="btn-nuevo">
-    <button class="btn-consultar" id="openModalActivoBtn">
+    <button class="btn-consultar" id="openModalBtn">
         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
             <g id="Grupo_22674" data-name="Grupo 22674" transform="translate(-19 -11.164)">
                 <line id="Línea_338" data-name="Línea 338" y1="15" transform="translate(27.5 12.164)"
@@ -132,5 +132,5 @@
         </div>
     </div>
 </div>
-
+<script src="{{ asset('assets/js/activos.js') }}"></script>
 

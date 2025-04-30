@@ -40,16 +40,16 @@
                                 </a>
 
                                 <!-- Modal -->
-                                <div class="modal fade" id="actividadModal{{ $areaActividad->id }}"
+                                <div class="modal fade" id="actividadModal{{ $areaActividad->actividad->id }}"
                                     tabindex="-1" role="dialog"
                                     aria-labelledby="actividadModalLabel{{ $areaActividad->actividad->id }}"
                                     aria-hidden="true">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title"
-                                                    id="actividadModalLabel{{ $areaActividad->id }}">
-                                                    {{ $areaActividad->actividad->nombre }} - {{ $area->area->nombre }}</h5>
+                                                <h5 class="modal-title" id="actividadModalLabel{{ $areaActividad->id }}">
+                                                    {{ $areaActividad->actividad->nombre }} - {{ $area->area->nombre }}
+                                                </h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -57,12 +57,18 @@
                                             </div>
                                             <div class="modal-body">
                                                 <p>{{ $areaActividad->actividad->descripcion }}</p>
-                                                <form action="{{ route('guardarCalificacion', $areaActividad->actividad->id) }}" method="POST" enctype="multipart/form-data">
+                                                {{$areaActividad}}
+                                                <form
+                                                    action="{{ route('guardarCalificacion', ['turnos_areas_id' => $areaActividad->turnos_areas_id, 'actividad_id' => $areaActividad->actividad->id]) }}"
+                                                    method="POST" enctype="multipart/form-data">
                                                     @csrf
-                                                    <input id="area_id" name="area_id" type="text" value="{{ $area->area_id }}" style="display: none">
-                                                    <input id="turnos_areas_id" name="turnos_areas_id" type="text" value="{{ $areaActividad->turnos_areas_id }}" style="display: none">
+                                                    <input id="area_id" name="area_id" type="text"
+                                                        value="{{ $area->area_id }}" style="display: none">
+                                                    <input id="turnos_areas_id" name="turnos_areas_id" type="text"
+                                                        value="{{ $areaActividad->turnos_areas_id }}"
+                                                        style="display: none">
                                                     <button class="btn boton-secundario" type="button"
-                                                        onclick="document.getElementById('evidenciaInput{{ $areaActividad->id }}').click()">Agregar
+                                                        onclick="document.getElementById('evidenciaInput{{ $areaActividad->actividad->id }}').click()">Agregar
                                                         Evidencia <svg xmlns="http://www.w3.org/2000/svg" width="24.953"
                                                             height="19.677" viewBox="0 0 24.953 19.677">
                                                             <g id="Grupo_23192" data-name="Grupo 23192"
@@ -80,17 +86,16 @@
                                                         </svg>
                                                     </button>
                                                     <input type="file"
-                                                        id="evidenciaInput{{ $areaActividad->id }}"
+                                                        id="evidenciaInput{{ $areaActividad->actividad->id }}"
                                                         name="evidencias[]" accept="image/jpeg, image/png"
                                                         style="display: none;" multiple
                                                         onchange="handleFileSelect(event, {{ $areaActividad->actividad->id }})">
                                                     <div class="evidencias"
-                                                        id="evidenciasContainer{{ $areaActividad->id }}">
+                                                        id="evidenciasContainer{{ $areaActividad->actividad->id }}">
                                                         <!-- Miniaturas de las evidencias cargadas -->
                                                     </div>
                                                     <span class="mt-3">Calificar</span>
-                                                    <div class="calificacion"
-                                                        id="calificacion{{ $areaActividad->id }}">
+                                                    <div class="calificacion" id="calificacion{{ $areaActividad->id }}">
                                                         <!-- Cinco estrellas para calificar -->
                                                         <div class="rating">
                                                             @for ($i = 5; $i >= 1; $i--)

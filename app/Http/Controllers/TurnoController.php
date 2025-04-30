@@ -18,7 +18,6 @@ class TurnoController extends Controller
             $validatedData = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'frecuencia' => 'required|exists:frecuencias,id',
-                'detalleFrecuencia' => 'required|string|max:255',
                 'estado' => 'required|boolean',
             ]);
 

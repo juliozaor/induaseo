@@ -14,6 +14,8 @@ use App\Models\SatisfaccionServicio;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ActividadesExport;
 use App\Exports\ActivosExport;
+use App\Exports\InsumosExport;
+use App\Models\Inventario;
 
 class ReporteController extends Controller
 {
@@ -148,6 +150,24 @@ class ReporteController extends Controller
         return response()->json($activos);
     }
 
+    public function insumos(Request $request)
+    {
+        $sede_id = $request->sede_id;
+
+        $query = Inventario::with(['item', 'estados'])
+            ->where('sede_id', $sede_id);
+        /* dd($query->get()); */
+        $insumos = $query->get()->map(function ($insumo) {
+            return [
+                'insumo' => $insumo->item->nombre_elemento,
+                'cantidad' => $insumo->cantidad,
+                'estado' => $insumo->estados->nombre
+            ];
+        });
+
+        return response()->json($insumos);
+    }
+
     public function exportarActividades(Request $request)
     {
         $sede_id = $request->sede_id;
@@ -162,5 +182,11 @@ class ReporteController extends Controller
         $sede_id = $request->sede_id;
 
         return Excel::download(new ActivosExport($sede_id), 'activos.xlsx');
+    }
+    public function exportarInsumos(Request $request)
+    {
+        $sede_id = $request->sede_id;
+
+        return Excel::download(new InsumosExport($sede_id), 'insumos.xlsx');
     }
 }
