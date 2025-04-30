@@ -57,7 +57,6 @@
                                             </div>
                                             <div class="modal-body">
                                                 <p>{{ $areaActividad->actividad->descripcion }}</p>
-                                                {{$areaActividad}}
                                                 <form
                                                     action="{{ route('guardarCalificacion', ['turnos_areas_id' => $areaActividad->turnos_areas_id, 'actividad_id' => $areaActividad->actividad->id]) }}"
                                                     method="POST" enctype="multipart/form-data">
