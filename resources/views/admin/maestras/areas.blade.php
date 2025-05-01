@@ -117,7 +117,7 @@
                 <span class="slider round"></span>
             </label>
             <label for="estadoToggle">Activo</label>
-            <button id="modalActionBtn" class="btn-consultar" disabled>Crear Área</button>
+            <button id="modalActionBtn" class="btn-consultar" >Crear Área</button>
         </div>
         <div id="actividadSection" style="display: none;">
             {{-- Aquí puedes agregar actividades para la nueva área --}}

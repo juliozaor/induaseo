@@ -16,6 +16,7 @@ class SedeController extends Controller
             $validatedData = $request->validate([
                 'nombre' => 'required|string|max:255',
                 'cliente' => 'required|exists:clientes,id',
+                'pais' => 'required|exists:paises,id',
                 'ciudad' => 'required|exists:ciudades,id',
                 'direccion' => 'required|string|max:255',
                 'telefono' => 'required|string|max:20',

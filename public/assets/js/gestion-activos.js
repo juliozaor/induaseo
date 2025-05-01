@@ -11,10 +11,10 @@
     const activoIdInput = document.getElementById('activoId');
     const crearActivoModalLabel = document.getElementById('crearActivoModalLabel');
     const clienteInput = document.getElementById('clienteInput');
-    const codigoInput = document.getElementById('codigoInput');
-    const cantidadInput = document.getElementById('cantidadInput');
-    const activoSelect = document.getElementById('activoSelect');
-    const imagenesInput = document.getElementById('imagenesInput');
+    const codigoInput = document.getElementById('codigo');
+    const cantidadInput = document.getElementById('cantidad');
+    const activoSelect = document.getElementById('activo');
+    const imagenesInput = document.getElementById('imagenes');
     const imagenesPreview = document.getElementById('imagenesPreview');
     const crearActivoModal = document.getElementById('crearActivoModal');
     const mantenimientosTableBody = document.getElementById('mantenimientosTableBody');
@@ -160,6 +160,7 @@
 
     document.addEventListener('click', function (event) {
         if (event.target.classList.contains('icono-editar')) {
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
             activoId = event.target.getAttribute('data-id');
             if (!activoId) {
                 console.error("Error: No se encontró el ID del activo en el botón.");
@@ -180,11 +181,11 @@
                 .then((activo) => {
 
                     // Populate form fields with activo data
-                    const activoSelect = document.getElementById('activoSelect');
+                    const activoSelect = document.getElementById('activo');
                     activoSelect.value = activo.activo_id;
                     clienteInput.value = activo.sede.cliente.nombre;
                     sedeInput.value = activo.sede.nombre;
-                    const estadoSelect = document.getElementById("estadoActivo");
+                    const estadoSelect = document.getElementById('estado');
                     estadoSelect.value = activo.estado_id;
                     codigoInput.value = activo.activo.serie;
                     cantidadInput.value = activo.cantidad;
@@ -263,7 +264,11 @@
                             return response.json();
                         })
                         .then(data => {
-                            alert(data.message);
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                data.message // Mensaje de éxito
+                            );
+                            /* alert(data.message); */
                             consultarActivos(); // Reload the table
                         })
                         .catch(error => console.error("Error al eliminar el activo:", error));
@@ -278,13 +283,13 @@
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(document.getElementById('crearActivoForm'));
-        formData.append("estado", document.getElementById("estadoActivoToggle").checked ? 1 : 0);
+        formData.append("estadoActivo", document.getElementById("estadoActivoToggle").checked ? 1 : 0);
         formData.append('sede_id', sedeSelect.value);
 
         // Append only the first image to formData
         if (imagenesInput.files.length > 0) {
             console.log(imagenesInput.files[0]);
-            formData.append('imagenesInput', imagenesInput.files[0]);
+            formData.append('imagenes', imagenesInput.files[0]);
         }
 
         if (editMode) {
@@ -307,6 +312,7 @@
                 return response.json();
             })
             .then((data) => {
+                console.log(data);
                 if (data.errors) {
                     showActivoErrors(data.errors);
                 } else {
@@ -320,6 +326,7 @@
                 }
             })
             .catch((error) => {
+                console.error("Error al guardar el activo:", error);
                 if (error.errors) {
                     showActivoErrors(error.errors);
                 } else {
@@ -364,6 +371,9 @@
             }
         }
     }
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
 
     function showMantenimientoErrors(errors) {
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
@@ -377,6 +387,7 @@
 
     function resetActivoForm() {
         document.getElementById('crearActivoForm').reset();
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
         crearActivoModalLabel.textContent = "Crear nuevo Activo";
         guardarActivoBtn.textContent = "Crear Activo";
         editMode = false;
@@ -389,6 +400,7 @@
         editMode = false;
         activoId = null;
         document.getElementById('crearActivoForm').reset();
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
         sedeInput.value = sedeSelect.options[sedeSelect.selectedIndex].textContent;
         clienteInput.value = clienteSelect.options[clienteSelect.selectedIndex].textContent;
         imagenesPreview.innerHTML = ''; // Clear image previews
@@ -405,7 +417,7 @@
         fetch(`activos`)
             .then(response => response.json())
             .then(activos => {
-                const activoSelect = document.getElementById('activoSelect');
+                const activoSelect = document.getElementById('activo');
                 activoSelect.innerHTML = '<option value="">Seleccione un activo</option>';
                 activos.forEach(activo => {
                     const option = document.createElement('option');
@@ -433,7 +445,7 @@
         fetch(`estados`)
             .then(response => response.json())
             .then(estados => {
-                const estadoSelect = document.getElementById("estadoActivo");
+                const estadoSelect = document.getElementById("estado");
                 estadoSelect.innerHTML = '<option value="">Seleccione</option>';
                 estados.forEach(estado => {
                     const option = document.createElement("option");
@@ -568,7 +580,7 @@
 
         document.getElementById('pills-activos-tab').addEventListener('click', consultarActivos);
 
-        const imagenesInput = document.getElementById('imagenesInput');
+        const imagenesInput = document.getElementById('imagenes');
         const imagenesPreview = document.getElementById('imagenesPreview');
 
         imagenesInput.addEventListener('change', function () {

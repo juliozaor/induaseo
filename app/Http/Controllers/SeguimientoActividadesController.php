@@ -156,6 +156,7 @@ class SeguimientoActividadesController extends Controller
                 foreach ($area->actividades as $areaActividad) {
                     if (!$areaActividad->estado) {
                         $areaActividad->estado = true;
+                        $areaActividad->calificacion = null;
                         $areaActividad->save();
                     }
                 }
@@ -453,7 +454,7 @@ class SeguimientoActividadesController extends Controller
         return response()->json(['message' => 'Activo no encontrado'], 404);
     }
 
-    // Función para enviar la solicitud de items por correo
+    // Función para enviar la solicitud de inventario por correo
     public function enviarSolicitudItems(Request $request)
     {
         // Validar los datos recibidos
@@ -483,11 +484,11 @@ class SeguimientoActividadesController extends Controller
         foreach ($administradores as $email) {
             Mail::send('emails.solicitud', $data, function ($message) use ($email) {
                 $message->to($email)
-                    ->subject('Solicitud de Items');
+                    ->subject('Solicitud de inventario');
             });
         }
 
-        return response()->json(['message' => 'Solicitud de items enviada correctamente']);
+        return response()->json(['message' => 'Solicitud de inventario enviada correctamente']);
     }
 
     public function activoReportado($id)

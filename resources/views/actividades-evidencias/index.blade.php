@@ -20,7 +20,7 @@
     </div>
 
     <div class="container-body mt-3">
-        <div class="listado-container">
+        <div class="listado-container2">
             <h2 class="listado-titulo">Actividades</h2>
             <div class="filter-container">
                 <div class="d-flex">
@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <div class="listado-container">
+        {{-- <div class="listado-container">
             <h2 class="listado-titulo">Listado de turnos</h2>
             <div class="divider"></div>
 
@@ -94,7 +94,7 @@
                 </table>
             </div>
             <div class="paginacion" id="turnosPaginacion"></div>
-        </div>
+        </div> --}}
 
         <div class="listado-container2">
             <h2 class="listado-titulo">Consolidado</h2>

@@ -140,47 +140,47 @@
                                         <span class="error-message" id="errorSedeInput"></span>
                                     </div>
                                     <div class="col">
-                                        <label for="estadoActivo">Estado:</label>
-                                        <select id="estadoActivo" name="estadoActivo" class="form-control" required>
+                                        <label for="estado">Estado:</label>
+                                        <select id="estado" name="estado" class="form-control" required>
                                             <option value="">Seleccione</option>
                                             <!-- Opciones de estado se llenarán dinámicamente -->
                                         </select>
-                                        <span class="error-message" id="errorEstadoActivo"></span>
+                                        <span class="error-message" id="errorEstado"></span>
                                     </div>
                                 </div>
                                 <div class="form-group flex-grow-1 row">
                                     <div class="col">
-                                        <label for="activoSelect">Seleccionar activo</label>
-                                        <select id="activoSelect" name="activoSelect" class="form-control"
+                                        <label for="activo">Seleccionar activo</label>
+                                        <select id="activo" name="activo" class="form-control"
                                             name="activo_id">
                                             <!-- Opciones de activos -->
                                         </select>
-                                        <span class="error-message" id="erroractivoSelect"></span>
+                                        <span class="error-message" id="errorActivo"></span>
                                     </div>
                                     <div class="col">
-                                        <label for="codigoInput">Código, No. de serie</label>
-                                        <input type="text" id="codigoInput" name="codigoInput" class="form-control"
+                                        <label for="codigo">Código, No. de serie</label>
+                                        <input type="text" id="codigo" name="codigo" class="form-control"
                                             readonly>
-                                        <span class="error-message" id="errorCodigoInput"></span>
+                                        <span class="error-message" id="errorCodigo"></span>
                                     </div>
                                     <div class="col">
-                                        <label for="cantidadInput">Cantidad</label>
-                                        <input type="text" id="cantidadInput" class="form-control" name="cantidad">
-                                        <span class="error-message" id="errorCantidadInput"></span>
+                                        <label for="cantidad">Cantidad</label>
+                                        <input type="text" id="cantidad" class="form-control" name="cantidad">
+                                        <span class="error-message" id="errorCantidad"></span>
                                     </div>
                                 </div>
                                 <div class="form-group flex-grow-1 row">
                                     <div class="col">
-                                        <label for="imagenesInput">Imagen Formatos permitidos PNG, JPG</label>
+                                        <label for="imagenes">Imagen Formatos permitidos PNG, JPG</label>
                                         <div class="input-group">
                                             <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="imagenesInput"
-                                                    name="imagenesInput" accept="image/*">
-                                                <label class="custom-file-label" for="imagenesInput">Selecciona un archivo
+                                                <input type="file" class="custom-file-input" id="imagenes"
+                                                    name="imagenes" accept="image/*">
+                                                <label class="custom-file-label" for="imagenes">Selecciona un archivo
                                                     desde el dispositivo</label>
                                             </div>
                                         </div>
-                                        <span class="error-message" id="errorImagenesInput"></span>
+                                        <span class="error-message" id="errorImagenes"></span>
                                         <div id="imagenesPreview" class="imagenes-preview mt-3"></div>
                                     </div>
                                 </div>

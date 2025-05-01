@@ -9,6 +9,7 @@ use App\Models\Sede;
 use App\Models\Usuario;
 use App\Models\Area;
 use App\Models\TurnoArea;
+use Illuminate\Validation\ValidationException;
 
 class SupervisorTurnoController extends Controller
 {
@@ -46,31 +47,43 @@ class SupervisorTurnoController extends Controller
 
     public function guardar(Request $request)
     {
-        $validatedData = $request->validate([
-            'supervisor_id' => 'required|exists:usuarios,id',
-            'sede_id' => 'required|exists:sedes,id',
-            'turno_id' => 'required|exists:turnos,id',
-            /* 'fecha_inicio' => 'required|date',
+        try {
+            $validatedData = $request->validate([
+                'supervisor' => 'required|exists:usuarios,id',
+                'sede_id' => 'required|exists:sedes,id',
+                'turno' => 'required|exists:turnos,id',
+                /* 'fecha_inicio' => 'required|date',
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio', */
-        ]);
+            ]);
 
-        $turno = SupervisorTurno::create($validatedData);
+            $turno = SupervisorTurno::create([
+                'supervisor_id' => $validatedData['supervisor'],
+                'sede_id' => $validatedData['sede_id'],
+                'turno_id' => $validatedData['turno'],
+            ]);
 
-        return response()->json(['message' => 'Turno asignado con éxito', 'turno_id' => $turno->id]);
+            return response()->json(['message' => 'Turno asignado con éxito', 'turno_id' => $turno->id]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
     public function actualizar(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'supervisor_id' => 'required|exists:usuarios,id',
+            'supervisor' => 'required|exists:usuarios,id',
             'sede_id' => 'required|exists:sedes,id',
-            'turno_id' => 'required|exists:turnos,id',
+            'turno' => 'required|exists:turnos,id',
             /* 'fecha_inicio' => 'required|date',
             'fecha_fin' => 'required|date|after_or_equal:fecha_inicio', */
         ]);
 
         $turno = SupervisorTurno::findOrFail($id);
-        $turno->update($validatedData);
+        $turno->update([
+            'supervisor_id' => $validatedData['supervisor'],
+            'sede_id' => $validatedData['sede_id'],
+            'turno_id' => $validatedData['turno'],
+        ]);
 
         return response()->json(['message' => 'Turno actualizado con éxito']);
     }

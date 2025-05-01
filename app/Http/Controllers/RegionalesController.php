@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Regionales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class RegionalesController extends Controller
 {
@@ -22,7 +23,7 @@ class RegionalesController extends Controller
         }
 
         if ($request->filled('estado')) {
-            $query->where('estado',$estado);
+            $query->where('estado', $estado);
         }
 
         $regionales = $query->paginate($registrosPorPagina);
@@ -32,17 +33,21 @@ class RegionalesController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'estado' => 'boolean',
-        ]);
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'estado' => 'boolean',
+            ]);
 
-        $regional = Regionales::create([
-            'nombre' => $validated['nombre'],
-            'estado' => $request->input('estado', 0)
-        ]);
+            $regional = Regionales::create([
+                'nombre' => $request->input('nombre')/* $validated['nombre'] */,
+                'estado' => $request->input('estado', 0)
+            ]);
 
-        return response()->json(['message' => 'Regional creada con éxito', 'regional' => $regional], 201);
+            return response()->json(['message' => 'Regional creada con éxito', 'regional' => $regional], 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
     public function show(Request $request)

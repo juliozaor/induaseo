@@ -288,7 +288,11 @@
                             return response.json();
                         })
                         .then(data => {
-                            alert("Turno eliminado con éxito.");
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                "Turno eliminado con éxito." // Mensaje de éxito
+                            );
+                            /* alert("Turno eliminado con éxito."); */
                             cargarDatos(1); // Reload the table
                         })
                         .catch(error => console.error("Error al eliminar el turno:", error));

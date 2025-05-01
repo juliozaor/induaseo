@@ -118,7 +118,20 @@
                 return;
             }
             if (tipo === "usuario") {
-                if (confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
+                /*let eliminarUsiario = false;
+                 showAlertModal(
+                    "pregunta.png", // Ruta del ícono de eliminar
+                    "¿Estás seguro de que deseas eliminar este usuario?", // Mensaje de confirmación
+                    function () { // Callback para el botón "Aceptar"
+                        eliminarUsiario = true;
+                        userModal.style.display = "none"; // Cerrar el modal
+                    },
+                    function () { // Callback para el botón "Cancelar"
+                        eliminarUsiario = false;
+                        console.log("Operación cancelada por el usuario."); // Log para depuración
+                    }
+                ); */
+                if (/*eliminarUsiario*/ confirm("¿Estás seguro de que deseas eliminar este usuario?") ) {
                     fetch(`../usuarios/${userId}`, {
                         method: "DELETE",
                         headers: {
@@ -132,7 +145,11 @@
                             return response.json();
                         })
                         .then(data => {
-                            alert(data.message);
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                data.message // Mensaje de éxito
+                            );
+                            /* alert(data.message); */
                             cargarUsuarios(1); // Reload the table after deletion
                         })
                         .catch(error => console.error("Error al eliminar el usuario:", error));
@@ -320,7 +337,7 @@
                     <td><div class="${estadoClase}">${usuario.estado ? 'Activo' : 'Inactivo'}</div></td>
                     <td>
                         <img src="../assets/icons/editar.png" alt="Editar" class="icono-editar" data-id="${usuario.id}">
-                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${usuario.id}">
+                        <img src="../assets/icons/eliminar.png" alt="Eliminar" class="icono-eliminar" data-id="${usuario.id}" data-tipo="usuario">
                     </td>
                 `;
                     tablaUsuariosBody.appendChild(row);

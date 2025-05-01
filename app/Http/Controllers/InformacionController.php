@@ -43,7 +43,8 @@ class InformacionController extends Controller
                 'url' => 'nullable|file|mimes:pdf,mp4,png,jpg,jpeg|max:20480',
                 'tipo_multimedia_id' => 'required|exists:tipo_multimedias,id',
                 'categoria_id' => 'required|exists:categorias,id',
-                'sede_id' => 'nullable|exists:sedes,id',
+                'sede_id' => 'required|exists:sedes,id',
+                'cliente_id' => 'required|exists:clientes,id',
             ]);
 
             if ($request->hasFile('url')) {

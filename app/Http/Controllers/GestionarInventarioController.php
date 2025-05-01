@@ -131,7 +131,7 @@ class GestionarInventarioController extends Controller
         // Actualizar los datos del inventario
         $inventario->update([
             'sede_id' => $request->sedeSelect,
-            'item_id' => $request->itemSelect,
+            'insumo_id' => $request->itemSelect,
             'cantidad' => $request->cantidadInput,
             'estado_id' => 1,
             'estado' => 1,

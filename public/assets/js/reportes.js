@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${turno.fecha ?? '-'}</td>
+                <td>${turno.turno ?? '-'}</td>
                 <td>${turno.area}</td>
                 <td>${turno.actividad}</td>
                 <td>${turno.estado}</td>
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const li = document.createElement('li');
                     /* li.textContent = `Turno: ${turno.nombre}`; */
                     li.innerHTML = `
-                        Turno: ${turno.nombre}
+                        Listado de áreas del turno: ${turno.nombre}
                         <div class="datos-satisfaccion">
                             <span>Satisfacción del cliente: ${turno.satisfaccion ?? 0}</span>
                             <span>Encuestas enviadas: ${turno.total_encuestas ?? 0}</span>

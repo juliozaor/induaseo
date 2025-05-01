@@ -224,7 +224,11 @@
                             return response.json();
                         })
                         .then(data => {
-                            alert(data.message);
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                data.message // Mensaje de éxito
+                            );
+                            /* alert(data.message); */
                             cargarDatos(1); // Reload the table after deletion
                         })
                         .catch(error => console.error("Error al eliminar el cliente:", error));
@@ -245,7 +249,11 @@
     // Guardar cambios
     modalActionBtn.addEventListener("click", function () {
         if (!identificacionValida) {
-            alert('¡La identificación ya existe, por favor, ingrese una diferente!');
+            showAlertModal(
+                "error.png", // Ruta del ícono de error
+                "¡La identificación ya existe, por favor, ingrese una diferente!" // Mensaje de error
+            );
+            /* alert(''); */
             return; // No permitir crear cliente si la identificación no es válida
         }
 

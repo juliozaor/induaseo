@@ -319,6 +319,7 @@
     // Abrir el modal
     openModalBtn.addEventListener("click", function () {
         modal.style.display = "flex";
+        actividadSection.style.display = "none";
         resetForm();
         cargarActividadesSelect();
     });
@@ -479,7 +480,25 @@
     agregarActividadBtn.addEventListener("click", function () {
         const actividadId = actividadSelect.value;
         if (actividadId && areaId) {
-            agregarActividad(areaId, actividadId);
+            fetch(`../actividades/${areaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const actividadExistente = data.find(actividad => actividad.id == actividadId);
+                    if (actividadExistente) {
+                        showAlertModal(
+                            "error.png", // Ruta del ícono de error
+                            "La actividad ya está asociada a esta área" // Mensaje de error
+                        );
+                    } else {
+                        agregarActividad(areaId, actividadId);
+                    }
+                })
+                .catch(error => console.error('Error al verificar la actividad:', error));
+        } else {
+            showAlertModal(
+                "error.png", // Ruta del ícono de error
+                "Seleccione una actividad" // Mensaje de error
+            );
         }
     });
 
@@ -507,16 +526,16 @@
                 .then(data => {
                     if (data.exists && nombre !== originalName) {
                         nombreExistente.style.display = "block";
-                        modalActionBtn.disabled = true;
+                        /* modalActionBtn.disabled = true; */
                     } else {
                         nombreExistente.style.display = "none";
-                        modalActionBtn.disabled = false;
+                        /* modalActionBtn.disabled = false; */
                     }
                 })
                 .catch(error => console.error('Error al verificar el nombre del área:', error));
         } else {
             nombreExistente.style.display = "none";
-            modalActionBtn.disabled = true;
+            /* modalActionBtn.disabled = true; */
         }
     });
 
@@ -542,7 +561,7 @@
         modalActionBtn.textContent = "Crear Área";
         document.getElementById("nombre").disabled = true;
         document.getElementById("nombreExistente").style.display = "none";
-        modalActionBtn.disabled = true;
+        /* modalActionBtn.disabled = true; */
         editMode = false;
         areaId = null;
         tablaActividadesBody.innerHTML = ''; // Clear the activities table

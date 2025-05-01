@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching turnos:', error));
     });
 
-    turnosTableBody.addEventListener('click', function (event) {
+    /* turnosTableBody.addEventListener('click', function (event) {
         if (event.target.classList.contains('icono-editar')) {
             const turnoId = event.target.getAttribute('data-id');
             fetch(`actividades-evidencias/detalle/${turnoId}`)
@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(error => console.error('Error fetching turno details:', error));
         }
-    });
+    }); */
 
     const aplicarFiltroBtn = document.getElementById('aplicarFiltroBtn');
     const limpiarFiltroBtn = document.getElementById('limpiarFiltroBtn');
@@ -378,7 +378,11 @@ document.addEventListener('DOMContentLoaded', function () {
             .reduce((acc, val) => acc + val, 0);
 
         if (!supervisorTurnoId || totalPuntos === 0) {
-            alert('Por favor, complete la encuesta antes de enviarla.');
+            showAlertModal(
+                "error.png", // Ruta del ícono de éxito
+                'Por favor, complete la encuesta antes de enviarla.' // Mensaje de éxito
+            );
+            /* alert('Por favor, complete la encuesta antes de enviarla.'); */
             return;
         }
         console.log(`Enviar encuesta para el supervisor_turno_id: ${supervisorTurnoId}, total_puntos: ${totalPuntos}`);
@@ -397,7 +401,11 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.message) {
-                    alert(data.message);
+                    showAlertModal(
+                        "ok.png", // Ruta del ícono de éxito
+                        data.message// Mensaje de éxito
+                    );
+                    /* alert(); */
                     $('#encuestaModal').modal('hide');
                     document.getElementById('encuestaForm').reset();
                 } else {

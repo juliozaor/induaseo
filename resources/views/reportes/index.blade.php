@@ -51,6 +51,7 @@
                     <thead>
                         <tr>
                             <th>Fecha</th>
+                            <th>Turno</th>
                             <th>Área</th>
                             <th>Actividad</th>
                             <th>Estado</th>

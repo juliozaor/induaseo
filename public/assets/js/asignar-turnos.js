@@ -166,11 +166,25 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching turnos:', error));
     }
 
+    function showErrors(errors) {
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        for (const [key, messages] of Object.entries(errors)) {
+            const errorElement = document.getElementById(`error${capitalizeFirstLetter(key)}`);
+            /* console.log(capitalizeFirstLetter(key), messages); */
+            if (errorElement) {
+                errorElement.textContent = messages.join(', ');
+            }
+        }
+    }
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     guardarTurnoBtn.addEventListener('click', function () {
         const formData = new FormData();
-        formData.append('supervisor_id', supervisorSelect.value);
+        formData.append('supervisor', supervisorSelect.value);
         formData.append('sede_id', sedeSelect.value);
-        formData.append('turno_id', turnoSelect.value);
+        formData.append('turno', turnoSelect.value);
         /* formData.append('fecha_inicio', fechaInicioInput.value);
         formData.append('fecha_fin', fechaFinInput.value); */
 
@@ -191,14 +205,19 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
-                    turnoId = data.turno_id; // Almacenar el ID del turno asignado
-                    document.getElementById('asignarTurnoModal').setAttribute('data-turno-id', turnoId); // Almacenar el turnoId en el modal
-                    areaSection.style.display = "block"; // Mostrar la sección de áreas
-                    showAlertModal(
-                        "ok.png", // Ruta del ícono de éxito
-                        data.message // Mensaje de éxito
-                    );
+                    /* console.log(data); */
+                    if (data.errors) {
+                        showErrors(data.errors);
+                    } else {
+                        turnoId = data.turno_id; // Almacenar el ID del turno asignado
+                        document.getElementById('asignarTurnoModal').setAttribute('data-turno-id', turnoId); // Almacenar el turnoId en el modal
+                        areaSection.style.display = "block"; // Mostrar la sección de áreas
+                        showAlertModal(
+                            "ok.png", // Ruta del ícono de éxito
+                            data.message // Mensaje de éxito
+                        );
+                    }
+
                 })
                 .catch(error => console.error('Error al guardar el turno:', error));
         };
@@ -349,7 +368,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             return response.json();
                         })
                         .then(data => {
-                            alert("Turno asignado eliminado con éxito.");
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                "Turno asignado eliminado con éxito." // Mensaje de éxito
+                            );
+                            /* alert(); */
                             consultarTurnosAsignados(); // Reload the table
                         })
                         .catch(error => console.error("Error al eliminar el turno asignado:", error));

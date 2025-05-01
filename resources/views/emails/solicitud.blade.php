@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de Items</title>
+    <title>Solicitud de inventario</title>
 </head>
 <body>
-    <h1>Solicitud de Items</h1>
+    <h1>Solicitud de inventario</h1>
     <p>Supervisor: {{ $usuario }}</p>
     <p>Cliente: {{ $cliente }}</p>
     <p>Sede: {{ $sede }}</p>

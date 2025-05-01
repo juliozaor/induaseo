@@ -69,7 +69,7 @@
                     <th>Identificación</th>
                     <th>Nombres y Apellidos</th>
                     <th>Turno</th>
-                    <th>Cant de Areas</th>
+                    <th>Cantidad de Areas</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -102,7 +102,7 @@
                             <select id="supervisorSelect" class="form-control">
                                 <!-- Opciones de supervisores -->
                             </select>
-                            <span class="error-message" id="errorSupervisorSelect"></span>
+                            <span class="error-message" id="errorSupervisor"></span>
                         </div>
                         <div class="col">
                             <label for="sedeInput">Sede:</label>
@@ -112,24 +112,12 @@
                     </div>
                     <h5>Turno de supervisión</h5>
                     <div class="form-group flex-grow-1 row">
-
-                        {{-- <div class="col">
-                            <label for="fechaInicioInput">Fecha Inicio:</label>
-                            <input type="date" id="fechaInicioInput" class="form-control">
-                            <span class="error-message" id="errorFechaInicioInput"></span>
-                        </div>
-                        <div class="col">
-                            <label for="fechaFinInput">Fecha Fin:</label>
-                            <input type="date" id="fechaFinInput" class="form-control">
-                            <span class="error-message" id="errorFechaFinInput"></span>
-                        </div> --}}
-
                         <div class="col">
                             <label for="turnoSelect">Turno:</label>
                             <select id="turnoSelect" class="form-control">
                                 <!-- Opciones de turnos -->
                             </select>
-                            <span class="error-message" id="errorTurnoSelect"></span>
+                            <span class="error-message" id="errorTurno"></span>
                         </div>
                     </div>
                 </form>

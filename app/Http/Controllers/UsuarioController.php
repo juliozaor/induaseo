@@ -59,9 +59,9 @@ class UsuarioController extends Controller
                 'nombres' => 'required|string|max:255',
                 'apellidos' => 'required|string|max:255',
                 'fechaNacimiento' => 'required|date',
-                'telefono' => 'nullable|string|max:20',
+                'telefono' => 'required|string|max:20',
                 'correo' => 'required|email|max:255|unique:usuarios,email',
-                'cargo' => 'nullable|string|max:255',
+                'cargo' => 'required|string|max:255',
                 'cliente_id' => 'nullable|exists:clientes,id', // Validar cliente_id
                 //'estado' => 'required|boolean', // Validar estado
             ]);

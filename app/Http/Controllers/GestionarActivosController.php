@@ -53,20 +53,19 @@ class GestionarActivosController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'activoSelect' => 'required|exists:activos,id',
+                'activo' => 'required|exists:activos,id',
                 'cantidad' => 'required|integer|min:1',
-                'estado' => 'required|boolean',
-                'estadoActivo' => 'required|exists:estados,id',
-                'imagenesInput' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'estado' => 'required|exists:estados,id',
+                'imagenes' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
             $activo = SedesActivos::create([
                 'sede_id' => $request->sede_id,
-                'activo_id' => $request->activoSelect,
-                'numero_serie' => $request->codigoInput,
+                'activo_id' => $request->activo,
+                'numero_serie' => $request->codigo,
                 'cantidad' => $request->cantidad,
-                'estado_id' => $request->estadoActivo,
-                'estado' => $request->estado,
+                'estado_id' => $request->estado,
+                'estado' => $request->estadoActivo,
                 'creador_id' => Auth::id(),
             ]);
 
@@ -94,32 +93,31 @@ class GestionarActivosController extends Controller
     {
 
         $validatedData = $request->validate([
-            'activoSelect' => 'required|exists:activos,id',
+            'activo' => 'required|exists:activos,id',
             'cantidad' => 'required|integer|min:1',
-            'estado' => 'required|boolean',
-            'estadoActivo' => 'required|exists:estados,id',
-            'imagenesInput' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'estado' => 'required|exists:estados,id',
+            'imagenes' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $activo = SedesActivos::findOrFail($id);
 
         $activo->update([
             'sede_id' => $request->sede_id,
-            'activo_id' => $request->activoSelect,
-            'numero_serie' => $request->codigoInput,
+            'activo_id' => $request->activo,
+            'numero_serie' => $request->codigo,
             'cantidad' => $request->cantidad,
-            'estado_id' => $request->estadoActivo,
-            'estado' => $request->estado,
+            'estado_id' => $request->estado,
+            'estado' => $request->estadoActivo,
             'actualizador_id' => Auth::id(),
         ]);
 
 
-        if ($request->hasFile('imagenesInput')) {
+        if ($request->hasFile('imagenes')) {
             // Delete old images
             ImagenSedeActivo::where('sede_activo_id', $activo->id)->delete();
             Storage::disk('public')->delete($activo->imagenes->pluck('imagen')->toArray());
 
-            $file = $request->file('imagenesInput');
+            $file = $request->file('imagenes');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('imagenes'), $filename);
             ImagenSedeActivo::create([

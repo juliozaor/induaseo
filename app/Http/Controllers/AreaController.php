@@ -30,7 +30,7 @@ class AreaController extends Controller
         }
 
         if ($clienteId) {
-            $query->whereHas('sede.cliente', function($q) use ($clienteId) {
+            $query->whereHas('sede.cliente', function ($q) use ($clienteId) {
                 $q->where('id', $clienteId);
             });
         }
@@ -51,21 +51,25 @@ class AreaController extends Controller
     // Almacenar una nueva área
     public function store(Request $request)
     {
+        try {
+            $validated = $request->validate([
+                'cliente' => 'required|exists:clientes,id',
+                'nombre' => 'required|string|max:255',
+                'sede' => 'required|exists:sedes,id',
+                'estado' => 'boolean',
+            ]);
 
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'sede' => 'required|exists:sedes,id',
-            'estado' => 'boolean',
-        ]);
+            $area = Area::create([
+                'nombre' => $validated['nombre'],
+                'sede_id' => $validated['sede'],
+                'estado' => $request->input('estado', 0), // Default to 0 if not provided
+                'creador_id' => Auth::id(),
+            ]);
 
-        $area = Area::create([
-            'nombre' => $validated['nombre'],
-            'sede_id' => $validated['sede'],
-            'estado' => $request->input('estado', 0), // Default to 0 if not provided
-            'creador_id' => Auth::id(),
-        ]);
-
-        return response()->json(['message' => 'Área creada con éxito', 'area' => $area], 201);
+            return response()->json(['message' => 'Área creada con éxito', 'area' => $area], 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
     // Mostrar detalles de un área específica
@@ -95,7 +99,7 @@ class AreaController extends Controller
                 'actualizador_id' => Auth::id(),
             ]);
         } catch (\Throwable $th) {
-           return response()->json(['message' => 'Error al actualizar el área', 'error' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Error al actualizar el área', 'error' => $th->getMessage()], 500);
         }
 
         return response()->json(['message' => 'Área actualizada correctamente', 'area' => $area]);

@@ -202,7 +202,7 @@
                 console.error("Error: No se encontró el ID del activo en el botón.");
                 return;
             }
-            if (tipo !== "activo") {
+            if (tipo === "activo") {
                 if (confirm("¿Está seguro de que desea eliminar este activo?")) {
                     fetch(`../activos/${activoId}`, {
                         method: "DELETE",
@@ -217,7 +217,11 @@
                             return response.json();
                         })
                         .then(data => {
-                            alert("Activo eliminado con éxito.");
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                'Activo eliminado con éxito.' // Mensaje de éxito
+                            );
+                            /* alert(""); */
                             cargarDatos(1); // Reload the table
                         })
                         .catch(error => console.error("Error al eliminar el activo:", error));

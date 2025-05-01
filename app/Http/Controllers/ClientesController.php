@@ -45,9 +45,9 @@ class ClientesController extends Controller
                 'nombre' => 'required|string|max:255',
                 'pais' => 'required|exists:paises,id',
                 'ciudad' => 'required|exists:ciudades,id',
-                'direccion' => 'nullable|string|max:255',
-                'correo' => 'nullable|email|max:255',
-                'celular' => 'nullable|numeric',
+                'direccion' => 'required|string|max:255',
+                'correo' => 'required|email|max:255',
+                'celular' => 'required|numeric',
                 'estado' => 'required|boolean',
                 'sectorEconomico' => 'required|exists:sectores_economicos,id',
             ]);

@@ -221,7 +221,11 @@
                             return response.json();
                         })
                         .then(data => {
-                            alert("Insumo eliminado con éxito.");
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                "Insumo eliminado con éxito." // Mensaje de éxito
+                            );
+                            /* alert(); */
                             cargarDatos(1); // Reload the table
                         })
                         .catch(error => console.error("Error al eliminar el insumo:", error));

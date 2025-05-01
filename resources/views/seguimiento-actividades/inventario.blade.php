@@ -296,7 +296,11 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message);
+                    showAlertModal(
+                        "ok.png",
+                        data.message
+                    );
+                    /* alert(data.message); */
                     // Cerrar el modal después de guardar
                     $(`#actividadModal${id}`).modal('hide');
                 })
@@ -332,7 +336,11 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message);
+                    showAlertModal(
+                        "ok.png",
+                        data.message
+                    );
+                    /* alert(data.message); */
                     // Cerrar el modal después de guardar
                     $(`#activoModal${id}`).modal('hide');
                 })
@@ -368,7 +376,11 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message);
+                    showAlertModal(
+                        "ok.png",
+                        data.message
+                    );
+                    /* alert(data.message); */
                     // Cerrar el modal después de reportar
                     $(`#activoModal${id}`).modal('hide');
                 })
@@ -517,11 +529,15 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message);
+                    showAlertModal(
+                        "ok.png",
+                        data.message
+                    );
+                    /* alert(data.message); */
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al enviar la solicitud de items: ' + error.message);
+                    alert('Error al enviar la solicitud de inventario: ' + error.message);
                 });
         }
 
@@ -767,7 +783,11 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message);
+                    showAlertModal(
+                        "ok.png",
+                        data.message
+                    );
+                    /* alert(data.message); */
                     // Close the modal after saving
                     //$(`#mantenimientoModal${id}`).modal('hide');
                 })
@@ -814,7 +834,11 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert(data.message);
+                    showAlertModal(
+                        "ok.png",
+                        data.message
+                    );
+                    /* alert(data.message); */
                     // Close the modal after saving
                     // $(`#finalModal${id}`).modal('hide');
                 })

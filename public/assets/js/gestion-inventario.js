@@ -254,7 +254,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             return response.json();
                         })
                         .then(data => {
-                            alert("Inventario eliminado con éxito.");
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                "Inventario eliminado con éxito." // Mensaje de éxito
+                            );
+                            /* alert(); */
                             consultarInventarios(); // Reload the table
                         })
                         .catch(error => console.error("Error al eliminar el inventario:", error));

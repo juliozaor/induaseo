@@ -21,7 +21,7 @@ class ActividadesExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $turnosAsignados = SupervisorTurno::with(['turno', 'supervisor', 'areas.area.actividades'])
+        $turnosAsignados = SupervisorTurno::with(['turno', 'supervisor', 'areas.area.actividades', 'areas.actividades.actividad'])
             ->where('sede_id', $this->sede_id);
 
         if ($this->fecha_inicio && $this->fecha_fin) {
@@ -30,22 +30,24 @@ class ActividadesExport implements FromCollection, WithHeadings
 
         $turnos = $turnosAsignados->get()->map(function ($turnoAsignado) {
             $actividadesCompletadas = $turnoAsignado->areas->map(function ($area) use ($turnoAsignado) {
-                return $area->area->actividades->where('estado', false)->map(function ($actividad) use ($turnoAsignado, $area) {
+                return $area->actividades->where('estado', false)->map(function ($actividad) use ($turnoAsignado, $area) {
                     return [
                         'fecha' => $turnoAsignado->fecha_inicio,
+                        'turno' => $turnoAsignado->turno->nombre,
                         'area' => $area->area->nombre,
-                        'actividad' => $actividad->nombre,
+                        'actividad' => $actividad->actividad->nombre,
                         'estado' => 'completada'
                     ];
                 });
             })->flatten(1);
 
             $actividadesIncompletadas = $turnoAsignado->areas->map(function ($area) use ($turnoAsignado) {
-                return $area->area->actividades->where('estado', true)->map(function ($actividad) use ($turnoAsignado, $area) {
+                return $area->actividades->where('estado', true)->map(function ($actividad) use ($turnoAsignado, $area) {
                     return [
                         'fecha' => $turnoAsignado->fecha_inicio,
+                        'turno' => $turnoAsignado->turno->nombre,
                         'area' => $area->area->nombre,
-                        'actividad' => $actividad->nombre,
+                        'actividad' => $actividad->actividad->nombre,
                         'estado' => 'incompleta'
                     ];
                 });
@@ -61,6 +63,7 @@ class ActividadesExport implements FromCollection, WithHeadings
     {
         return [
             'Fecha',
+            'Turno',
             'Área',
             'Actividad',
             'Estado'

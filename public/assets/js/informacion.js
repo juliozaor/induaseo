@@ -34,6 +34,7 @@
     document.addEventListener("click", function (event) {
         if (event.target.classList.contains("icono-editar")) {
             informacionId = event.target.getAttribute("data-id");
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
             if (!informacionId) {
                 console.error("Error: No se encontró el ID de la información en el botón.");
                 return;
@@ -98,7 +99,11 @@
                             return response.json();
                         })
                         .then(data => {
-                            alert("Información eliminada con éxito.");
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                "Información eliminada con éxito." // Mensaje de éxito
+                            );
+                            /* alert(); */
                             cargarInformacion(1); // Reload the table
                         })
                         .catch(error => console.error("Error al eliminar la información:", error));
@@ -121,7 +126,7 @@
         const method = editMode ? "PUT" : "POST";
 
         const formData = new FormData(informacionForm);
-        console.log('formData:', ...formData);
+        /* console.log('formData:', ...formData); */
         if (editMode) {
             formData.append("_method", "PUT");
         }
@@ -142,6 +147,7 @@
                 return response.json();
             })
             .then((data) => {
+                console.log('data:', data);
                 if (data.errors) {
                     showInformacionErrors(data.errors);
                 } else {
@@ -155,6 +161,7 @@
                 }
             })
             .catch((error) => {
+                console.error("Error al guardar la información:", error);
                 if (error.errors) {
                     showInformacionErrors(error.errors);
                 } else {
@@ -167,6 +174,7 @@
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
         for (const [key, messages] of Object.entries(errors)) {
             const errorElement = document.getElementById(`error${capitalizeFirstLetter(key)}`);
+            console.log(capitalizeFirstLetter(key));
             if (errorElement) {
                 errorElement.textContent = messages.join(', ');
             }
@@ -184,6 +192,9 @@
         editMode = false;
         informacionId = null;
         document.getElementById("fileLabel").textContent = ''; // Clear the file label
+
+        // Resetea aquí los mensajes de error
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
     }
 
     // Cargar tipos de multimedia

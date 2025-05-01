@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Actividades;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ActividadesController extends Controller
 {
@@ -25,19 +26,23 @@ class ActividadesController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'frecuencia' => 'required|exists:frecuencias,id',
-            'estado' => 'required|boolean',
-        ]);
+        try {
+            $validated = $request->validate([
+                'nombre' => 'required|string|max:255',
+                'frecuencia' => 'required|exists:frecuencias,id',
+                'estado' => 'required|boolean',
+            ]);
 
-        $actividad = Actividades::create([
-            'nombre' => $validated['nombre'],
-            'frecuencia_id' => $validated['frecuencia'], // Corregido
-            'estado' => $request->input('estado', 0)
-        ]);
+            $actividad = Actividades::create([
+                'nombre' => $validated['nombre'],
+                'frecuencia_id' => $validated['frecuencia'], // Corregido
+                'estado' => $request->input('estado', 0)
+            ]);
 
-        return response()->json(['message' => 'Actividad creada con éxito', 'actividad' => $actividad], 201);
+            return response()->json(['message' => 'Actividad creada con éxito', 'actividad' => $actividad], 201);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        }
     }
 
     public function show(Request $request)

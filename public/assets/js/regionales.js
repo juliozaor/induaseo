@@ -266,7 +266,7 @@
             })
             .catch((error) => {
                 if (error.errors) {
-                    showErrors(error.errors);
+                    showUserErrors(error.errors);
                 } else {
                     console.error("Error al guardar la regional:", error);
                 }

@@ -31,7 +31,11 @@
             consultarBtn.addEventListener("click", function() {
                 const tablaSeleccionada = tablaMaestraSelect.value ;
                 if (!tablaSeleccionada) {
-                    alert("Por favor, seleccione una tabla maestra.");
+                    showAlertModal(
+                        "error.png",
+                        "Por favor, seleccione una tabla maestra."
+                    );
+                    /* alert("Por favor, seleccione una tabla maestra."); */
                     return;
                 }
 

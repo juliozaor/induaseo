@@ -72,7 +72,7 @@
                             <option value="">Seleccione</option>
                             <!-- Opciones de clientes -->
                         </select>
-                        <span class="error-message" id="errorClienteId"></span>
+                        <span class="error-message" id="errorCliente_id"></span>
                     </div>
                     <div class="col-6">
                         <label for="sede_id">Sede:</label>
@@ -80,7 +80,7 @@
                             <option value="">Seleccione</option>
                             <!-- Opciones de sedes -->
                         </select>
-                        <span class="error-message" id="errorSedeId"></span>
+                        <span class="error-message" id="errorSede_id"></span>
                     </div>
                 </div>
                 <div class="form-group flex-grow-1 row">
@@ -90,7 +90,7 @@
                             <option value="">Seleccione</option>
                             <!-- Opciones de tipos de multimedia -->
                         </select>
-                        <span class="error-message" id="errorTipoMultimediaId"></span>
+                        <span class="error-message" id="errorTipo_multimedia_id"></span>
                     </div>
                     <div class="col-6">
                         <label for="categoria_id">Categoría:</label>
@@ -98,7 +98,7 @@
                             <option value="">Seleccione</option>
                             <!-- Opciones de categorías -->
                         </select>
-                        <span class="error-message" id="errorCategoriaId"></span>
+                        <span class="error-message" id="errorCategoria_id"></span>
                     </div>
                 </div>
                 <div class="form-group flex-grow-1 row">
@@ -120,10 +120,10 @@
                         <label for="url" class="form-label">Adjuntar multimedia <span class="subtitulo-modal">- Formatos permitidos: PDF, MP4, PNG, JPG</span></label>
                         <input class="form-control" type="file" id="url" name="url">
                         <span class="error-message" id="errorUrl"></span>
-                        <span id="fileLabel" class="file-label"></span> 
+                        <span id="fileLabel" class="file-label"></span>
                     </div>
                 </div>
-                
+
             </form>
         </div>
         <div class="modal-footer">

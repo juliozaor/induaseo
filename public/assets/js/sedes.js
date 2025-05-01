@@ -224,7 +224,11 @@
                             return response.json();
                         })
                         .then(data => {
-                            alert("Sede eliminada con éxito.");
+                            showAlertModal(
+                                "ok.png", // Ruta del ícono de éxito
+                                "Sede eliminada con éxito." // Mensaje de éxito
+                            );
+                            /* alert(); */
                             cargarDatos(1); // Reload the table
                         })
                         .catch(error => console.error("Error al eliminar la sede:", error));
@@ -244,7 +248,11 @@
     // Guardar cambios
     modalActionBtn.addEventListener("click", function () {
         if (nombreExists) {
-            alert("El nombre de la sede ya existe. Por favor, elija otro nombre.");
+            showAlertModal(
+                "error.png", // Ruta del ícono de error
+                "El nombre de la sede ya existe. Por favor, elija otro nombre." // Mensaje de error
+            );
+            /* alert("El nombre de la sede ya existe. Por favor, elija otro nombre."); */
             return;
         }
 

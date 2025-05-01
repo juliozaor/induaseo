@@ -32,33 +32,36 @@ class ReporteController extends Controller
         $fecha_fin = $request->fecha_fin;
 
         // Obtener los turnos asignados con sus relaciones
-        $turnosAsignados = SupervisorTurno::with(['turno', 'supervisor', 'areas.area.actividades'])
+        $turnosAsignados = SupervisorTurno::with(['turno', 'supervisor', 'areas.area.actividades', 'areas.actividades.actividad' ])
             ->where('sede_id', $sede_id);
 
         // Filtrar por rango de fechas si se proporcionan
         if ($fecha_inicio && $fecha_fin) {
             $turnosAsignados->whereBetween('fecha_inicio', [$fecha_inicio, $fecha_fin]);
         }
-
+        /* dd($turnosAsignados->get()); */
         // Mapear los turnos asignados para devolver la estructura deseada
         $turnos = $turnosAsignados->get()->map(function ($turnoAsignado) {
             $actividadesCompletadas = $turnoAsignado->areas->map(function ($area) use ($turnoAsignado) {
-                return $area->area->actividades->where('estado', false)->map(function ($actividad) use ($turnoAsignado, $area) {
+                /* dd($area->actividades); */
+                return $area->actividades->where('estado', false)->map(function ($actividad) use ($turnoAsignado, $area) {
                     return [
                         'fecha' => $turnoAsignado->fecha_inicio,
+                        'turno' => $turnoAsignado->turno->nombre,
                         'area' => $area->area->nombre,
-                        'actividad' => $actividad->nombre,
+                        'actividad' => $actividad->actividad->nombre,
                         'estado' => 'completada'
                     ];
                 });
             })->flatten(1);
 
             $actividadesIncompletadas = $turnoAsignado->areas->map(function ($area) use ($turnoAsignado) {
-                return $area->area->actividades->where('estado', true)->map(function ($actividad) use ($turnoAsignado, $area) {
+                return $area->actividades->where('estado', true)->map(function ($actividad) use ($turnoAsignado, $area) {
                     return [
                         'fecha' => $turnoAsignado->fecha_inicio,
+                        'turno' => $turnoAsignado->turno->nombre,
                         'area' => $area->area->nombre,
-                        'actividad' => $actividad->nombre,
+                        'actividad' => $actividad->actividad->nombre,
                         'estado' => 'incompleta'
                     ];
                 });
@@ -66,7 +69,7 @@ class ReporteController extends Controller
 
             return $actividadesCompletadas->merge($actividadesIncompletadas);
         })->flatten(1);
-
+        /* dd($turnos); */
         return response()->json($turnos);
     }
 
