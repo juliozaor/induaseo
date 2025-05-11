@@ -1,3 +1,5 @@
+/* const { default: Swal } = require("sweetalert2"); */
+
 // Maneja la selección de archivos para evidencias
 function handleFileSelect(event, actividadId) {
     const files = event.target.files;
@@ -5,11 +7,17 @@ function handleFileSelect(event, actividadId) {
 
     // Verifica si se excede el límite de 3 imágenes
     if (evidenciasContainer.children.length + files.length > 5) {
-        showAlertModal(
+        /* showAlertModal(
             "error.png", // Ruta del ícono
             "Solo puedes agregar un máximo de 5 imágenes." // Mensaje
-        );
-        /* alert(''); */
+        ); */
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Solo puedes agregar un máximo de 5 imágenes.',
+            confirmButtonText: 'Aceptar'
+        });
+        /* alert('Solo puedes agregar un máximo de 5 imágenes.'); */
         return;
     }
 

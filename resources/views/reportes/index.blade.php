@@ -50,11 +50,13 @@
                 <table class="tabla" id="tablaActividades">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
+                            <th>Fecha inicio</th>
+                            <th>Fecha fin</th>
                             <th>Turno</th>
                             <th>Área</th>
                             <th>Actividad</th>
                             <th>Estado</th>
+                            <th>Calificación</th>
                         </tr>
                     </thead>
                     <tbody id="actividadesTableBody">
@@ -127,7 +129,8 @@
     </div>
 
     <!-- Modal for Turno Details -->
-    <div class="modal fade" id="detalleTurnoModal" tabindex="-1" role="dialog" aria-labelledby="detalleTurnoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="detalleTurnoModal" tabindex="-1" role="dialog" aria-labelledby="detalleTurnoModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -177,7 +180,8 @@
     </div>
 
     <!-- Modal for Activity Details -->
-    <div class="modal fade" id="detalleActividadModal" tabindex="-1" role="dialog" aria-labelledby="detalleActividadModalLabel" aria-hidden="true">
+    <div class="modal fade" id="detalleActividadModal" tabindex="-1" role="dialog"
+        aria-labelledby="detalleActividadModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -216,9 +220,10 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
+    <!-- Include SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/js/reportes.js') }}?v={{ time() }}"></script>
 @endpush

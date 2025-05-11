@@ -16,6 +16,8 @@ use App\Exports\ActividadesExport;
 use App\Exports\ActivosExport;
 use App\Exports\InsumosExport;
 use App\Models\Inventario;
+use App\Models\SupervisorTurnosFechas;
+use App\Models\TurnosHistorialActividades;
 
 class ReporteController extends Controller
 {
@@ -35,15 +37,64 @@ class ReporteController extends Controller
         $turnosAsignados = SupervisorTurno::with(['turno', 'supervisor', 'areas.area.actividades', 'areas.actividades.actividad' ])
             ->where('sede_id', $sede_id);
 
-        // Filtrar por rango de fechas si se proporcionan
-        if ($fecha_inicio && $fecha_fin) {
-            $turnosAsignados->whereBetween('fecha_inicio', [$fecha_inicio, $fecha_fin]);
+        $historialTurnos = SupervisorTurnosFechas::with([
+            'supervisorTurno', 'supervisorTurno.turno', 'supervisorTurno.supervisor',
+            'supervisorTurno.areas.area.actividades', 'supervisorTurno.areas.actividades.actividad',
+            'supervisorTurno.areas'
+            ])
+            ->whereIn('supervisor_turno_id', $turnosAsignados->pluck('id'));
+
+        $turnos = [];
+
+        foreach ($historialTurnos->get() as $historialTurno) {
+            $supervisorTurno = $historialTurno->supervisorTurno;
+
+            if ($supervisorTurno) {
+            $historialActividades = TurnosHistorialActividades::with(['turnoAreaActividad'])
+                ->whereHas('turnoAreaActividad.turnoArea', function ($query) use ($supervisorTurno) {
+                $query->where('turno_id', $supervisorTurno->id);
+                })
+                ->get()
+                ->map(function ($historial) use ($supervisorTurno, $historialTurno) {
+                return [
+                    'fecha_inicio' => $historialTurno->fecha_inicio,
+                    'fecha_fin' => $historialTurno->fecha_fin,
+                    'turno' => $supervisorTurno->turno->nombre,
+                    'area' => $historial->turnoAreaActividad->turnoArea->area->nombre,
+                    'actividad' => $historial->turnoAreaActividad->actividad->nombre,
+                    'estado' => $historial->estado,
+                    'calificacion' => $historial->calificacion,
+                ];
+                });
+
+            $turnos = array_merge($turnos, $historialActividades->toArray());
+            }
         }
+
+        if ($fecha_inicio && $fecha_fin) {
+            $turnos = array_filter($turnos, function ($item) use ($fecha_inicio, $fecha_fin) {
+                return $item['fecha_inicio'] >= $fecha_inicio && $item['fecha_fin'] <= $fecha_fin;
+            });
+        } else if ($fecha_inicio) {
+            $turnos = array_filter($turnos, function ($item) use ($fecha_inicio) {
+                return $item['fecha_inicio'] >= $fecha_inicio;
+            });
+        } else if ($fecha_fin) {
+            $turnos = array_filter($turnos, function ($item) use ($fecha_fin) {
+                return $item['fecha_fin'] <= $fecha_fin;
+            });
+        }
+
+        /* dd($turnos); */
+
+        // Filtrar por rango de fechas si se proporcionan
+        /* if ($fecha_inicio && $fecha_fin) {
+            $turnosAsignados->whereBetween('fecha_inicio', [$fecha_inicio, $fecha_fin]);
+        } */
         /* dd($turnosAsignados->get()); */
         // Mapear los turnos asignados para devolver la estructura deseada
-        $turnos = $turnosAsignados->get()->map(function ($turnoAsignado) {
+        /* $turnos = $turnosAsignados->get()->map(function ($turnoAsignado) {
             $actividadesCompletadas = $turnoAsignado->areas->map(function ($area) use ($turnoAsignado) {
-                /* dd($area->actividades); */
                 return $area->actividades->where('estado', false)->map(function ($actividad) use ($turnoAsignado, $area) {
                     return [
                         'fecha' => $turnoAsignado->fecha_inicio,
@@ -68,8 +119,7 @@ class ReporteController extends Controller
             })->flatten(1);
 
             return $actividadesCompletadas->merge($actividadesIncompletadas);
-        })->flatten(1);
-        /* dd($turnos); */
+        })->flatten(1); */
         return response()->json($turnos);
     }
 

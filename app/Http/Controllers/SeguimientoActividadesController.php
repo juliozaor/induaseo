@@ -24,6 +24,7 @@ use App\Models\Cliente; // Importar el modelo Cliente
 use App\Models\Inventario;
 use App\Models\SupervisorTurnosFechas; // Import the model
 use App\Models\TurnosAreasActividades; // Import the model TurnosAreasActividades
+use App\Models\TurnosHistorialActividades; // Import the model TurnosHistorialActividades
 
 class SeguimientoActividadesController extends Controller
 {
@@ -136,12 +137,6 @@ class SeguimientoActividadesController extends Controller
         $turnoAsignadoId = $turnoAsignado->first()->id;
         $estadoInicializado = $turnoAsignado->first()->inicializado;
         /* dd($turnoId, $sedeId,$turnoAsignadoId); */
-        // Guardar la fecha inicial en la tabla supervisor_turnos_fechas
-        SupervisorTurnosFechas::create([
-            'supervisor_turno_id' => $turnoAsignadoId, // Usar el ID correcto
-            'fecha_inicio' => $fechaInicial,
-            'fecha_fin' => null // Asumiendo que fecha_fin es nulo inicialmente
-        ]);
 
         $supervisorTurno = SupervisorTurno::with(['supervisor', 'sede', 'turno', 'areas'])
             ->where('supervisor_id', $userId)
@@ -152,6 +147,13 @@ class SeguimientoActividadesController extends Controller
         $actividadesFalse = collect();  // Actividades finalizadas
 
         if (!$estadoInicializado) {
+            // Guardar la fecha inicial en la tabla supervisor_turnos_fechas
+            SupervisorTurnosFechas::create([
+                'supervisor_turno_id' => $turnoAsignadoId, // Usar el ID correcto
+                'fecha_inicio' => $fechaInicial,
+                'fecha_fin' => null // Asumiendo que fecha_fin es nulo inicialmente
+            ]);
+
             foreach ($supervisorTurno->areas as $area) {
                 foreach ($area->actividades as $areaActividad) {
                     if (!$areaActividad->estado) {
@@ -182,18 +184,25 @@ class SeguimientoActividadesController extends Controller
         return view('seguimiento-actividades.actividades', compact('supervisorTurno', 'actividadesTrue', 'actividadesFalse', 'sedeId', 'turnoId'));
     }
 
-    public function guardarCalificacion(Request $request,$turnosAreasId, $actividadId)
+    public function guardarCalificacion(Request $request, $turnosAreasId, $actividadId)
     {
         $actividad = Actividades::findOrFail($actividadId);
         //$actividad->calificacion = $request->input('calificacion');
         $actividad->save();
 
         $actividadArea = TurnosAreasActividades::where('actividad_id', $actividadId)
-            ->where('turnos_areas_id',$turnosAreasId)
+            ->where('turnos_areas_id', $turnosAreasId)
             ->firstOrFail();
         $actividadArea->estado = false;
         $actividadArea->calificacion = $request->input('calificacion');
         $actividadArea->save();
+
+        // Crear un registro en la tabla turnosHistorialActividades
+        TurnosHistorialActividades::create([
+            'turnos_areas_actividades_id' => $actividadArea->id,
+            'estado' => false,
+            'calificacion' => $request->input('calificacion')
+        ]);
 
         if ($request->hasFile('evidencias')) {
             foreach ($request->file('evidencias') as $file) {
@@ -223,30 +232,30 @@ class SeguimientoActividadesController extends Controller
 
         $sedesInsumos = $inventario->groupBy('id')->map(function ($items, $id) {
             return [
-            'id' => $id,
-            'cantidad' => $items->first()->cantidad, // Obtiene el campo 'cantidad' directamente del inventario
-            'insumos' => $items->pluck('item')
+                'id' => $id,
+                'cantidad' => $items->first()->cantidad, // Obtiene el campo 'cantidad' directamente del inventario
+                'insumos' => $items->pluck('item')
             ];
         });
         /* dd($sedeId, $sedesInsumos); */
 
         // Obtener todos los activos de la sede
-        $activos = SedesActivos::with(['activo','activo.estados', 'sede', 'imagenes'])
+        $activos = SedesActivos::with(['activo', 'activo.estados', 'sede', 'imagenes'])
             ->where('sede_id', $sedeId)
             ->get();
 
-            $sedesActivos = $activos->map(function ($activo) {
-                $imagen = $activo->imagenes->first(); // Obtener la primera imagen asociada al activo
-                return [
-                    'id' => $activo->id,
-                    'nombre' => $activo->activo->nombre_elemento,
-                    'serie' => $activo->activo->serie,
-                    'estado_id' => $activo->estado_id,
-                    'estado' => $activo->activo->estados->nombre,
-                    'observacion' => $activo->observacion,
-                    'imagen' => $imagen ? $imagen->imagen : null, // Agregar el campo 'imagen'
-                ];
-            });
+        $sedesActivos = $activos->map(function ($activo) {
+            $imagen = $activo->imagenes->first(); // Obtener la primera imagen asociada al activo
+            return [
+                'id' => $activo->id,
+                'nombre' => $activo->activo->nombre_elemento,
+                'serie' => $activo->activo->serie,
+                'estado_id' => $activo->estado_id,
+                'estado' => $activo->activo->estados->nombre,
+                'observacion' => $activo->observacion,
+                'imagen' => $imagen ? $imagen->imagen : null, // Agregar el campo 'imagen'
+            ];
+        });
         /* dd($sedesActivos); */
 
         // Obtiene los mantenimientos con estado_id = 3
@@ -314,6 +323,7 @@ class SeguimientoActividadesController extends Controller
         // Verificar si existe un registro con fecha_fin nulo
         $registroFecha = SupervisorTurnosFechas::where('supervisor_turno_id', $turnoAsignadoId)
             ->whereNull('fecha_fin')
+            ->orderBy('id', 'desc')
             ->first();
 
         if ($registroFecha) {
@@ -331,9 +341,28 @@ class SeguimientoActividadesController extends Controller
             $turno->turno->observacion = $request->input('observaciones');
             //$turno->turno->estado = false;
             $turno->turno->save();
+
+            // Verificar si hay actividades pendientes
+            $actividadesPendientes = TurnosAreasActividades::whereHas('turnoArea', function ($query) use ($turno) {
+                $query->where('turno_id', $turno->id);
+            })->where('estado', true)->exists();
+
+            if ($actividadesPendientes) {
+                $actividadesPendientes = TurnosAreasActividades::whereHas('turnoArea', function ($query) use ($turno) {
+                    $query->where('turno_id', $turno->id);
+                })->where('estado', true)->get();
+
+                foreach ($actividadesPendientes as $actividadPendiente) {
+                    TurnosHistorialActividades::create([
+                        'turnos_areas_actividades_id' => $actividadPendiente->id,
+                        'estado' => true,
+                        'calificacion' => null,
+                    ]);
+                }
+            }
         }
 
-        return redirect()->route('inventarios.turno')->with('success', 'Turno finalizado correctamente.');
+        return redirect()->route('seguimiento.actividades.index')->with('success', 'Turno finalizado correctamente.');
     }
 
     public function actualizarInsumo(Request $request)

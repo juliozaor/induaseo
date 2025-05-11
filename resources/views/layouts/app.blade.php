@@ -1,6 +1,7 @@
 <!-- resources/views/layouts/app.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}?v={{ time() }}">
 </head>
+
 <body>
 
     <!-- Contenedor principal de la aplicación -->
@@ -23,15 +25,18 @@
         @yield('content')
     </div>
 
-     <!-- Incluir el modal de alerta -->
-     @include('components.alert_modal')
+    <!-- Incluir el modal de alerta -->
+    @include('components.alert_modal')
 
     <!-- jQuery y Bootstrap JS CDN para que el modal funcione -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.bundle.min.js"></script>
 
-      <!-- Script para activar el modal con alertas dinámicas -->
-      <script>
+    <!-- Include SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Script para activar el modal con alertas dinámicas -->
+    <script>
         function showAlertModal(iconSrc, alertText) {
             $('#alertIcon').attr('src', iconSrc); // Configurar el icono
             $('#alertText').text(alertText); // Configurar el texto
@@ -40,6 +45,7 @@
     </script>
 
     @stack('scripts')
-    
+
 </body>
+
 </html>

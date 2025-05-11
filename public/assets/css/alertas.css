@@ -87,6 +87,7 @@
 }
 
 .input-container {
+    position: relative; /* Ensure the icon is positioned relative to the container */
     display: flex;
     gap: 10px;
 }
@@ -95,17 +96,23 @@
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border: 1px solid #B7B7B7;
     border-radius: 6px;
-    padding-left: 30px; /* Espacio para el ícono */
+    padding-left: 30px; /* Space for the icon */
     width: 100%;
 }
 
+.busqueda-icono {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
 .input-container::before {
-    content: url('../icons/lupa.svg'); /* Cambia por la URL o código del ícono */
+    content: url('../icons/lupa.svg'); /* Replace with the correct icon URL */
     position: absolute;
-    right: 10px;
+    left: 10px; /* Adjust the position to align the icon */
     top: 50%;
     transform: translateY(-50%);
-    pointer-events: none; /* Evita que el ícono interfiera con el input */
+    pointer-events: none; /* Prevent the icon from interfering with input */
 }
 
 .registros-encontrados {

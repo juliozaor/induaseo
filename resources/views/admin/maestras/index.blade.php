@@ -21,7 +21,7 @@
         <div id="clientesContainer"></div>
     </div>
 
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
 
             const consultarBtn = document.getElementById("consultarBtn");
@@ -29,7 +29,7 @@
             const clientesContainer = document.getElementById("clientesContainer");
 
             consultarBtn.addEventListener("click", function() {
-                const tablaSeleccionada = tablaMaestraSelect.value ;
+                const tablaSeleccionada = tablaMaestraSelect.value;
                 if (!tablaSeleccionada) {
                     showAlertModal(
                         "error.png",
@@ -44,67 +44,58 @@
                     .then(html => {
                         clientesContainer.innerHTML = html;
                         // Remove the existing script if it is already loaded
-                        const existingScript = document.querySelector('script[src="{{ asset('assets/js/clientes.js') }}"]');
-                        if (existingScript) {
-                            existingScript.remove();
-                        }
+                        const scriptsToRemove = [
+                            'clientes.js',
+                            'sedes.js',
+                            'turnos.js',
+                            'areas.js',
+                            'activos.js',
+                            'insumos.js',
+                            'regionales.js'
+                        ];
 
-                        const existingScript2 = document.querySelector('script[src="{{ asset('assets/js/sedes.js') }}"]');
-                        if (existingScript2) {
-                            existingScript2.remove();
-                        }
-
-                        const existingScript3 = document.querySelector('script[src="{{ asset('assets/js/turnos.js') }}"]');
-                        if (existingScript3) {
-                            existingScript3.remove();
-                        }
-
-                        const existingScript4 = document.querySelector('script[src="{{ asset('assets/js/areas.js') }}"]');
-                        if (existingScript4) {
-                            existingScript4.remove();
-                        }
-
-                        const existingScript5 = document.querySelector('script[src="{{ asset('assets/js/activos.js') }}"]');
-                        if (existingScript5) {
-                            existingScript5.remove();
-                        }
-
-                        const existingScript6 = document.querySelector('script[src="{{ asset('assets/js/insumos.js') }}"]');
-                        if (existingScript6) {
-                            existingScript6.remove();
-                        }
-
-                        const existingScript7 = document.querySelector('script[src="{{ asset('assets/js/regionales.js') }}"]');
-                        if (existingScript7) {
-                            existingScript7.remove();
-                        }
+                        scriptsToRemove.forEach(fileName => {
+                            document.querySelectorAll('script').forEach(script => {
+                                if (script.src.includes(`assets/js/${fileName}`)) {
+                                    script.remove();
+                                }
+                            });
+                        });
 
                         // Load the script after content is inserted
                         const script = document.createElement('script');
                         switch (tablaSeleccionada) {
                             case 'clientes':
-                                script.src = "{{ asset('assets/js/clientes.js') }}?v={{ time() }}";
+                                script.src =
+                                    "{{ asset('assets/js/clientes.js') }}?v={{ time() }}";
                                 break;
                             case 'sedes':
-                                script.src = "{{ asset('assets/js/sedes.js') }}?v={{ time() }}";
+                                script.src =
+                                "{{ asset('assets/js/sedes.js') }}?v={{ time() }}";
                                 break;
                             case 'turnos':
-                                script.src = "{{ asset('assets/js/turnos.js') }}?v={{ time() }}";
+                                script.src =
+                                    "{{ asset('assets/js/turnos.js') }}?v={{ time() }}";
                                 break;
                             case 'areas':
-                                script.src = "{{ asset('assets/js/areas.js') }}?v={{ time() }}";
+                                script.src =
+                                "{{ asset('assets/js/areas.js') }}?v={{ time() }}";
                                 break;
                             case 'activos':
-                                script.src = "{{ asset('assets/js/activos.js') }}?v={{ time() }}";
+                                script.src =
+                                    "{{ asset('assets/js/activos.js') }}?v={{ time() }}";
                                 break;
                             case 'insumos':
-                                script.src = "{{ asset('assets/js/insumos.js') }}?v={{ time() }}";
+                                script.src =
+                                    "{{ asset('assets/js/insumos.js') }}?v={{ time() }}";
                                 break;
                             case 'regionales':
-                                script.src = "{{ asset('assets/js/regionales.js') }}?v={{ time() }}";
+                                script.src =
+                                    "{{ asset('assets/js/regionales.js') }}?v={{ time() }}";
                                 break;
                             case 'actividades':
-                                script.src = "{{ asset('assets/js/actividades.js') }}?v={{ time() }}";
+                                script.src =
+                                    "{{ asset('assets/js/actividades.js') }}?v={{ time() }}";
                                 break;
                             default:
                                 console.error('Tabla no encontrada');
@@ -116,6 +107,73 @@
             });
 
         });
+    </script> --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const consultarBtn = document.getElementById("consultarBtn");
+            const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
+            const clientesContainer = document.getElementById("clientesContainer");
+
+            consultarBtn.addEventListener("click", function () {
+                const tablaSeleccionada = tablaMaestraSelect.value;
+                if (!tablaSeleccionada) {
+                    showAlertModal(
+                        "error.png",
+                        "Por favor, seleccione una tabla maestra."
+                    );
+                    return;
+                }
+
+                fetch(`{{ route('maestras.clientes') }}?tabla=${tablaSeleccionada}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        clientesContainer.innerHTML = html;
+
+                        // Mapeo de tabla a arreglo de scripts
+                        const tablaScriptsMap = {
+                            'clientes': ['clientes.js'],
+                            'sedes': ['sedes.js'],
+                            'turnos': ['turnos.js'],
+                            'areas': ['areas.js'],
+                            'activos': ['activos.js'],
+                            'insumos': ['insumos.js'],
+                            'regionales': ['regionales.js'],
+                            'actividades': ['actividades.js'],
+                            // Ejemplo si una tabla requiere más de un script
+                            // 'multi': ['script1.js', 'script2.js']
+                        };
+
+                        const scriptsToLoad = tablaScriptsMap[tablaSeleccionada];
+
+                        if (!scriptsToLoad || scriptsToLoad.length === 0) {
+                            console.error('No se encontraron scripts para esta tabla.');
+                            return;
+                        }
+
+                        // Eliminar scripts existentes relacionados
+                        document.querySelectorAll('script').forEach(script => {
+                            scriptsToLoad.forEach(fileName => {
+                                if (script.src.includes(`assets/js/${fileName}`)) {
+                                    script.remove();
+                                }
+                            });
+                        });
+
+                        // Cargar los scripts necesarios con versión única
+                        scriptsToLoad.forEach(fileName => {
+                            const newScript = document.createElement('script');
+                            newScript.src = `{{ asset('assets/js') }}/${fileName}?v=${Date.now()}`;
+                            newScript.defer = true;
+                            document.body.appendChild(newScript);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+        });
     </script>
+
+
 
 @endsection

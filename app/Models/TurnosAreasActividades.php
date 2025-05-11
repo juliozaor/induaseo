@@ -32,4 +32,9 @@ class TurnosAreasActividades extends Model
     {
         return $this->hasMany(ImagenesActividades::class, 'actividad_id', 'id');
     }
+
+    public function turnoHistorialActividades()
+    {
+        return $this->hasMany(TurnosHistorialActividades::class, 'turnos_areas_actividades_id', 'id');
+    }
 }

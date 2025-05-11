@@ -107,7 +107,7 @@ class InsumosController extends Controller
             $clasificacion = $request->input('clasificacion');
             $estado = $request->input('estado');
 
-            $query = Insumos::with(['clasificacion', 'estados']);
+            $query = Insumos::with(['clasificacion', 'estados', 'creador', 'actualizador']);
 
             if ($buscar) {
                 $query->where('nombre_elemento', 'like', "%{$buscar}%")

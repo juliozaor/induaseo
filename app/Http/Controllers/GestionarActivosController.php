@@ -69,8 +69,8 @@ class GestionarActivosController extends Controller
                 'creador_id' => Auth::id(),
             ]);
 
-            if ($request->hasFile('imagenesInput')) {
-                $file = $request->file('imagenesInput');
+            if ($request->hasFile('imagenes')) {
+                $file = $request->file('imagenes');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $path = $file->move(public_path('imagenes'), $filename);
                 // Asegúrate de que la ruta no esté vacía

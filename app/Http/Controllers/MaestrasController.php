@@ -82,6 +82,7 @@ class MaestrasController extends Controller
                 if ($request->has('buscar') && $request->input('buscar') !== '') {
                     $buscar = $request->input('buscar');
                     $query->where('direccion', 'like', "%$buscar%")
+                        ->orWhere('nombre', 'like', "%$buscar%")
                         ->orWhereHas('cliente', fn($q) => $q->where('nombre', 'like', "%$buscar%"))
                         ->orWhereHas('ciudad', fn($q) => $q->where('nombre', 'like', "%$buscar%"));
                 }

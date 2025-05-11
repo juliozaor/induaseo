@@ -54,8 +54,9 @@
 
                             </a>
                             <!-- Modal de insumo -->
-                            <div class="modal fade" id="actividadModal{{ $sedesInsumo['id']}}" tabindex="-1" role="dialog"
-                                aria-labelledby="actividadModalLabel{{ $sedesInsumo['id'] }}" aria-hidden="true">
+                            <div class="modal fade" id="actividadModal{{ $sedesInsumo['id'] }}" tabindex="-1"
+                                role="dialog" aria-labelledby="actividadModalLabel{{ $sedesInsumo['id'] }}"
+                                aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -67,11 +68,11 @@
                                         </div>
                                         <div class="modal-body">
                                             <div class="contenedor-imagen-modal">
-                                                <img src="{{ $insumo->imagen }}"
-                                                    alt="{{ $insumo->nombre_elemento }}" class="img-fluid">
+                                                <img src="{{ $insumo->imagen }}" alt="{{ $insumo->nombre_elemento }}"
+                                                    class="img-fluid">
                                             </div>
                                             {{-- <p>Estado: {{ optional($insumo->estados)->nombre }}</p> --}}
-                                            <h4>Cantidad: {{ $sedesInsumo['cantidad']}}</h4>
+                                            <h4>Cantidad: {{ $sedesInsumo['cantidad'] }}</h4>
                                             {{-- <div class="form-group">
                                                 <label for="novedades{{ $sedesInsumo['id'] }}">Novedades</label>
                                                 <select class="form-control" id="novedades{{ $sedesInsumo['id'] }}"></select>
@@ -102,8 +103,8 @@
                         <a class="item-actividad" href="#" data-toggle="modal"
                             data-target="#activoModal{{ $sedesActivo['id'] }}">
                             <div class="contenedor-actividad">
-                                <span><img src="{{ $sedesActivo['imagen'] }}"
-                                        alt="{{ $sedesActivo['nombre'] }}" class="imagen-insumo">
+                                <span><img src="{{ $sedesActivo['imagen'] }}" alt="{{ $sedesActivo['nombre'] }}"
+                                        class="imagen-insumo">
                                     {{ $sedesActivo['nombre'] }} - {{ $sedesActivo['serie'] }}
                                 </span> <span class="flecha">></span>
                             </div>
@@ -114,7 +115,7 @@
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="activoModalLabel{{ $sedesActivo['id']}}">
+                                        <h5 class="modal-title" id="activoModalLabel{{ $sedesActivo['id'] }}">
                                             {{ $sedesActivo['nombre'] }}</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
@@ -122,8 +123,8 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="contenedor-imagen-modal">
-                                            <img src="{{ $sedesActivo['imagen'] }}"
-                                                alt="{{ $sedesActivo['nombre'] }}" class="img-fluid">
+                                            <img src="{{ $sedesActivo['imagen'] }}" alt="{{ $sedesActivo['nombre'] }}"
+                                                class="img-fluid">
                                         </div>
                                         <p>Estado: {{ $sedesActivo['estado'] }}</p>
                                         <p>Serie: {{ $sedesActivo['serie'] }}</p>
@@ -173,8 +174,8 @@
                         <div class="item-actividad">
                             <div class="contenedor-actividad d-flex justify-content-between align-items-center">
                                 <span>
-                                    <img src="{{ $insumo->imagen }}" alt="{{ $insumo->nombre_elemento }}"
-                                        class="imagen-insumo">
+                                    {{-- <img src="{{ $insumo->imagen }}" alt="{{ $insumo->nombre_elemento }}"
+                                        class="imagen-insumo"> --}}
                                     {{ $insumo->nombre_elemento }}
                                 </span>
                                 <div class="d-flex align-items-center">
@@ -196,8 +197,8 @@
                         <div class="item-actividad">
                             <div class="contenedor-actividad d-flex justify-content-between align-items-center">
                                 <span>
-                                    <img src="{{ $activo->imagen }}" alt="{{ $activo->nombre_elemento }}"
-                                        class="imagen-insumo">
+                                    {{-- <img src="{{ $activo->imagen }}" alt="{{ $activo->nombre_elemento }}"
+                                        class="imagen-insumo"> --}}
                                     {{ $activo->nombre_elemento }}
                                 </span>
                                 <div class="d-flex align-items-center">
@@ -249,10 +250,10 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
+                    /* console.log(data); */
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    /* // console.error('Error:', error); */
                     alert('Error al cargar el inventario: ' + error.message);
                 });
         }
@@ -296,16 +297,17 @@
                     return response.json();
                 })
                 .then(data => {
-                    showAlertModal(
-                        "ok.png",
-                        data.message
-                    );
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: data.message,
+                    });
                     /* alert(data.message); */
                     // Cerrar el modal después de guardar
                     $(`#actividadModal${id}`).modal('hide');
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    /* // console.error('Error:', error); */
                     alert('Error al actualizar el insumo: ' + error.message);
                 });
         }
@@ -336,16 +338,17 @@
                     return response.json();
                 })
                 .then(data => {
-                    showAlertModal(
-                        "ok.png",
-                        data.message
-                    );
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: data.message,
+                    });
                     /* alert(data.message); */
                     // Cerrar el modal después de guardar
                     $(`#activoModal${id}`).modal('hide');
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    /* // console.error('Error:', error); */
                     alert('Error al actualizar el activo: ' + error.message);
                 });
         }
@@ -376,16 +379,17 @@
                     return response.json();
                 })
                 .then(data => {
-                    showAlertModal(
-                        "ok.png",
-                        data.message
-                    );
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: data.message,
+                    });
                     /* alert(data.message); */
                     // Cerrar el modal después de reportar
                     $(`#activoModal${id}`).modal('hide');
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    /* // console.error('Error:', error); */
                     alert('Error al reportar el activo: ' + error.message);
                 });
         }
@@ -455,14 +459,14 @@
                                 }
                             })
                             .catch(error => {
-                                console.error("Error al cargar el insumo o activo:", error);
+                                // console.error("Error al cargar el insumo o activo:", error);
                                 alert("Error al cargar el insumo o activo: " + error.message);
                             });
                     }
 
                 })
                 .catch(error => {
-                    console.error("Error al cargar los estados:", error);
+                    // console.error("Error al cargar los estados:", error);
                     alert("Error al cargar los estados: " + error.message);
                 });
 
@@ -529,14 +533,15 @@
                     return response.json();
                 })
                 .then(data => {
-                    showAlertModal(
-                        "ok.png",
-                        data.message
-                    );
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: data.message,
+                    });
                     /* alert(data.message); */
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                     alert('Error al enviar la solicitud de inventario: ' + error.message);
                 });
         }
@@ -555,7 +560,7 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                 });
         }
 
@@ -572,6 +577,15 @@
                 })
                 .then(data => {
                     //console.log(data);
+                    /* <img src="${mantenimiento.sede_activo.activo.imagen}"
+                                        alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
+                                        class="imagen-insumo">
+                                        <img src="${mantenimiento.sede_activo.activo.imagen}"
+                                                alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
+                                                class="img-fluid">
+                                                <img src="${mantenimiento.sede_activo.activo.imagen}"
+                                                alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
+                                                class="img-fluid">*/
                     const mantenimientos = data;
                     const mantenimientosDiv = document.getElementById('mantenimientos');
                     mantenimientosDiv.innerHTML = '';
@@ -582,9 +596,7 @@
                             <div class="item-actividad">
                             <div class="contenedor-actividad">
                                 <span>
-                                    <img src="${mantenimiento.sede_activo.activo.imagen}"
-                                        alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
-                                        class="imagen-insumo">
+
                                     ${mantenimiento.sede_activo.activo.nombre_elemento}
                                 </span>
                                 <div class="iconos">
@@ -618,9 +630,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="contenedor-imagen-modal">
-                                            <img src="${mantenimiento.sede_activo.activo.imagen}"
-                                                alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
-                                                class="img-fluid">
+
                                         </div>
                                         <p>Estado: ${mantenimiento.sede_activo.estados ? mantenimiento.sede_activo.estados.nombre : ''}</p>
                                         <div class="form-group">
@@ -657,9 +667,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="contenedor-imagen-modal">
-                                            <img src="${mantenimiento.sede_activo.activo.imagen}"
-                                                alt="${mantenimiento.sede_activo.activo.nombre_elemento}"
-                                                class="img-fluid">
+
                                         </div>
                                         <div class="form-group">
                                             <label for="novedades${mantenimiento.id}">Estado</label>
@@ -687,7 +695,7 @@
                     });
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                     alert('Error al cargar los mantenimientos: ' + error.message);
                 });
         }
@@ -727,7 +735,7 @@
                     });
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                     alert('Error al cargar los estados: ' + error.message);
                 });
         }
@@ -744,7 +752,7 @@
                     fechaInput.value = data.mtto_programado;
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                 });
         }
 
@@ -783,16 +791,17 @@
                     return response.json();
                 })
                 .then(data => {
-                    showAlertModal(
-                        "ok.png",
-                        data.message
-                    );
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: data.message,
+                    });
                     /* alert(data.message); */
                     // Close the modal after saving
                     //$(`#mantenimientoModal${id}`).modal('hide');
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                     alert('Error al actualizar el mantenimiento: ' + error.message);
                 });
         }
@@ -834,16 +843,17 @@
                     return response.json();
                 })
                 .then(data => {
-                    showAlertModal(
-                        "ok.png",
-                        data.message
-                    );
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: data.message,
+                    });
                     /* alert(data.message); */
                     // Close the modal after saving
                     // $(`#finalModal${id}`).modal('hide');
                 })
                 .catch(error => {
-                    console.error('Error:', error);
+                    // console.error('Error:', error);
                     alert('Error al finalizar el mantenimiento: ' + error.message);
                 });
             obtenerMantenimientos();

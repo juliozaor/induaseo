@@ -43,10 +43,13 @@
                 <table class="tabla" id="tablaActividades">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
+                            <th>Fecha inicio</th>
+                            <th>Fecha fin</th>
+                            <th>Turno</th>
                             <th>Área</th>
                             <th>Actividad</th>
                             <th>Estado</th>
+                            <th>Calificación</th>
                         </tr>
                     </thead>
                     <tbody id="actividadesTableBody">
@@ -107,11 +110,13 @@
     </div>
 
     <!-- Modal for Survey -->
-    <div class="modal fade" id="encuestaModal" tabindex="-1" role="dialog" aria-labelledby="encuestaModalLabel" aria-hidden="true">
+    <div class="modal fade" id="encuestaModal" tabindex="-1" role="dialog" aria-labelledby="encuestaModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="encuestaModalLabel" style="color: #EC6F35;">Encuesta de Satisfacción del Servicio de Limpieza Industrial</h5>
+                    <h5 class="modal-title" id="encuestaModalLabel" style="color: #EC6F35;">Encuesta de Satisfacción del
+                        Servicio de Limpieza Industrial</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -168,7 +173,8 @@
                             <div class="d-flex justify-content-between">
                                 @for ($i = 0; $i <= 10; $i++)
                                     <label>
-                                        <input type="radio" name="calificacion" value="{{ $i }}"> {{ $i }}
+                                        <input type="radio" name="calificacion" value="{{ $i }}">
+                                        {{ $i }}
                                     </label>
                                 @endfor
                             </div>
@@ -184,7 +190,8 @@
     </div>
 
     <!-- Modal for Turno Details -->
-    <div class="modal fade" id="detalleTurnoModal" tabindex="-1" role="dialog" aria-labelledby="detalleTurnoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="detalleTurnoModal" tabindex="-1" role="dialog" aria-labelledby="detalleTurnoModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -235,7 +242,8 @@
     </div>
 
     <!-- Modal for Activity Details -->
-    <div class="modal fade" id="detalleActividadModal" tabindex="-1" role="dialog" aria-labelledby="detalleActividadModalLabel" aria-hidden="true">
+    <div class="modal fade" id="detalleActividadModal" tabindex="-1" role="dialog"
+        aria-labelledby="detalleActividadModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -274,9 +282,10 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
-<script src="{{ asset('assets/js/actividades-evidencias.js') }}?v={{ time() }}"></script>
+    <!-- Include SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('assets/js/actividades-evidencias.js') }}?v={{ time() }}"></script>
 @endpush

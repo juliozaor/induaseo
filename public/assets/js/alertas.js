@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const turnosTableBody = document.getElementById('turnosTableBody');   
+    const turnosTableBody = document.getElementById('turnosTableBody');
     const registrosEncontrados = document.querySelector('.registros-encontrados');
     const paginacionContainer = document.createElement('div');
     const clienteSelect = document.getElementById('clienteSelect');
     const sedeSelect = document.getElementById('sedeSelect');
+    const alertasMensaje = document.getElementById('alertasMensaje');
     paginacionContainer.classList.add('paginacion');
     document.querySelector(".tabla-paginacion").appendChild(paginacionContainer);
 
-        
+
     clienteSelect.addEventListener('change', function() {
         const clienteId = this.value;
         fetch(`sedes?cliente_id=${clienteId}`)
@@ -26,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function cargarAlertas(page = 1) {
         console.log('cargarAlertas');
-        
+        alertasMensaje.textContent = 'Cargando...';
+
         const buscar = document.getElementById("busquedaTurnoInput").value;
         const registrosPorPagina = document.getElementById("registrosTurnoPorPagina").value;
         const clienteId = clienteSelect.value;
@@ -51,9 +53,14 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 // Limpiar la tabla y la paginación
+                if (data.data.length === 0) {
+                    alertasMensaje.textContent = 'No se encontraron resultados';
+                    alertasMensaje.style.display = 'block';
+                } else {
+                    alertasMensaje.style.display = 'none';
+                }
                 turnosTableBody.innerHTML = '';
                 paginacionContainer.innerHTML = '';
-
 
                 // Convertir el objeto en un array
                 const turnosArray = Object.values(data.data);
@@ -138,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('detalleCelular').value = turnoData.celular;
             document.getElementById('detalleCliente').value = turnoData.cliente;
             document.getElementById('detalleObservaciones').value = turnoData.observaciones;
-          
+
             $('#detalleTurnoModal').modal('show');
         }
     });
@@ -146,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function cargarClientes() {
         fetch(`clientes-select`)
             .then(response => response.json())
-            .then(clientes => {               
+            .then(clientes => {
                     const clienteSelect1 = document.getElementById("clienteSelect");
                     clienteSelect1.innerHTML = '<option value="">Seleccione un cliente</option>';
                     clientes.forEach(cliente => {
@@ -155,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         option.textContent = cliente.nombre;
                         clienteSelect1.appendChild(option);
                     });
-               
+
             })
 
             .catch(error => console.error("Error al cargar los clientes:", error));

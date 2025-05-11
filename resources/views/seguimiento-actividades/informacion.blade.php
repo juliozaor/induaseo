@@ -108,6 +108,7 @@
                         resultsContainer.innerHTML = '';
                         novedadesContainer.innerHTML = '';
                         data.forEach(item => {
+                            console.log(item);
                             if (!selectedCategory || item.categoria_id === selectedCategory) {
                                 const card = document.createElement('div');
                                 card.classList.add('novedad-card');
@@ -207,7 +208,7 @@
                             card.style.cursor = 'pointer';
                             card.onclick = function() {
                                 const fileFrame = document.getElementById('fileFrame');
-                                fileFrame.src = `{{ asset('storage') }}/${novedad.url}`;
+                                fileFrame.src = `{{ asset('/') }}/${novedad.url}`;
                                 const fileModalLabel = document.getElementById('fileModalLabel');
                                 fileModalLabel.textContent = novedad.url.split('/')
                             .pop(); // Mostrar el nombre del archivo

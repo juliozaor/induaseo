@@ -42,10 +42,12 @@
                 </tr>
             </thead>
             <tbody id="turnosTableBody">
-                
+                <!-- Los datos de la tabla se llenarán dinámicamente con JavaScript -->
             </tbody>
+
         </table>
     </div>
+    <div id="alertasMensaje" class="mensaje">No hay registros para mostrar.</div>
     <div class="tabla-paginacion"></div>
 </div>
 

@@ -54,8 +54,8 @@
                     <th>Ciudad</th>
                     <th>Dirección</th>
                     <th>Teléfono</th>
-                    <th>Horario Inicio</th>
-                    <th>Horario Fin</th>
+                    {{-- <th>Horario Inicio</th>
+                    <th>Horario Fin</th> --}}
                     <th>Estado</th>
                     <th>Creado por</th>
                     <th>Fecha de creación</th>
@@ -126,7 +126,7 @@
                         <input type="text" id="telefono" name="telefono" class="form-control" maxlength="10" required>
                         <span class="error-message" id="errorTelefono"></span>
                     </div>
-                    <div class="col-3">
+                    {{-- <div class="col-3">
                         <label for="horarioInicio">Horario Inicio:</label>
                         <input type="time" id="horarioInicio" name="horarioInicio" class="form-control" required>
                         <span class="error-message" id="errorHorarioInicio"></span>
@@ -135,7 +135,7 @@
                         <label for="horarioFin">Horario Fin:</label>
                         <input type="time" id="horarioFin" name="horarioFin" class="form-control" required>
                         <span class="error-message" id="errorHorarioFin"></span>
-                    </div>
+                    </div> --}}
                     <div class="col-3">
                         <label for="regional">Regional:</label>
                         <select id="regional" name="regional" class="form-control" required>

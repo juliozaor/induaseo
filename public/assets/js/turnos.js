@@ -265,7 +265,6 @@
                 })
                 .catch((error) => console.error("Error al cargar los datos del turno:", error));
         }
-
         if (event.target.classList.contains("icono-eliminar")) {
             const turnoId = event.target.getAttribute("data-id");
             const tipo = event.target.getAttribute("data-tipo");
@@ -300,6 +299,7 @@
             }
 
         }
+
     });
 
     // Cerrar modal

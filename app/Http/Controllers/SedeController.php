@@ -6,6 +6,7 @@ use App\Models\Sede;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Psy\Readline\Hoa\Console;
 
 class SedeController extends Controller
 {
@@ -20,8 +21,8 @@ class SedeController extends Controller
                 'ciudad' => 'required|exists:ciudades,id',
                 'direccion' => 'required|string|max:255',
                 'telefono' => 'required|string|max:20',
-                'horarioInicio' => 'required|date_format:H:i',
-                'horarioFin' => 'required|date_format:H:i',
+                /* 'horarioInicio' => 'required|date_format:H:i',
+                'horarioFin' => 'required|date_format:H:i', */
                 'estado' => 'required|boolean',
                 'ciudad' => 'required|exists:ciudades,id',
                 'regional' => 'required|exists:regionales,id',
@@ -32,8 +33,8 @@ class SedeController extends Controller
                 'ciudad_id' => $request->ciudad,
                 'direccion' => $request->direccion,
                 'telefono' => $request->telefono,
-                'horario_inicio' => $request->horarioInicio,
-                'horario_fin' => $request->horarioFin,
+                /* 'horario_inicio' => $request->horarioInicio,
+                'horario_fin' => $request->horarioFin, */
                 'estado' => $request->estado,
                 'regional_id' => $request->regional,
                 'creador_id' => Auth::id(),
@@ -61,8 +62,8 @@ class SedeController extends Controller
                 'ciudad' => 'required|exists:ciudades,id',
                 'direccion' => 'required|string|max:255',
                 'telefono' => 'required|string|max:20',
-                'horarioInicio' => 'required|date_format:H:i',
-                'horarioFin' => 'required|date_format:H:i',
+                /* 'horarioInicio' => 'required|date_format:H:i',
+                'horarioFin' => 'required|date_format:H:i', */
                 'estado' => 'required|boolean',
                 'regional' => 'required|exists:regionales,id',
             ]);
@@ -73,8 +74,8 @@ class SedeController extends Controller
                 'ciudad_id' => $request->ciudad,
                 'direccion' => $request->direccion,
                 'telefono' => $request->telefono,
-                'horario_inicio' => $request->horarioInicio,
-                'horario_fin' => $request->horarioFin,
+                /* 'horario_inicio' => $request->horarioInicio,
+                'horario_fin' => $request->horarioFin, */
                 'estado' => $request->estado,
                 'regional_id' => $request->regional,
                 'actualizador_id' => Auth::id(),
@@ -104,6 +105,7 @@ class SedeController extends Controller
         $query = Sede::with('cliente', 'ciudad.pais');
 
         if ($buscar) {
+            dd($buscar);
             $query->where('direccion', 'like', "%{$buscar}%")
                   ->orWhereHas('cliente', function($q) use ($buscar) {
                       $q->where('nombre', 'like', "%{$buscar}%");

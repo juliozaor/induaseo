@@ -1,4 +1,5 @@
 (function () {
+
     const consultarBtn = document.getElementById("consultarBtn");
     const tablaMaestraSelect = document.getElementById("tablaMaestraSelect");
     const tablaInsumosBody = document.querySelector("#tablaInsumos tbody");
@@ -48,6 +49,7 @@
 
                 // Llenar la tabla con los datos
                 data.data.forEach(insumo => {
+                    /* console.log(insumo); */
                     const row = document.createElement("tr");
                     const estadoClase = insumo.estado ? 'estado-activo' : 'estado-inactivo';
                     row.innerHTML = `
@@ -129,6 +131,7 @@
 
     cargarDatos(1);
     cargarClasificaciones();
+
     //cargarFiltroClasificacionInsumo();
     //cargarEstados();
 
@@ -206,7 +209,7 @@
                 console.error("Error: No se encontró el ID del insumo en el botón.");
                 return;
             }
-            if (tipo !== "insumo") {
+            if (tipo === "insumo") {
                 if (confirm("¿Está seguro de que desea eliminar este insumo?")) {
                     fetch(`../insumos/${insumoId}`, {
                         method: "DELETE",

@@ -55,8 +55,6 @@
                     <td>${sede.ciudad?.nombre}</td>
                     <td>${sede.direccion}</td>
                     <td>${sede.telefono}</td>
-                    <td>${sede.horario_inicio}</td>
-                    <td>${sede.horario_fin}</td>
                     <td><div class="${estadoClase}">${sede.estado ? 'Activo' : 'Inactivo'}</div></td>
                     <td>${sede.creador?.nombres || 'N/A'}</td>
                     <td>${formatDate(sede.created_at)}</td>
@@ -191,8 +189,8 @@
                     cargarCiudades(sede.ciudad.pais_id, sede.ciudad_id);
                     document.getElementById("direccion").value = sede.direccion;
                     document.getElementById("telefono").value = sede.telefono;
-                    document.getElementById("horarioInicio").value = sede.horario_inicio;
-                    document.getElementById("horarioFin").value = sede.horario_fin;
+                    /* document.getElementById("horarioInicio").value = sede.horario_inicio;
+                    document.getElementById("horarioFin").value = sede.horario_fin; */
                     document.getElementById("estadoToggle").checked = sede.estado === 1;
                     document.querySelector("label[for='estadoToggle']").textContent = sede.estado ? "Activo" : "Inactivo";
                     document.getElementById("regional").value = sede.regional_id;

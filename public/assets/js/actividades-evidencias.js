@@ -16,7 +16,30 @@ document.addEventListener('DOMContentLoaded', function () {
         const paginationContainer = document.getElementById(paginationId);
         paginationContainer.innerHTML = '';
 
-        for (let i = 1; i <= totalPages; i++) {
+        const maxVisiblePages = 5; // Maximum number of visible page buttons
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        if (startPage > 1) {
+            const firstPageButton = document.createElement('button');
+            firstPageButton.textContent = '1';
+            firstPageButton.classList.add('page-button');
+            firstPageButton.addEventListener('click', () => renderFunction(data, 1, rowsPerPage));
+            paginationContainer.appendChild(firstPageButton);
+
+            if (startPage > 2) {
+                const dots = document.createElement('span');
+                dots.textContent = '...';
+                dots.classList.add('pagination-dots');
+                paginationContainer.appendChild(dots);
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
             const pageButton = document.createElement('button');
             pageButton.textContent = i;
             pageButton.classList.add('page-button');
@@ -25,6 +48,21 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             pageButton.addEventListener('click', () => renderFunction(data, i, rowsPerPage));
             paginationContainer.appendChild(pageButton);
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                const dots = document.createElement('span');
+                dots.textContent = '...';
+                dots.classList.add('pagination-dots');
+                paginationContainer.appendChild(dots);
+            }
+
+            const lastPageButton = document.createElement('button');
+            lastPageButton.textContent = totalPages;
+            lastPageButton.classList.add('page-button');
+            lastPageButton.addEventListener('click', () => renderFunction(data, totalPages, rowsPerPage));
+            paginationContainer.appendChild(lastPageButton);
         }
     }
 
@@ -78,7 +116,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     consultarBtn.addEventListener('click', function () {
         const sedeId = sedeSelect.value;
-        fetchTurnos(sedeId);
+        /* fetchTurnos(sedeId); */
+
+        actividadesMensaje.textContent = 'Cargando...';
 
         // Consultar actividades
         fetch(`reportes/consultar?sede_id=${sedeId}`)
@@ -159,10 +199,13 @@ document.addEventListener('DOMContentLoaded', function () {
         paginatedData.forEach(turno => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${turno.fecha ?? '-'}</td>
+                <td>${turno.fecha_inicio ?? '-'}</td>
+                <td>${turno.fecha_fin ?? '-'}</td>
+                <td>${turno.turno ?? '-'}</td>
                 <td>${turno.area}</td>
                 <td>${turno.actividad}</td>
-                <td>${turno.estado}</td>
+                <td>${turno.estado ? 'Incompleto' : 'Completo'}</td>
+                <td>${turno.calificacion ? turno.calificacion + '/5' : '0/5'}</td>
             `;
             actividadesTableBody.appendChild(row);
         });
@@ -225,8 +268,35 @@ document.addEventListener('DOMContentLoaded', function () {
         const fechaInicioVal = fechaInicio.value;
         const fechaFinVal = fechaFin.value;
 
+        // Mostrar el modal de carga
+        Swal.fire({
+            title: 'Generando archivo...',
+            text: 'Por favor, espere mientras se genera el archivo.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         const url = `actividades-evidencias/exportar-actividades?sede_id=${sedeId}&fecha_inicio=${fechaInicioVal}&fecha_fin=${fechaFinVal}`;
-        window.location.href = url;
+        // Iniciar la descarga
+        fetch(url)
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = url; // Redirigir para descargar el archivo
+                } else {
+                    throw new Error('Error al generar el archivo.');
+                }
+                Swal.close(); // Cerrar el modal de carga
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo generar el archivo. Intente nuevamente.',
+                });
+                console.error('Error:', error);
+            });
     });
 
     turnoMenu.addEventListener('click', function (event) {
