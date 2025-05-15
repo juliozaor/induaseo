@@ -1,3 +1,5 @@
+/* const { default: Swal } = require("sweetalert2"); */
+
 (function () {
     const openUserModalBtn = document.getElementById("openUserModalBtn");
     const userModal = document.getElementById("createUserModal");
@@ -118,42 +120,40 @@
                 return;
             }
             if (tipo === "usuario") {
-                /*let eliminarUsiario = false;
-                 showAlertModal(
-                    "pregunta.png", // Ruta del ícono de eliminar
-                    "¿Estás seguro de que deseas eliminar este usuario?", // Mensaje de confirmación
-                    function () { // Callback para el botón "Aceptar"
-                        eliminarUsiario = true;
-                        userModal.style.display = "none"; // Cerrar el modal
-                    },
-                    function () { // Callback para el botón "Cancelar"
-                        eliminarUsiario = false;
-                        console.log("Operación cancelada por el usuario."); // Log para depuración
-                    }
-                ); */
-                if (/*eliminarUsiario*/ confirm("¿Estás seguro de que deseas eliminar este usuario?") ) {
-                    fetch(`../usuarios/${userId}`, {
-                        method: "DELETE",
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar el usuario.");
+                Swal.fire({
+                    title: '¿Estás seguro de que deseas eliminar este usuario?',
+                    /* text: "No podrás revertir esto.", */
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`../usuarios/${userId}`, {
+                            method: "DELETE",
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
-                            return response.json();
                         })
-                        .then(data => {
-                            showAlertModal(
-                                "ok.png", // Ruta del ícono de éxito
-                                data.message // Mensaje de éxito
-                            );
-                            /* alert(data.message); */
-                            cargarUsuarios(1); // Reload the table after deletion
-                        })
-                        .catch(error => console.error("Error al eliminar el usuario:", error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error al eliminar el usuario.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                showAlertModal(
+                                    "ok.png", // Ruta del ícono de éxito
+                                    data.message // Mensaje de éxito
+                                );
+                                /* alert(data.message); */
+                                cargarUsuarios(1); // Reload the table after deletion
+                            })
+                            .catch(error => console.error("Error al eliminar el usuario:", error));
+                    }
+                });
             }
 
         }

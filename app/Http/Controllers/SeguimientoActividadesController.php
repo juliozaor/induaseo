@@ -145,7 +145,7 @@ class SeguimientoActividadesController extends Controller
         /* dd($turnoId, $sedeId,$turnoAsignadoId,$supervisorTurno); */
         $actividadesTrue = collect();   // Actividades pendientes
         $actividadesFalse = collect();  // Actividades finalizadas
-
+        /* dd($estadoInicializado); */
         if (!$estadoInicializado) {
             // Guardar la fecha inicial en la tabla supervisor_turnos_fechas
             SupervisorTurnosFechas::create([

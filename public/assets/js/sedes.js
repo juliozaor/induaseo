@@ -208,29 +208,40 @@
                 return;
             }
             if (tipo === "sede") {
-                if (confirm("¿Está seguro de que desea eliminar esta sede?")) {
-                    fetch(`../sedes/${sedeId}`, {
-                        method: "DELETE",
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar la sede.");
+                Swal.fire({
+                    title: '¿Estás seguro de que deseas eliminar esta sede?',
+                    /* text: "No podrás revertir esto.", */
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`../sedes/${sedeId}`, {
+                            method: "DELETE",
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
-                            return response.json();
                         })
-                        .then(data => {
-                            showAlertModal(
-                                "ok.png", // Ruta del ícono de éxito
-                                "Sede eliminada con éxito." // Mensaje de éxito
-                            );
-                            /* alert(); */
-                            cargarDatos(1); // Reload the table
-                        })
-                        .catch(error => console.error("Error al eliminar la sede:", error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error al eliminar la sede.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                showAlertModal(
+                                    "ok.png", // Ruta del ícono de éxito
+                                    "Sede eliminada con éxito." // Mensaje de éxito
+                                );
+                                /* alert(); */
+                                cargarDatos(1); // Reload the table
+                            })
+                            .catch(error => console.error("Error al eliminar la sede:", error));
+                    }
+                });
             }
 
         }

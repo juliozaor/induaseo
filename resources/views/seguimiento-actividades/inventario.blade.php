@@ -300,8 +300,8 @@
                 .then(data => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Éxito',
-                        text: data.message,
+                        title: data.message,
+                        /* text: data.message, */
                     });
                     /* alert(data.message); */
                     // Cerrar el modal después de guardar
@@ -341,8 +341,8 @@
                 .then(data => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Éxito',
-                        text: data.message,
+                        title: data.message,
+                        /* text: data.message, */
                     });
                     /* alert(data.message); */
                     // Cerrar el modal después de guardar
@@ -382,8 +382,8 @@
                 .then(data => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Éxito',
-                        text: data.message,
+                        title: data.message,
+                        /* text: data.message, */
                     });
                     /* alert(data.message); */
                     // Cerrar el modal después de reportar
@@ -536,8 +536,8 @@
                 .then(data => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Éxito',
-                        text: data.message,
+                        title: data.message,
+                        /* text: data.message, */
                     });
                     /* alert(data.message); */
                 })
@@ -794,8 +794,8 @@
                 .then(data => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Éxito',
-                        text: data.message,
+                        title: data.message,
+                        /*text:  data.message ,*/
                     });
                     /* alert(data.message); */
                     // Close the modal after saving
@@ -846,8 +846,8 @@
                 .then(data => {
                     Swal.fire({
                         icon: 'success',
-                        title: 'Éxito',
-                        text: data.message,
+                        title: data.message,
+                        /* text: data.message, */
                     });
                     /* alert(data.message); */
                     // Close the modal after saving

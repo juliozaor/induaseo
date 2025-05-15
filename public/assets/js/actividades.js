@@ -192,28 +192,39 @@
                 return;
             }
             if (tipo === "actividad") {
-                if (confirm("¿Estás seguro de que deseas eliminar esta actividad?")) {
-                    fetch(`../actividades/${actividadId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar la actividad.");
+                Swal.fire({
+                    title: '¿Estás seguro de que deseas eliminar esta actividad?',
+                    /* text: "No podrás revertir esto.", */
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`../actividades/${actividadId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
-                            return response.json();
                         })
-                        .then(data => {
-                            showAlertModal(
-                                "ok.png", // Ruta del ícono de éxito
-                                data.message // Mensaje de éxito
-                            );
-                            cargarDatos(1)
-                        })
-                        .catch(error => console.error("Error al eliminar la actividad:", error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error al eliminar la actividad.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                showAlertModal(
+                                    "ok.png", // Ruta del ícono de éxito
+                                    data.message // Mensaje de éxito
+                                );
+                                cargarDatos(1)
+                            })
+                            .catch(error => console.error("Error al eliminar la actividad:", error));
+                    }
+                });
             }
 
         }

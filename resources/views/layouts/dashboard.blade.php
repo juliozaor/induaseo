@@ -58,7 +58,7 @@
 
                   <!-- Menú desplegable de usuario -->
                   <div class="dropdown-menu" id="userDropdownMenu">
-                      <p>ROL: {{ Auth::user()->rol }}</p>
+                      <p>ROL: {{ Auth::user()->roles[0]->name }}</p>
                       <div class="divider"></div>
                       <a href="{{ route('profile.edit') }}" class="sub-text">
                           <img src="{{ asset('assets/icons/configuracion.png') }}" alt="Configuración" class="sub-icon">Configuración de Cuenta
@@ -88,7 +88,7 @@
 
     <!-- jQuery y Bootstrap JS CDN para que el modal funcione -->
 
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
       <!-- Script para activar el modal con alertas dinámicas -->

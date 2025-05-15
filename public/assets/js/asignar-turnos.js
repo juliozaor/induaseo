@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const guardarTurnoBtn = document.getElementById('guardarTurnoBtn');
     const nuevaAsignacionBtn = document.getElementById('nuevaAsignacionBtn');
     const tareasTableBody = document.getElementById('tareasTableBody');
-    const volverBtn = document.getElementById('volverBtn');
+    /* const volverBtn = document.getElementById('volverBtn'); */
     const agregarTareaBtn = document.getElementById('agregarTareaBtn');
     const nuevaAreaSelect = document.getElementById('nuevaAreaSelect');
     const areaSection = document.getElementById("areaSection");
@@ -354,29 +354,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             if (tipo === "asignar-turno") {
-                if (confirm("¿Está seguro de que desea eliminar este turno asignado?")) {
-                    fetch(`asignar-turnos/eliminar/${turnoId}`, {
-                        method: "DELETE",
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar el turno asignado.");
+                Swal.fire({
+                    title: '¿Estás seguro de que deseas eliminar este turno asignado?',
+                    /* text: "No podrás revertir esto.", */
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`asignar-turnos/eliminar/${turnoId}`, {
+                            method: "DELETE",
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
-                            return response.json();
                         })
-                        .then(data => {
-                            showAlertModal(
-                                "ok.png", // Ruta del ícono de éxito
-                                "Turno asignado eliminado con éxito." // Mensaje de éxito
-                            );
-                            /* alert(); */
-                            consultarTurnosAsignados(); // Reload the table
-                        })
-                        .catch(error => console.error("Error al eliminar el turno asignado:", error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error al eliminar el turno asignado.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                showAlertModal(
+                                    "ok.png", // Ruta del ícono de éxito
+                                    "Turno asignado eliminado con éxito." // Mensaje de éxito
+                                );
+                                /* alert(); */
+                                consultarTurnosAsignados(); // Reload the table
+                            })
+                            .catch(error => console.error("Error al eliminar el turno asignado:", error));
+                    }
+                });
             }
 
         }
@@ -433,10 +444,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error al cargar las áreas:', error));
     }
 
-    volverBtn.addEventListener('click', function () {
+    /* volverBtn.addEventListener('click', function () {
         $('#tareasModal').modal('hide');
         $('#asignarTurnoModal').modal('show');
-    });
+    }); */
 
     function cargarSupervisores() {
         fetch(`supervisores`)

@@ -39,7 +39,7 @@
 
                     <!-- Menú desplegable de usuario -->
                     <div class="dropdown-menu" id="userDropdownMenu">
-                        <p>ROL: {{ Auth::user()->rol }}</p>
+                        <p>ROL: {{ Auth::user()->roles[0]->name }}</p>
                         <div class="divider"></div>
                         <a href="#" class="sub-text" data-toggle="modal" data-target="#editProfileModal">
                             <img src="{{ asset('assets/icons/configuracion.png') }}" alt="Configuración"
@@ -212,6 +212,8 @@
 
     <!-- Include SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap JS (para Bootstrap 5) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         $(document).ready(function() {

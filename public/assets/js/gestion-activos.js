@@ -250,29 +250,40 @@
                 return;
             }
             if (tipo === "gestionar-activos") {
-                if (confirm("¿Está seguro de que desea eliminar este activo?")) {
-                    fetch(`gestionar-activos/eliminar/${activoId}?sede_id=${sedeId}`, {
-                        method: "DELETE",
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar el activo.");
+                Swal.fire({
+                    title: '¿Estás seguro de que deseas eliminar este activo asignado?',
+                    /* text: "No podrás revertir esto.", */
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`gestionar-activos/eliminar/${activoId}?sede_id=${sedeId}`, {
+                            method: "DELETE",
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
-                            return response.json();
                         })
-                        .then(data => {
-                            showAlertModal(
-                                "ok.png", // Ruta del ícono de éxito
-                                data.message // Mensaje de éxito
-                            );
-                            /* alert(data.message); */
-                            consultarActivos(); // Reload the table
-                        })
-                        .catch(error => console.error("Error al eliminar el activo:", error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error al eliminar el activo.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                showAlertModal(
+                                    "ok.png", // Ruta del ícono de éxito
+                                    data.message // Mensaje de éxito
+                                );
+                                /* alert(data.message); */
+                                consultarActivos(); // Reload the table
+                            })
+                            .catch(error => console.error("Error al eliminar el activo:", error));
+                    }
+                });
             }
 
         }

@@ -273,29 +273,40 @@
                 return;
             }
             if (tipo === "turno") {
-                if (confirm("¿Está seguro de que desea eliminar este turno?")) {
-                    fetch(`../turnos/${turnoId}`, {
-                        method: "DELETE",
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar el turno.");
+                Swal.fire({
+                    title: '¿Estás seguro de que deseas eliminar este turno?',
+                    /* text: "No podrás revertir esto.", */
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`../turnos/${turnoId}`, {
+                            method: "DELETE",
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
-                            return response.json();
                         })
-                        .then(data => {
-                            showAlertModal(
-                                "ok.png", // Ruta del ícono de éxito
-                                "Turno eliminado con éxito." // Mensaje de éxito
-                            );
-                            /* alert("Turno eliminado con éxito."); */
-                            cargarDatos(1); // Reload the table
-                        })
-                        .catch(error => console.error("Error al eliminar el turno:", error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error al eliminar el turno.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                showAlertModal(
+                                    "ok.png", // Ruta del ícono de éxito
+                                    "Turno eliminado con éxito." // Mensaje de éxito
+                                );
+                                /* alert("Turno eliminado con éxito."); */
+                                cargarDatos(1); // Reload the table
+                            })
+                            .catch(error => console.error("Error al eliminar el turno:", error));
+                    }
+                });
             }
 
         }

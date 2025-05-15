@@ -60,6 +60,7 @@ class SupervisorTurnoController extends Controller
                 'supervisor_id' => $validatedData['supervisor'],
                 'sede_id' => $validatedData['sede_id'],
                 'turno_id' => $validatedData['turno'],
+                'inicializado' => 0,
             ]);
 
             return response()->json(['message' => 'Turno asignado con éxito', 'turno_id' => $turno->id]);

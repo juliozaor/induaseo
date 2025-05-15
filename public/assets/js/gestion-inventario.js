@@ -240,29 +240,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             if (tipo === "eliminar-inventario") {
-                if (confirm("¿Está seguro de que desea eliminar este inventario?")) {
-                    fetch(`gestionar-inventario/eliminar/${inventarioId}`, {
-                        method: "DELETE",
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar el inventario.");
+                Swal.fire({
+                    title: '¿Estás seguro de que deseas eliminar este insumo asignado?',
+                    /* text: "No podrás revertir esto.", */
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`gestionar-inventario/eliminar/${inventarioId}`, {
+                            method: "DELETE",
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
-                            return response.json();
                         })
-                        .then(data => {
-                            showAlertModal(
-                                "ok.png", // Ruta del ícono de éxito
-                                "Inventario eliminado con éxito." // Mensaje de éxito
-                            );
-                            /* alert(); */
-                            consultarInventarios(); // Reload the table
-                        })
-                        .catch(error => console.error("Error al eliminar el inventario:", error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error al eliminar el inventario.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                showAlertModal(
+                                    "ok.png", // Ruta del ícono de éxito
+                                    "Inventario eliminado con éxito." // Mensaje de éxito
+                                );
+                                /* alert(); */
+                                consultarInventarios(); // Reload the table
+                            })
+                            .catch(error => console.error("Error al eliminar el inventario:", error));
+                    }
+                });
             }
 
         }

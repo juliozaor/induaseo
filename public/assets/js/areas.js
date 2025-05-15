@@ -383,9 +383,20 @@
             const tipo = event.target.getAttribute("data-tipo");
             if (areaId) {
                 if (tipo === "area") {
-                    if (confirm("¿Estás seguro de que deseas eliminar esta área?")) {
-                        eliminarArea(areaId);
-                    }
+                    Swal.fire({
+                        title: '¿Estás seguro de que deseas eliminar esta área?',
+                        /* text: "No podrás revertir esto.", */
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            eliminarArea(areaId);
+                        }
+                    });
                 }
 
             }

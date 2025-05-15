@@ -85,29 +85,40 @@
                 return;
             }
             if (tipo === "informacion") {
-                if (confirm("¿Está seguro de que desea eliminar esta información?")) {
-                    fetch(`../informacion/eliminar/${informacionId}`, {
-                        method: "DELETE",
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al eliminar la información.");
+                Swal.fire({
+                    title: '¿Estás seguro de que deseas eliminar esta información?',
+                    /* text: "No podrás revertir esto.", */
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`../informacion/eliminar/${informacionId}`, {
+                            method: "DELETE",
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             }
-                            return response.json();
                         })
-                        .then(data => {
-                            showAlertModal(
-                                "ok.png", // Ruta del ícono de éxito
-                                "Información eliminada con éxito." // Mensaje de éxito
-                            );
-                            /* alert(); */
-                            cargarInformacion(1); // Reload the table
-                        })
-                        .catch(error => console.error("Error al eliminar la información:", error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Error al eliminar la información.");
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                showAlertModal(
+                                    "ok.png", // Ruta del ícono de éxito
+                                    "Información eliminada con éxito." // Mensaje de éxito
+                                );
+                                /* alert(); */
+                                cargarInformacion(1); // Reload the table
+                            })
+                            .catch(error => console.error("Error al eliminar la información:", error));
+                    }
+                });
             }
 
         }
