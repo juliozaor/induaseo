@@ -387,7 +387,9 @@
                     });
                     /* alert(data.message); */
                     // Cerrar el modal después de reportar
-                    $(`#activoModal${id}`).modal('hide');
+                    /* $(`#activoModal${id}`).modal('hide');
+                    $('.modal-backdrop').remove();
+                    document.body.classList.remove('modal-open'); */
                 })
                 .catch(error => {
                     /* // console.error('Error:', error); */
@@ -708,7 +710,7 @@
         $('.modal').on('show.bs.modal', function() {
             const modal = $(this);
             const id = modal.attr('id').replace('activoModal', '');
-            console.log(`ID: ${id}`);
+            /* console.log(`ID: ${id}`); */
             if (modal.attr('id').includes('activoModal')) {
                 verificarActivoReportado(id);
             }
@@ -770,7 +772,7 @@
         function actualizarMantenimiento(id) {
             const fecha = document.getElementById(`fecha${id}`).value;
             const observaciones = document.getElementById(`observacionesMant${id}`).value;
-            console.log('Está entrando a la función');
+            /* console.log('Está entrando a la función'); */
             fetch(`{{ route('actualizar.mantenimiento.details') }}`, {
                     method: 'POST',
                     headers: {
@@ -799,7 +801,9 @@
                     });
                     /* alert(data.message); */
                     // Close the modal after saving
-                    //$(`#mantenimientoModal${id}`).modal('hide');
+                    $(`#mantenimientoModal${id}`).modal('hide');
+                    $('.modal-backdrop').remove();
+                    document.body.classList.remove('modal-open');
                 })
                 .catch(error => {
                     // console.error('Error:', error);
@@ -851,13 +855,15 @@
                     });
                     /* alert(data.message); */
                     // Close the modal after saving
-                    // $(`#finalModal${id}`).modal('hide');
+                    $(`#finalModal${id}`).modal('hide');
+                    $('.modal-backdrop').remove();
+                    document.body.classList.remove('modal-open');
+                    obtenerMantenimientos();
                 })
                 .catch(error => {
                     // console.error('Error:', error);
                     alert('Error al finalizar el mantenimiento: ' + error.message);
                 });
-            obtenerMantenimientos();
         }
         //obtenerMantenimientos();
     </script>
