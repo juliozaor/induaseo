@@ -82,14 +82,15 @@
                                 'fileModal'));
 
                             // Ajustar el tamaño del iframe según el tipo de archivo
+                            console.log(novedad.tipo_multimedia);
                             switch (novedad.tipo_multimedia.nombre) {
                                 case 'Documento':
                                     fileFrame.style.height = '800px';
-                                    modalBody.style.height = '800px';
+                                    modalBody.style.height = '830px';
                                     break;
                                 case 'Video':
                                     fileFrame.style.height = '400px';
-                                    modalBody.style.height = '400px';
+                                    modalBody.style.height = '430px';
                                     break;
                                 case 'Imagen':
                                     fileFrame.style.height = '500px';

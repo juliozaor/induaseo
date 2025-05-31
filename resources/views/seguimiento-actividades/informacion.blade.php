@@ -105,6 +105,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
+                        console.log('Datos obtenidos:', data);
                         resultsContainer.innerHTML = '';
                         novedadesContainer.innerHTML = '';
                         data.forEach(item => {
@@ -118,21 +119,22 @@
                                     const modalBody = document.querySelector('.modal-body');
                                     fileFrame.src = item.url;
                                     const fileModalLabel = document.getElementById(
-                                    'fileModalLabel');
+                                        'fileModalLabel');
                                     fileModalLabel.textContent = item.url.split('/')
-                                .pop(); // Mostrar el nombre del archivo
+                                        .pop(); // Mostrar el nombre del archivo
                                     const fileModal = new bootstrap.Modal(document.getElementById(
                                         'fileModal'));
 
                                     // Ajustar el tamaño del iframe según el tipo de archivo
+                                    console.log('Tipo de multimedia:', item.tipo_multimedia);
                                     switch (item.tipo_multimedia.nombre) {
                                         case 'Documento':
                                             fileFrame.style.height = '800px';
-                                            modalBody.style.height = '800px';
+                                            modalBody.style.height = '830px';
                                             break;
                                         case 'Video':
                                             fileFrame.style.height = '400px';
-                                            modalBody.style.height = '400px';
+                                            modalBody.style.height = '430px';
                                             break;
                                         case 'Imagen':
                                             fileFrame.style.height = '500px';
@@ -208,12 +210,32 @@
                             card.style.cursor = 'pointer';
                             card.onclick = function() {
                                 const fileFrame = document.getElementById('fileFrame');
+                                const modalBody = document.querySelector('.modal-body');
                                 fileFrame.src = `{{ asset('/') }}/${novedad.url}`;
                                 const fileModalLabel = document.getElementById('fileModalLabel');
                                 fileModalLabel.textContent = novedad.url.split('/')
-                            .pop(); // Mostrar el nombre del archivo
+                                    .pop(); // Mostrar el nombre del archivo
                                 const fileModal = new bootstrap.Modal(document.getElementById(
                                     'fileModal'));
+                                // Ajustar el tamaño del iframe según el tipo de archivo
+                                console.log('Tipo de multimedia:', novedad.tipo_multimedia.nombre);
+                                switch (novedad.tipo_multimedia.nombre) {
+                                    case 'Documento':
+                                        fileFrame.style.height = '800px';
+                                        modalBody.style.height = '830px';
+                                        break;
+                                    case 'Video':
+                                        fileFrame.style.height = '400px';
+                                        modalBody.style.height = '430px';
+                                        break;
+                                    case 'Imagen':
+                                        fileFrame.style.height = '500px';
+                                        modalBody.style.height = '530px';
+                                        break;
+                                    default:
+                                        fileFrame.style.height = 'auto';
+                                        modalBody.style.height = 'auto';
+                                }
                                 fileModal.show();
                             };
 

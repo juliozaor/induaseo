@@ -158,7 +158,7 @@
                 return response.json();
             })
             .then((data) => {
-                console.log('data:', data);
+                /* console.log('data:', data); */
                 if (data.errors) {
                     showInformacionErrors(data.errors);
                 } else {
@@ -185,7 +185,7 @@
         document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
         for (const [key, messages] of Object.entries(errors)) {
             const errorElement = document.getElementById(`error${capitalizeFirstLetter(key)}`);
-            console.log(capitalizeFirstLetter(key));
+            /* console.log(capitalizeFirstLetter(key)); */
             if (errorElement) {
                 errorElement.textContent = messages.join(', ');
             }

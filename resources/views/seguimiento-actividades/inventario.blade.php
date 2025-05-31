@@ -801,9 +801,9 @@
                     });
                     /* alert(data.message); */
                     // Close the modal after saving
-                    $(`#mantenimientoModal${id}`).modal('hide');
+                    /* $(`#mantenimientoModal${id}`).modal('hide');
                     $('.modal-backdrop').remove();
-                    document.body.classList.remove('modal-open');
+                    document.body.classList.remove('modal-open'); */
                 })
                 .catch(error => {
                     // console.error('Error:', error);
