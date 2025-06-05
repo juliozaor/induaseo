@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\SupervisorTurno;
@@ -34,14 +35,17 @@ class ReporteController extends Controller
         $fecha_fin = $request->fecha_fin;
 
         // Obtener los turnos asignados con sus relaciones
-        $turnosAsignados = SupervisorTurno::with(['turno', 'supervisor', 'areas.area.actividades', 'areas.actividades.actividad' ])
+        $turnosAsignados = SupervisorTurno::with(['turno', 'supervisor', 'areas.area.actividades', 'areas.actividades.actividad'])
             ->where('sede_id', $sede_id);
 
         $historialTurnos = SupervisorTurnosFechas::with([
-            'supervisorTurno', 'supervisorTurno.turno', 'supervisorTurno.supervisor',
-            'supervisorTurno.areas.area.actividades', 'supervisorTurno.areas.actividades.actividad',
+            'supervisorTurno',
+            'supervisorTurno.turno',
+            'supervisorTurno.supervisor',
+            'supervisorTurno.areas.area.actividades',
+            'supervisorTurno.areas.actividades.actividad',
             'supervisorTurno.areas'
-            ])
+        ])
             ->whereIn('supervisor_turno_id', $turnosAsignados->pluck('id'));
 
         $turnos = [];
@@ -50,42 +54,45 @@ class ReporteController extends Controller
             $supervisorTurno = $historialTurno->supervisorTurno;
 
             if ($supervisorTurno) {
-            $historialActividades = TurnosHistorialActividades::with(['turnoAreaActividad'])
-                ->whereHas('turnoAreaActividad.turnoArea', function ($query) use ($supervisorTurno) {
-                $query->where('turno_id', $supervisorTurno->id);
-                })
-                ->get()
-                ->map(function ($historial) use ($supervisorTurno, $historialTurno) {
-                return [
-                    'fecha_inicio' => $historialTurno->fecha_inicio,
-                    'fecha_fin' => $historialTurno->fecha_fin,
-                    'turno' => $supervisorTurno->turno->nombre,
-                    'area' => $historial->turnoAreaActividad->turnoArea->area->nombre,
-                    'actividad' => $historial->turnoAreaActividad->actividad->nombre,
-                    'estado' => $historial->estado,
-                    'calificacion' => $historial->calificacion,
-                ];
-                });
+                $historialActividades = TurnosHistorialActividades::with(['turnoAreaActividad'])
+                    ->whereHas('turnoAreaActividad.turnoArea', function ($query) use ($supervisorTurno) {
+                        $query->where('turno_id', $supervisorTurno->id);
+                    })
+                    ->get()
+                    ->map(function ($historial) use ($supervisorTurno, $historialTurno) {
+                        return [
+                            'fecha_inicio' => $historialTurno->fecha_inicio,
+                            'fecha_fin' => $historialTurno->fecha_fin,
+                            'turno' => $supervisorTurno->turno->nombre,
+                            'area' => $historial->turnoAreaActividad->turnoArea->area->nombre,
+                            'actividad' => $historial->turnoAreaActividad->actividad->nombre,
+                            'estado' => $historial->estado,
+                            'calificacion' => $historial->calificacion,
+                        ];
+                    });
 
-            $turnos = array_merge($turnos, $historialActividades->toArray());
+                $turnos = array_merge($turnos, $historialActividades->toArray());
             }
         }
-
+        // Filtrar por rango de fechas si se proporcionan
         if ($fecha_inicio && $fecha_fin) {
             $turnos = array_filter($turnos, function ($item) use ($fecha_inicio, $fecha_fin) {
-                return $item['fecha_inicio'] >= $fecha_inicio && $item['fecha_fin'] <= $fecha_fin;
+            return $item['fecha_inicio'] >= $fecha_inicio && $item['fecha_fin'] <= $fecha_fin;
             });
         } else if ($fecha_inicio) {
             $turnos = array_filter($turnos, function ($item) use ($fecha_inicio) {
-                return $item['fecha_inicio'] >= $fecha_inicio;
+            return $item['fecha_inicio'] >= $fecha_inicio;
             });
         } else if ($fecha_fin) {
             $turnos = array_filter($turnos, function ($item) use ($fecha_fin) {
-                return $item['fecha_fin'] <= $fecha_fin;
+            return $item['fecha_fin'] <= $fecha_fin;
             });
         }
 
-        /* dd($turnos); */
+        // Reindexar el arreglo para asegurar que sea un array numérico
+        $turnos = array_values($turnos);
+
+        /* dd($fecha_inicio, $fecha_fin, $turnos); */
 
         // Filtrar por rango de fechas si se proporcionan
         /* if ($fecha_inicio && $fecha_fin) {

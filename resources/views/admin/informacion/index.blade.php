@@ -110,7 +110,7 @@
                 </div>
                 <div class="form-group flex-grow-1 row">
                     <div class="col-12">
-                        <label for="descripcion" class="form-label">Desripción</label>
+                        <label for="descripcion" class="form-label">Descripción</label>
                         <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
                         <span class="error-message" id="errorDescripcion"></span>
                     </div>

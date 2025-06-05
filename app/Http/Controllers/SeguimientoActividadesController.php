@@ -504,7 +504,7 @@ class SeguimientoActividadesController extends Controller
         // Datos del correo
         $data = [
             'items' => $request->items,
-            'usuario' => Auth::user()->nombres + ' ' + Auth::user()->apellidos,
+            'usuario' => Auth::user()->nombres . ' ' . Auth::user()->apellidos,
             'sede' => $sedes->nombre,
             'cliente' => $sedes->cliente->nombre,
         ];

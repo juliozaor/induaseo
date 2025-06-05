@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 response => response.json()
             )
             .then(data => {
-                console.log('Actividades Data:', data); // Debug statement
+                //console.log('Actividades Data:', data);  Debug statement
                 actividadesData = data;
                 if (actividadesData.length > 0) {
                     renderTable(actividadesData);
